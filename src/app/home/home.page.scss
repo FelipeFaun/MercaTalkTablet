@@ -1,0 +1,642 @@
+/* FORZAR MODO CLARO */
+:host {
+  color-scheme: light only;
+}
+
+ion-content {
+  color-scheme: light;
+  --background: #ffffff;
+  --color: #000000;
+}
+
+/* Asegurar que todos los textos sean visibles */
+.avatar-bubble p {
+  color: #2c3e50 !important;
+}
+
+.options-section h2 {
+  color: #2c3e50 !important;
+}
+
+.secondary-option {
+  --color: #2c3e50 !important;
+  
+  ion-label {
+    color: #2c3e50 !important;
+  }
+}
+
+// Barra azul superior
+.blue-toolbar {
+  --background: #0071ce;
+  --min-height: 70px;
+  --border-width: 0;
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    
+    .logo-section .logo {
+      height: 40px;
+      width: auto;
+      max-width: 150px;
+      cursor: pointer;
+    }
+    
+    .empty-space {
+      width: 150px;
+    }
+  }
+}
+
+ion-content {
+  --background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+}
+
+.container {
+  padding: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+}
+
+// Layout con avatar y opciones - SIN SEPARACIÓN
+.chat-layout {
+  display: flex;
+  gap: 0;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  background: white;
+  border-radius: 0;
+  margin: 0;
+  box-shadow: none;
+}
+
+// Sección del avatar - INTEGRADA
+.avatar-section {
+  flex: 0 0 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+  border-radius: 0;
+  padding: 60px 40px;
+  box-shadow: none;
+  height: calc(100vh - 70px);
+  
+  .avatar-img {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 10px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    margin-bottom: 40px;
+  }
+}
+
+// Sección de opciones - INTEGRADA
+.options-section {
+  flex: 1;
+  max-width: 600px;
+  background: white;
+  border-radius: 0;
+  padding: 80px 50px;
+  box-shadow: none;
+  height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 40px;
+    font-weight: 700;
+    font-size: 32px;
+  }
+}
+
+.options-list {
+  background: transparent;
+}
+
+.main-option {
+  --background: linear-gradient(135deg, #0071ce 0%, #005a9e 100%);
+  --color: white;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  --padding-start: 25px;
+  --padding-end: 25px;
+  --min-height: 75px;
+  box-shadow: 0 6px 20px rgba(0, 113, 206, 0.3);
+  font-weight: 700;
+  font-size: 18px;
+  border: none;
+  
+  ion-icon {
+    font-size: 28px;
+    color: white;
+  }
+}
+
+.secondary-option {
+  --background: #f8f9fa;
+  --color: #2c3e50;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  --padding-start: 25px;
+  --padding-end: 25px;
+  --min-height: 65px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    --background: #e3f2fd;
+    border-color: #0071ce;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 113, 206, 0.15);
+  }
+  
+  ion-icon {
+    color: #0378fd;
+    font-size: 24px;
+  }
+}
+
+// Selector de avatar
+.avatar-selector-minimal {
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 15px 20px;
+  margin-bottom: 25px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  
+  .selector-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    
+    ion-icon {
+      font-size: 20px;
+      color: rgb(26, 0, 0);
+    }
+    
+    span {
+      color: rgb(0, 0, 0);
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+  
+  .selector-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    
+    .selector-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 2px solid transparent;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 13px;
+      
+      ion-icon {
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+      
+      &.active {
+        background: white;
+        color: #0071ce;
+        border-color: #0071ce;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        
+        ion-icon {
+          color: #0071ce;
+        }
+      }
+      
+      &:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+}
+
+// Input de chat integrado - MEJORADO
+.integrated-chat-input {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-top: 16px;
+  max-width: 600px;
+  width: 100%;
+  
+  .chat-textarea {
+    background: white;
+    border-radius: 20px;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    border: 2px solid #e0e0e0;
+    flex: 1;
+    
+    // TEXTO MÁS GRANDE en el textarea
+    font-size: 16px;
+    --placeholder-color: #666;
+    --placeholder-font-weight: 500;
+  }
+  
+  .voice-btn, .send-btn {
+    --border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+  
+  .voice-btn[color="danger"] {
+    animation: pulse 1.5s infinite;
+  }
+}
+
+// Indicador de typing
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  justify-content: center;
+  color: #666;
+  font-size: 14px;
+  
+  ion-spinner {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// Estilos para controles de voz
+.voice-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
+  padding: 10px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 10px;
+  color: #856404;
+  width: 100%;
+  max-width: 320px;
+  
+  ion-spinner {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.browser-support-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 12px;
+  background: #e3f2fd;
+  border: 1px solid #2196f3;
+  border-radius: 8px;
+  color: #1976d2;
+  font-size: 14px;
+  width: 100%;
+  max-width: 320px;
+  
+  ion-icon {
+    font-size: 18px;
+    color: #1976d2;
+  }
+}
+
+// CABECERA DE CHAT MEJORADA
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+  gap: 15px;
+  
+  .chat-controls-left,
+  .chat-controls-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .chat-controls-right {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  
+  .back-btn, .mute-btn, .repeat-btn {
+    font-weight: 600;
+    
+    ion-icon {
+      font-size: 18px;
+    }
+  }
+  
+  .mute-btn[color="medium"] {
+    opacity: 0.7;
+  }
+}
+
+// BURBUJA DE RESPUESTA MÁS GRANDE
+.avatar-bubble-response {
+  background: #e3f2fd;
+  border-radius: 20px;
+  padding: 25px;
+  margin: 16px 0;
+  position: relative;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 2px solid #1976d2;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+
+  .message-content {
+    width: 100%;
+  }
+
+  .chat-text {
+    margin: 0;
+    color: #333;
+    font-size: 18px; // TEXTO MÁS GRANDE
+    line-height: 1.6;
+    white-space: pre-line;
+    font-weight: 500;
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes avatarTalk {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+// Animación para cuando el avatar está hablando
+.avatar-img:has(+ .integrated-chat-input .voice-btn[color="danger"]) {
+  animation: avatarTalk 0.5s ease-in-out infinite alternate;
+}
+
+// Estilos responsivos
+@media (min-width: 1200px) {
+  .avatar-section {
+    flex: 0 0 450px;
+    
+    .avatar-img {
+      width: 320px;
+      height: 320px;
+    }
+  }
+  
+  .options-section {
+    padding: 80px 60px;
+  }
+  
+  .avatar-bubble-response .chat-text {
+    font-size: 19px; // Aún más grande en desktop
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .avatar-section {
+    flex: 0 0 350px;
+    padding: 50px 30px;
+    
+    .avatar-img {
+      width: 240px;
+      height: 240px;
+    }
+  }
+  
+  .options-section {
+    padding: 60px 40px;
+    
+    h2 {
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+  }
+  
+  .avatar-bubble-response .chat-text {
+    font-size: 17px;
+  }
+}
+
+// Tablets
+@media (min-width: 576px) and (max-width: 767px) {
+  .container {
+    align-items: flex-start;
+  }
+  
+  .chat-layout {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .avatar-section {
+    flex: none;
+    width: 100%;
+    height: auto;
+    padding: 40px 30px;
+    border-radius: 0 0 30px 30px;
+    
+    .avatar-img {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 30px;
+    }
+  }
+  
+  .options-section {
+    width: 100%;
+    height: auto;
+    padding: 40px 30px;
+    
+    h2 {
+      font-size: 26px;
+      margin-bottom: 30px;
+    }
+  }
+  
+  .avatar-bubble-response {
+    padding: 20px;
+    
+    .chat-text {
+      font-size: 16px;
+    }
+  }
+}
+
+// Móviles
+@media (max-width: 575px) {
+  .container {
+    align-items: flex-start;
+  }
+  
+  .chat-layout {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .avatar-section {
+    flex: none;
+    width: 100%;
+    height: auto;
+    padding: 30px 20px;
+    border-radius: 0 0 25px 25px;
+    
+    .avatar-img {
+      width: 180px;
+      height: 180px;
+      border-width: 8px;
+      margin-bottom: 25px;
+    }
+  }
+  
+  .options-section {
+    padding: 30px 20px;
+    height: auto;
+    
+    h2 {
+      font-size: 24px;
+      margin-bottom: 25px;
+    }
+  }
+  
+  .main-option, .secondary-option {
+    --padding-start: 20px;
+    --padding-end: 20px;
+  }
+  
+  .main-option {
+    --min-height: 65px;
+    font-size: 16px;
+    margin-bottom: 15px;
+    
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+  
+  .secondary-option {
+    --min-height: 58px;
+    font-size: 14px;
+    margin-bottom: 12px;
+    
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+
+  .integrated-chat-input {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .voice-btn, .send-btn {
+      align-self: flex-end;
+      margin-top: 8px;
+    }
+  }
+
+  .avatar-selector-minimal {
+    padding: 10px 14px;
+    margin-bottom: 15px;
+    
+    .selector-label {
+      gap: 6px;
+      
+      ion-icon {
+        font-size: 18px;
+      }
+      
+      span {
+        font-size: 12px;
+      }
+    }
+    
+    .selector-buttons {
+      flex-direction: column;
+      gap: 8px;
+      
+      .selector-btn {
+        padding: 10px;
+        justify-content: center;
+      }
+    }
+  }
+
+  .chat-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    
+    .chat-controls-left,
+    .chat-controls-right {
+      justify-content: center;
+    }
+    
+    .chat-controls-right {
+      order: -1; // Los botones de control arriba en móviles
+    }
+  }
+  
+  .avatar-bubble-response {
+    padding: 18px;
+    
+    .chat-text {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+  }
+  
+  .integrated-chat-input .chat-textarea {
+    font-size: 16px; // Mantener tamaño legible en móviles
+  }
+}

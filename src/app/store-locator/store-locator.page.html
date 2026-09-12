@@ -1,0 +1,153 @@
+<ion-header [translucent]="true">
+  <!-- Barra azul superior con logo -->
+  <ion-toolbar class="blue-toolbar">
+    <div class="header-content">
+      <!-- Logo Líder a la izquierda -->
+      <div class="logo-section">
+        <img src="https://i5.walmartimages.com/dfw/63fd9f59-4a2e/587a39f4-fa04-49c6-b70f-ed494f49ff69/v1/chile-walmart-od-logo.svg" 
+             alt="Líder" 
+             class="logo" 
+             routerLink="/home"
+             style="cursor: pointer;">
+      </div>
+      <!-- Espacio vacío para balancear -->
+      <div class="empty-space"></div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <h2>¿Dónde encontrar productos en el supermercado?</h2>
+    
+    <!-- Búsqueda -->
+    <div class="search-section">
+      <ion-item>
+        <ion-input 
+          placeholder="Ej: Leche, Arroz, Aceite, Té..."
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="searchProductLocation()"
+        ></ion-input>
+      </ion-item>
+      
+      <ion-button expand="block" (click)="searchProductLocation()" [disabled]="!searchQuery.trim()">
+        <ion-icon slot="start" name="search"></ion-icon>
+        Buscar Ubicación
+      </ion-button>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" *ngIf="isLoading">
+      <ion-spinner></ion-spinner>
+      <p>Buscando ubicaciones...</p>
+    </div>
+
+    <!-- Resultados de búsqueda -->
+    <div class="results-section" *ngIf="showResults && !isLoading && !selectedProduct">
+      <div class="results-header">
+        <h3>
+          <ion-icon name="location"></ion-icon>
+          {{ searchResults.length }} producto(s) encontrado(s)
+        </h3>
+        <ion-button size="small" (click)="clearSearch()" *ngIf="searchResults.length > 0">
+          Nueva Búsqueda
+        </ion-button>
+      </div>
+
+      <!-- Sin resultados -->
+      <div class="no-results" *ngIf="searchResults.length === 0">
+        <ion-icon name="map"></ion-icon>
+        <h4>No se encontraron productos</h4>
+        <p>Intenta con otros términos de búsqueda</p>
+      </div>
+
+      <!-- Lista de resultados -->
+      <div class="products-list" *ngIf="searchResults.length > 0">
+        <ion-card *ngFor="let product of searchResults" class="product-card" (click)="selectProduct(product)">
+          <ion-card-header>
+            <ion-card-title>{{ product.name }}</ion-card-title>
+            <ion-card-subtitle>{{ product.brand }}</ion-card-subtitle>
+          </ion-card-header>
+          
+          <ion-card-content>
+            <div class="product-info">
+              <ion-chip color="primary" *ngIf="product.supermarketLocation">
+                <ion-icon name="navigate"></ion-icon>
+                <ion-label>{{ product.supermarketLocation.aisle }}</ion-label>
+              </ion-chip>
+              <p>Toca para ver detalles de ubicación</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+    <!-- Detalles de ubicación -->
+    <div class="location-details" *ngIf="selectedProduct && selectedProduct.supermarketLocation">
+      <div class="location-header">
+        <ion-button fill="clear" (click)="backToResults()">
+          <ion-icon slot="start" name="arrow-back"></ion-icon>
+          Volver
+        </ion-button>
+        <h3>Ubicación de {{ selectedProduct.name }}</h3>
+      </div>
+
+      <ion-card class="location-card">
+        <ion-card-header>
+          <div class="location-icon">
+            <span class="aisle-icon">{{ getAisleIcon(selectedProduct.supermarketLocation!.aisle) }}</span>
+          </div>
+          <ion-card-title>{{ selectedProduct.name }}</ion-card-title>
+          <ion-card-subtitle>{{ selectedProduct.brand }}</ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="location-steps">
+            <div class="step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <strong>Dirígete a:</strong>
+                <span class="step-highlight">{{ selectedProduct.supermarketLocation!.aisle }}</span>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <strong>Busca en la sección:</strong>
+                <span class="step-highlight">{{ selectedProduct.supermarketLocation!.section }}</span>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <strong>Revisa el estante:</strong>
+                <span class="step-highlight">{{ selectedProduct.supermarketLocation!.shelf }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="additional-info">
+            <!-- ❌ SECCIÓN ELIMINADA: Ya no muestra información de tiendas -->
+            
+            <div class="price-info" *ngIf="selectedProduct.inOffer">
+              <ion-text color="danger">
+                <strong>¡OFERTA! ${{ selectedProduct.offerPrice?.toLocaleString('es-CL') }}</strong>
+              </ion-text>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <div class="location-tips">
+        <h4>💡 Consejos para encontrar el producto:</h4>
+        <ul>
+          <li>Busca las señales del pasillo en el techo</li>
+          <li>Los productos similares están agrupados juntos</li>
+          <li>Pregunta a un empleado si necesitas ayuda</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</ion-content>

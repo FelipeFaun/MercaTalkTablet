@@ -1,0 +1,65 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="blue-toolbar">
+    <div class="header-content">
+      <div class="logo-section">
+        <ion-button fill="clear" class="logo-button" [routerLink]="['/home']">
+          <img 
+            src="https://i5.walmartimages.com/dfw/63fd9f59-4a2e/587a39f4-fa04-49c6-b70f-ed494f49ff69/v1/chile-walmart-od-logo.svg" 
+            alt="Líder" 
+            class="logo">
+        </ion-button>
+      </div>
+      
+      <div class="title-section">
+        <h1 class="page-title">Recetas Destacadas</h1>
+      </div>
+      
+      <div class="empty-space"></div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <!-- Banner explicativo mejorado -->
+    <div class="explanation-banner">
+      <div class="banner-icon">🍳</div>
+      <div class="banner-message">
+        <h2>¡Aprovecha las ofertas del día!</h2>
+        <p>Con estas recetas especiales podrás cocinar delicioso y ahorrar dinero usando los productos en promoción.</p>
+      </div>
+      <div class="banner-arrow"></div>
+    </div>
+
+    <!-- Grid de recetas -->
+    <div class="recipe-grid">
+      @for (recipe of recipes; track recipe.id; let i = $index) {
+        <div class="recipe-card" [class]="'recipe-color-' + (i % 4)">
+          <div class="recipe-image" [style.background-image]="'url(' + recipe.image + ')'"></div>
+          
+          <div class="recipe-content">
+            <div class="recipe-category">Receta Destacada</div>
+            <h2 class="recipe-title">{{ recipe.name }}</h2>
+            
+            <div class="recipe-meta">
+              <span>{{ recipe.time }}</span>
+              <span>{{ recipe.ingredients.length }} INGREDIENTES</span>
+            </div>
+            
+            <div class="recipe-ingredient">
+              <strong>Ingrediente principal:</strong> {{ recipe.mainIngredient }}
+            </div>
+            
+            <p class="recipe-description">
+              {{ recipe.description }}
+            </p>
+            
+            <button class="view-recipe-btn" (click)="viewRecipe(recipe)">
+              Ver Receta
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</ion-content>

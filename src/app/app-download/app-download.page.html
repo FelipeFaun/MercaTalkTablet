@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="blue-toolbar">
+    <div class="header-content">
+      <div class="logo-section">
+        <ion-button fill="clear" class="logo-button" [routerLink]="['/home']">
+          <img 
+            src="https://i5.walmartimages.com/dfw/63fd9f59-4a2e/587a39f4-fa04-49c6-b70f-ed494f49ff69/v1/chile-walmart-od-logo.svg" 
+            alt="Líder" 
+            class="logo">
+        </ion-button>
+      </div>
+      
+      <div class="title-section">
+        <h1 class="page-title">Descarga Nuestra App</h1>
+      </div>
+      
+      <div class="empty-space"></div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="app-download-content">
+  <div class="container">
+    
+    <!-- QR 1: Descarga Directa -->
+    <div class="qr-section">
+      <h3>Escanea para descargar la app</h3>
+      <img [src]="qrCodes.directDownload" alt="QR Descarga Directa" class="qr-code">
+    </div>
+
+
+  </div>
+</ion-content>

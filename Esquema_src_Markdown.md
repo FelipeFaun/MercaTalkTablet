@@ -1,0 +1,29 @@
+```
+└── 📁src
+    └── 📁app
+        └── 📁home
+            ├── home.page.html
+            ├── home.page.scss
+            ├── home.page.spec.ts
+            ├── home.page.ts
+        ├── app.component.html
+        ├── app.component.scss
+        ├── app.component.spec.ts
+        ├── app.component.ts
+        ├── app.routes.ts
+    └── 📁assets
+        └── 📁icon
+            ├── favicon.png
+        ├── shapes.svg
+    └── 📁environments
+        ├── environment.prod.ts
+        ├── environment.ts
+    └── 📁theme
+        ├── variables.scss
+    ├── global.scss
+    ├── index.html
+    ├── main.ts
+    ├── polyfills.ts
+    ├── test.ts
+    └── zone-flags.ts
+```

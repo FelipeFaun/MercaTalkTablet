@@ -1,0 +1,173 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="blue-toolbar">
+    <div class="header-content">
+      <div class="logo-section">
+        <img src="https://i5.walmartimages.com/dfw/63fd9f59-4a2e/587a39f4-fa04-49c6-b70f-ed494f49ff69/v1/chile-walmart-od-logo.svg" 
+             alt="Líder" 
+             class="logo" 
+             routerLink="/home"
+             style="cursor: pointer;">
+      </div>
+      <div class="empty-space"></div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <!-- Layout con avatar y opciones -->
+    <div class="chat-layout">
+      
+      <!-- Avatar Liderin - SIEMPRE VISIBLE -->
+      <div class="avatar-section">
+        
+        <!-- Selector de avatar - ARRIBA -->
+        <div class="avatar-selector-minimal" *ngIf="!isInConversation">
+          <div class="selector-label">
+            <ion-icon name="person-circle-outline"></ion-icon>
+            <span>Elige tu avatar</span>
+          </div>
+          <div class="selector-buttons">
+            <button class="selector-btn" 
+                    [class.active]="currentAvatar === 'assets/images/liderin.png'"
+                    (click)="changeAvatar('assets/images/liderin.png')">
+              <ion-icon name="sparkles"></ion-icon>
+              <span>Avatar 1</span>
+            </button>
+            <button class="selector-btn" 
+                    [class.active]="currentAvatar === 'assets/images/liderin2.png'"
+                    (click)="changeAvatar('assets/images/liderin2.png')">
+              <ion-icon name="star"></ion-icon>
+              <span>Avatar 2</span>
+            </button>
+          </div>
+        </div>
+
+        <img [src]="currentAvatar" alt="Liderin" class="avatar-img">
+        
+        <!-- Input de chat integrado -->
+        <div class="integrated-chat-input" *ngIf="showChatInput">
+          <ion-textarea
+            [(ngModel)]="userMessage"
+            [placeholder]="speechSupported ? 'Escribe o usa el micrófono...' : 'Escribe tu mensaje...'"
+            rows="1"
+            autoGrow="true"
+            (keyup.enter)="sendMessage()"
+            class="chat-textarea"
+          ></ion-textarea>
+          
+          <!-- Botón de micrófono con tooltip -->
+          <ion-button (click)="toggleListening()" 
+                      [color]="isListening ? 'danger' : 'primary'"
+                      [disabled]="!speechSupported"
+                      title="{{ !speechSupported ? 'Reconocimiento de voz no soportado en este navegador' : 'Usar micrófono' }}"
+                      class="voice-btn">
+            <ion-icon [name]="isListening ? 'mic-off' : 'mic'"></ion-icon>
+          </ion-button>
+          
+          <!-- Botón de enviar -->
+          <ion-button (click)="sendMessage()" 
+                      [disabled]="!userMessage.trim() || isLoading"
+                      class="send-btn">
+            <ion-icon name="send"></ion-icon>
+          </ion-button>
+        </div>
+
+        <!-- Indicador de escucha -->
+        <div class="voice-status" *ngIf="isListening">
+          <ion-spinner name="crescent"></ion-spinner>
+          <span>Escuchando... Habla ahora</span>
+        </div>
+
+        <!-- Mensaje de ayuda para compatibilidad -->
+        <div class="browser-support-message" *ngIf="!speechSupported && showChatInput">
+          <ion-icon name="information-circle"></ion-icon>
+          <span>El reconocimiento de voz funciona mejor en Chrome/Edge. Asegúrate de usar HTTPS.</span>
+        </div>
+      </div>
+
+      <!-- CONTENIDO DINÁMICO: OPCIONES O RESPUESTA DEL CHAT -->
+      <div class="content-section">
+        
+        <!-- OPCIONES DE CONVERSACIÓN - SE OCULTAN CUANDO SE CONVERSA -->
+        <div class="options-section" *ngIf="!isInConversation">
+          <h2>Conversa conmigo para poder ayudarte</h2>
+          
+          <ion-list class="options-list">
+            <!-- Opción principal -->
+            <ion-item button class="main-option" lines="none" (click)="startConversation()">
+              <ion-icon slot="start" name="chatbubbles"></ion-icon>
+              <ion-label>Comenzar a conversar</ion-label>
+            </ion-item>
+
+            <!-- Opciones secundarias -->
+            <ion-item button class="secondary-option" lines="none" (click)="navigateToPriceCheck()">
+              <ion-icon slot="start" name="pricetag"></ion-icon>
+              <ion-label>Pregúntame por el precio de un producto</ion-label>
+            </ion-item>
+
+            <ion-item button class="secondary-option" lines="none" (click)="navigateToStoreLocator()">
+              <ion-icon slot="start" name="location"></ion-icon>
+              <ion-label>Pregúntame dónde comprar un producto</ion-label>
+            </ion-item>
+
+            <ion-item button class="secondary-option" lines="none" (click)="navigateToOffers()">
+              <ion-icon slot="start" name="megaphone"></ion-icon>
+              <ion-label>Pregúntame por ofertas</ion-label>
+            </ion-item>
+
+            <ion-item button class="secondary-option" lines="none" (click)="navigateToRecipes()">
+              <ion-icon slot="start" name="restaurant"></ion-icon>
+              <ion-label>Pregúntame como hacer una receta de cocina</ion-label>
+            </ion-item>
+
+            <ion-item button class="secondary-option" lines="none" (click)="navigateToAppDownload()">
+              <ion-icon slot="start" name="phone-portrait"></ion-icon>
+              <ion-label>Descarga nuestra App Móvil para registrar tus compras</ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
+
+        <!-- RESPUESTA DEL CHAT - APARECE CUANDO SE CONVERSA -->
+        <div class="chat-response-section" *ngIf="isInConversation">
+          
+          <!-- Cabecera con botones de control -->
+          <div class="chat-header">
+            <div class="chat-controls-left">
+              <ion-button fill="clear" size="small" (click)="endConversation()" class="back-btn">
+                <ion-icon name="arrow-back" slot="start"></ion-icon>
+                Volver a opciones
+              </ion-button>
+            </div>
+            
+            <div class="chat-controls-right">
+              <!-- Botón para silenciar voz -->
+              <ion-button fill="clear" size="small" (click)="toggleMute()" [color]="isMuted ? 'medium' : 'primary'" class="mute-btn">
+                <ion-icon [name]="isMuted ? 'volume-mute' : 'volume-high'" slot="start"></ion-icon>
+                {{ isMuted ? 'Silenciado' : 'Silenciar' }}
+              </ion-button>
+              
+              <!-- Botón para repetir voz -->
+              <ion-button fill="clear" size="small" (click)="repeatVoice()" [disabled]="isSpeaking || isMuted" class="repeat-btn">
+                <ion-icon [name]="isSpeaking ? 'play' : 'reload'" slot="start"></ion-icon>
+                {{ isSpeaking ? 'Reproduciendo...' : 'Repetir' }}
+              </ion-button>
+            </div>
+          </div>
+
+          <!-- Cuadro de texto del avatar - MÁS GRANDE -->
+          <div class="avatar-bubble-response">
+            <div class="message-content">
+              <p class="chat-text">{{ chatMessage }}</p>
+              <div class="typing-indicator" *ngIf="isLoading">
+                <ion-spinner name="crescent"></ion-spinner>
+                <span>Liderín está escribiendo...</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

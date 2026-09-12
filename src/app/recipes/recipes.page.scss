@@ -1,0 +1,366 @@
+:root {
+  --color-blue: #3498db;
+  --color-red: #e74c3c;
+  --color-green: #2ecc71;
+  --color-orange: #f39c12;
+}
+
+// Navbar igual que ofertas
+.blue-toolbar {
+  --background: #0071ce;
+  --min-height: 70px;
+  --border-width: 0;
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    
+    .logo-section .logo-button {
+      --padding-start: 0;
+      --padding-end: 0;
+      --background: transparent;
+      margin: 0;
+      height: auto;
+      
+      .logo {
+        height: 40px;
+        width: auto;
+        max-width: 150px;
+      }
+    }
+    
+    .title-section .page-title {
+      color: white;
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .empty-space {
+      width: 150px;
+    }
+  }
+}
+
+ion-content {
+  --background: #f5f5f5;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.recipe-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.recipe-image {
+  height: 200px;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.recipe-content {
+  padding: 20px;
+}
+
+.recipe-category {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #7f8c8d;
+  margin-bottom: 5px;
+}
+
+.recipe-title {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  color: #2c3e50;
+  line-height: 1.3;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.recipe-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.recipe-ingredient {
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #0376e9;
+  border-radius: 6px;
+  border-left: 4px solid #e74c3c;
+}
+
+.recipe-description {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.view-recipe-btn {
+  display: inline-block;
+  background-color: #e74c3c; /* Rojo fijo */
+  color: #ffffff; /* Texto blanco fijo */
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+
+
+
+
+// Responsive
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  
+  .recipe-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  
+  .recipe-content {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .recipe-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .recipe-meta {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .recipe-title {
+    font-size: 1.2rem;
+  }
+}// ... (mantén todo el CSS anterior y añade esto al final)
+
+.info-banner {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0;
+  
+  .banner-image {
+    width: 200px;
+    height: auto;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+  
+  .banner-text {
+    padding: 25px 25px 25px 0;
+    flex: 1;
+    
+    h2 {
+      color: #2c3e50;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    p {
+      color: #555;
+      font-size: 1rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+  }
+}
+
+// Responsive para el banner
+@media (max-width: 768px) {
+  .banner-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 0;
+    
+    .banner-image {
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    
+    .banner-text {
+      padding: 20px;
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      p {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .info-banner {
+    margin-bottom: 20px;
+  }
+  
+  .banner-text {
+    h2 {
+      font-size: 1.3rem !important;
+    }
+    
+    p {
+      font-size: 0.85rem !important;
+    }
+  }
+}
+.explanation-banner {
+  background: linear-gradient(135deg, #0071ce 0%, #005a9e 100%);
+  border-radius: 12px;
+  padding: 20px 25px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: white;
+  box-shadow: 0 4px 20px rgba(0, 113, 206, 0.3);
+  
+  .banner-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+  }
+  
+  .banner-message {
+    flex: 1;
+    
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    p {
+      font-size: 1rem;
+      margin: 0;
+      opacity: 0.9;
+      line-height: 1.4;
+    }
+  }
+  
+  .banner-arrow {
+    font-size: 2rem;
+    flex-shrink: 0;
+    animation: bounce 2s infinite;
+  }
+}
+
+// Animación para la flecha
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateX(0);
+  }
+  40% {
+    transform: translateX(5px);
+  }
+  60% {
+    transform: translateX(3px);
+  }
+}
+
+// Responsive para el banner
+@media (max-width: 768px) {
+  .explanation-banner {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+    padding: 25px 20px;
+    
+    .banner-icon {
+      font-size: 2.5rem;
+    }
+    
+    .banner-message {
+      h2 {
+        font-size: 1.3rem;
+      }
+      
+      p {
+        font-size: 0.9rem;
+      }
+    }
+    
+    .banner-arrow {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .explanation-banner {
+    margin-bottom: 20px;
+    padding: 20px 15px;
+    
+    .banner-message {
+      h2 {
+        font-size: 1.2rem;
+      }
+      
+      p {
+        font-size: 0.85rem;
+      }
+    }
+  }
+}

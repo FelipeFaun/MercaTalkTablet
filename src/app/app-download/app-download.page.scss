@@ -1,0 +1,130 @@
+/* ========================================================= */
+/* FORZAR MODO CLARO SIEMPRE (IGNORAR MODO OSCURO DEL SO)    */
+/* ========================================================= */
+:root, :host, html, body {
+  color-scheme: light !important;
+  --ion-color-step-50: #ffffff !important;
+  --ion-color-step-850: #000000 !important;
+  --ion-background-color: #ffffff !important;
+  --ion-text-color: #000000 !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Ion-content fondo claro obligatorio */
+ion-content {
+  --background: #ffffff !important;
+  background: #ffffff !important;
+}
+
+/* ========================================================= */
+/* BARRA AZUL SUPERIOR                                        */
+/* ========================================================= */
+.blue-toolbar {
+  --background: #0071ce !important;
+  --min-height: 70px;
+  background: #0071ce !important;
+}
+
+/* header-content */
+.blue-toolbar .header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* logo */
+.blue-toolbar .header-content .logo {
+  height: 40px;
+  width: auto;
+}
+
+/* page-title */
+.blue-toolbar .header-content .page-title {
+  color: white !important;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* empty-space */
+.blue-toolbar .header-content .empty-space {
+  width: 150px;
+}
+
+/* ========================================================= */
+/* CONTENEDOR PRINCIPAL                                       */
+/* ========================================================= */
+.container {
+  padding: 40px 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  background: #ffffff !important;
+}
+
+/* ========================================================= */
+/* SECCIÓN QR                                                 */
+/* ========================================================= */
+.qr-section {
+  text-align: center;
+  background: #ffffff !important;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* h3 */
+.qr-section h3 {
+  margin: 0 0 20px 0;
+  color: #2c3e50 !important;
+  font-size: 20px;
+}
+
+/* QR code */
+.qr-section .qr-code {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px;
+  background: #ffffff !important;
+}
+
+/* texto */
+.qr-section p {
+  margin-bottom: 20px;
+  color: #666 !important;
+  font-size: 16px;
+}
+
+/* botón */
+.qr-section ion-button {
+  max-width: 250px;
+  margin: 0 auto;
+}
+
+/* ========================================================= */
+/* RESPONSIVE                                                 */
+/* ========================================================= */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+    gap: 30px;
+  }
+
+  .qr-section {
+    padding: 20px;
+  }
+
+  .qr-section .qr-code {
+    width: 150px;
+    height: 150px;
+  }
+}

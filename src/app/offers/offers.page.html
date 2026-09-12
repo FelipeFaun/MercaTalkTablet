@@ -1,0 +1,54 @@
+<ion-header [translucent]="true">
+  <!-- Barra azul superior con logo -->
+  <ion-toolbar class="blue-toolbar">
+    <div class="header-content">
+      <!-- Logo Líder a la izquierda -->
+      <div class="logo-section">
+        <img src="https://i5.walmartimages.com/dfw/63fd9f59-4a2e/587a39f4-fa04-49c6-b70f-ed494f49ff69/v1/chile-walmart-od-logo.svg" 
+             alt="Líder" 
+             class="logo" 
+             routerLink="/home"
+             style="cursor: pointer;">
+      </div>
+      
+      <!-- Título centrado con contador -->
+      <div class="title-section">
+        <h1 class=>Ofertas </h1>
+      </div>
+      
+      <!-- Espacio vacío para balancear -->
+      <div class="empty-space"></div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <div class="products-grid">
+      @for (offer of offers; track offer.id) {
+        <div class="product-card">
+          <div class="product-image">
+            <img [src]="offer.image" [alt]="offer.product">
+          </div>
+          
+          <div class="product-info">
+            <h3 class="product-title">{{ offer.product }}</h3>
+            
+            <div class="price-section">
+              <span class="current-price">${{ offer.price }}</span>
+              @if (offer.originalPrice > offer.price) {
+                <span class="original-price">${{ offer.originalPrice }}</span>
+                <span class="discount-badge">-{{ offer.discount }}%</span>
+              }
+            </div>
+            
+            <div class="product-details">
+              <span class="category">{{ offer.category }}</span>
+              <span class="valid-until">Válido hasta: {{ offer.validUntil }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</ion-content>

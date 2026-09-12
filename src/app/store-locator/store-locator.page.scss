@@ -1,0 +1,284 @@
+/* ===================================================================== */
+/* FORZAR MODO CLARO — NEUTRALIZAR MODO OSCURO DE IONIC COMPLETAMENTE   */
+/* ===================================================================== */
+html, body, :root {
+  color-scheme: light !important;
+  forced-color-adjust: none !important;
+  background: #ffffff !important;
+  --ion-background-color: #ffffff !important;
+  --ion-text-color: #000000 !important;
+}
+
+/* Ionic aplica estas clases automáticamente: debemos neutralizarlas */
+body.dark, html.dark, :root.dark,
+.ios body.dark, .md body.dark {
+  --ion-background-color: #ffffff !important;
+  --ion-text-color: #000000 !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Fondo global */
+ion-content {
+  --background: #ffffff !important;
+  background: #ffffff !important;
+}
+
+/* ===================================================================== */
+/* BARRA AZUL SUPERIOR */
+/* ===================================================================== */
+.blue-toolbar {
+  --background: #0071ce !important;
+  --min-height: 70px;
+  --border-width: 0;
+  background: #0071ce !important;
+}
+
+.blue-toolbar .header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.blue-toolbar .header-content .logo-section .logo {
+  height: 40px;
+  max-width: 150px;
+  cursor: pointer;
+}
+
+.blue-toolbar .header-content .title-section .page-title {
+  color: #ffffff !important;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* ===================================================================== */
+/* CONTENEDOR PRINCIPAL */
+/* ===================================================================== */
+.container {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  background: #ffffff !important;
+}
+
+h2 {
+  text-align: center;
+  color: #2c3e50 !important;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+/* ===================================================================== */
+/* BUSCADOR */
+/* ===================================================================== */
+.search-section {
+  margin-bottom: 24px;
+}
+
+.search-section ion-item {
+  --background: #ffffff !important;
+  --color: #000000 !important;
+  --border-color: transparent !important;
+  --highlight-color-focused: transparent !important;
+  --highlight-height: 0 !important;
+  --transition: none !important;
+  margin-bottom: 16px;
+}
+
+.search-section ion-item::part(container) {
+  background: #ffffff !important;
+}
+
+.search-section ion-input {
+  --background: #ffffff !important;
+  --color: #000000 !important;
+  --placeholder-color: #666666 !important;
+  --placeholder-opacity: 1 !important;
+  --highlight-color-focused: #000000 !important;
+
+  color: #000000 !important;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.search-section ion-input::part(native),
+.search-section ion-input::part(input) {
+  color: #000000 !important;
+}
+
+/* ===================================================================== */
+/* LOADING */
+/* ===================================================================== */
+.loading {
+  text-align: center;
+  padding: 40px;
+  background: #ffffff !important;
+}
+
+.loading ion-spinner {
+  margin-bottom: 16px;
+  --color: #3880ff !important;
+}
+
+.loading p {
+  color: #2c3e50 !important;
+}
+
+/* ===================================================================== */
+/* RESULTADOS */
+/* ===================================================================== */
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.results-header h3 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #2c3e50 !important;
+}
+
+/* ===================================================================== */
+/* SIN RESULTADOS */
+/* ===================================================================== */
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: #7f8c8d !important;
+  background: #ffffff !important;
+}
+
+.no-results ion-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  color: #bdc3c7 !important;
+}
+
+.no-results h4 {
+  margin: 0 0 8px;
+  color: #2c3e50 !important;
+}
+
+/* ===================================================================== */
+/* LISTA DE PRODUCTOS */
+/* ===================================================================== */
+.products-list {
+  display: grid;
+  gap: 16px;
+}
+
+.product-card {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  background: #ffffff !important;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+}
+
+.product-card .product-info p {
+  margin: 8px 0 0;
+  color: #7f8c8d !important;
+}
+
+/* ===================================================================== */
+/* DETALLES */
+/* ===================================================================== */
+.location-details {
+  background: #ffffff !important;
+}
+
+.location-header h3 {
+  margin: 0;
+  color: #2c3e50 !important;
+}
+
+.location-card {
+  background: #ffffff !important;
+}
+
+/* ===================================================================== */
+/* PASOS */
+/* ===================================================================== */
+.location-steps .step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #fafafa !important;
+  border-radius: 12px;
+}
+
+/* Número */
+.step-number {
+  width: 32px;
+  height: 32px;
+  background: #3880ff !important;
+  color: white !important;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===================================================================== */
+/* EXTRAS */
+/* ===================================================================== */
+.location-tips {
+  margin-top: 24px;
+  padding: 20px;
+  background: #f5f5f5 !important;
+  border-radius: 12px;
+}
+
+.location-tips h4 {
+  color: #1976d2 !important;
+}
+
+/* ===================================================================== */
+/* COMPONENTES IONIC */
+/* ===================================================================== */
+ion-card {
+  background: #ffffff !important;
+  color: #2c3e50 !important;
+}
+
+ion-button {
+  --background: #3880ff !important;
+  --color: white !important;
+}
+
+ion-chip {
+  --background: #3880ff !important;
+  --color: white !important;
+}
+
+ion-text,
+p, span, div, h1, h2, h3, h4, h5, h6, strong, label {
+  color: #2c3e50 !important;
+}
+
+/* ===================================================================== */
+/* RESPONSIVE */
+/* ===================================================================== */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+}

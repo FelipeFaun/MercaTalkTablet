@@ -1,0 +1,245 @@
+// Barra azul superior
+.blue-toolbar {
+  --background: #0071ce;
+  --min-height: 70px;
+  --border-width: 0;
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    
+    .logo-section .logo {
+      height: 40px;
+      width: auto;
+      max-width: 150px;
+      cursor: pointer;
+    }
+    
+    .title-section .page-title {
+      color: rgb(255, 255, 255);
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    .empty-space {
+      width: 150px;
+    }
+  }
+}
+
+// Contenido
+ion-content {
+  --background: #f5f5f5;
+}
+
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  background: rgb(248, 248, 248);
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.product-image {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+}
+
+.product-info {
+  padding: 16px;
+  
+  .product-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+    min-height: 40px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.price-section {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+  
+  .current-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #e74c3c;
+  }
+  
+  .original-price {
+    font-size: 14px;
+    color: #7f8c8d;
+    text-decoration: line-through;
+  }
+  
+  .discount-badge {
+    background: #e74c3c;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+}
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+  
+  .category {
+    font-size: 12px;
+    color: #7f8c8d;
+    font-weight: 500;
+  }
+  
+  .valid-until {
+    font-size: 11px;
+    color: #3498db;
+  }
+}
+
+.add-button {
+  width: 100%;
+  background: #0071ce;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  
+  &:hover {
+    background: #005a9e;
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// Mejorar responsive
+@media (max-width: 768px) {
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  
+  .product-image {
+    height: 180px;
+    padding: 15px;
+  }
+  
+  .product-info {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .product-title {
+    font-size: 13px;
+  }
+  
+  .current-price {
+    font-size: 18px;
+  }
+}.blue-toolbar {
+  --background: #0071ce;
+  --min-height: 70px;
+  --border-width: 0;
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    
+    .logo-section {
+      .logo {
+        height: 40px;
+        width: auto;
+        max-width: 150px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          opacity: 0.8;
+          transform: scale(1.05);
+        }
+        
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+    
+    .title-section {
+      .page-title {
+        color: white;
+        font-size: 24px;
+        font-weight: 600;
+        margin: 0;
+        text-align: center;
+      }
+    }
+    
+    .empty-space {
+      width: 150px;
+    }
+  }
+}
+
+// El resto de tus estilos permanece igual...
