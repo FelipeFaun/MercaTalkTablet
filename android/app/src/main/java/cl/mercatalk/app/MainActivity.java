@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package cl.mercatalk.app;
 
 import com.getcapacitor.BridgeActivity;
 
