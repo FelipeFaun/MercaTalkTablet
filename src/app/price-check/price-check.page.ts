@@ -1,6 +1,6 @@
 // src/app/price-check/price-check.page.ts
 
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy, NgZone } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnDestroy, NgZone, inject } from '@angular/core';
 import { Product, ProductsService } from '../services/products';
 import { 
   IonHeader, 
@@ -46,7 +46,10 @@ import { BrowserMultiFormatReader } from '@zxing/library';
     IonSpinner
   ],
 })
-export class PriceCheckerPage implements OnInit, OnDestroy {
+export class PriceCheckerPage implements OnDestroy {
+  private productsService = inject(ProductsService);
+  private ngZone = inject(NgZone);
+
   // --- ViewChilds para cámara ---
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvasElement', { static: false }) canvasElement!: ElementRef<HTMLCanvasElement>;
@@ -67,10 +70,6 @@ export class PriceCheckerPage implements OnInit, OnDestroy {
   private codeReader: BrowserMultiFormatReader | null = null;
   private mediaStream: MediaStream | null = null;
   private scanTimeout: any = null;
-
-  constructor(private productsService: ProductsService, private ngZone: NgZone) {}
-
-  ngOnInit() {}
 
   ngOnDestroy() {
     this.stopScanner(false);

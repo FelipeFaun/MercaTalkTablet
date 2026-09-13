@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { 
   IonHeader, IonToolbar, IonTitle, IonContent, 
   IonButton, IonInput, IonItem, IonCard, 
@@ -30,13 +30,15 @@ import { ProductsService, Product } from '../services/products';
   ]
 })
 export class StoreLocatorPage {
+  private productsService = inject(ProductsService);
+
   searchQuery: string = '';
   searchResults: Product[] = [];
   isLoading: boolean = false;
   showResults: boolean = false;
   selectedProduct: Product | null = null;
 
-  constructor(private productsService: ProductsService) {
+  constructor() {
     addIcons({ search, location, navigate, storefront, arrowBack });
   }
 

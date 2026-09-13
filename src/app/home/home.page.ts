@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { 
   IonHeader, IonToolbar, IonTitle, IonContent, 
   IonList, IonItem, IonLabel, IonIcon,
@@ -36,6 +36,12 @@ import { OffersService, Offer } from '../services/offers.service';
   ]
 })
 export class HomePage implements OnInit, OnDestroy {
+  private router = inject(Router);
+  private chatService = inject(ChatService);
+  private productsService = inject(ProductsService);
+  private recipesService = inject(RecipesService);
+  private offersService = inject(OffersService);
+
   currentAvatar = 'assets/images/liderin.png';
   chatMessage = "¡Hola! Soy Liderín, tu asistente virtual del Supermercado Líder. ¿En qué puedo ayudarte hoy?";
   showChatInput = false;
@@ -51,13 +57,7 @@ export class HomePage implements OnInit, OnDestroy {
   speechSupported = false;
   isMuted = false; // 🆕 NUEVA PROPIEDAD PARA SILENCIAR
 
-  constructor(
-    private router: Router,
-    private chatService: ChatService,
-    private productsService: ProductsService,
-    private recipesService: RecipesService,
-    private offersService: OffersService
-  ) {
+  constructor() {
     addIcons({
       chatbubbles,
       pricetag,
