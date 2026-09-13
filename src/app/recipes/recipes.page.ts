@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common'; // ← Añade esto
 import { 
-  IonHeader, IonToolbar, IonTitle, IonContent,
-  IonButton, IonIcon
+  IonHeader, IonToolbar, IonContent,
+  IonButton
 } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router';
 import { WALMART_RECIPES } from '../data/recipes.data';
@@ -15,8 +15,8 @@ import { WALMART_RECIPES } from '../data/recipes.data';
   imports: [
     CommonModule, // ← Esto incluye UpperCasePipe
     RouterModule,
-    IonHeader, IonToolbar, IonTitle, IonContent,
-    IonButton, IonIcon
+    IonHeader, IonToolbar, IonContent,
+    IonButton
   ]
 })
 export class RecipesPage {

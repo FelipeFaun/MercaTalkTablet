@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { 
-  IonHeader, IonToolbar, IonTitle, IonContent, 
-  IonButton, IonIcon
+  IonHeader, IonToolbar, IonContent, 
+  IonButton
 } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router';
 import { addIcons } from 'ionicons';
@@ -14,8 +14,8 @@ import { download, logoGooglePlaystore } from 'ionicons/icons';
   standalone: true,
   imports: [
     RouterModule,
-    IonHeader, IonToolbar, IonTitle, IonContent,
-    IonButton, IonIcon
+    IonHeader, IonToolbar, IonContent,
+    IonButton
   ]
 })
 export class AppDownloadPage {

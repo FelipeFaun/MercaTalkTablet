@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { 
-  IonHeader, IonToolbar, IonTitle, IonContent, 
+  IonHeader, IonToolbar, IonContent, 
   IonList, IonItem, IonLabel, IonIcon,
   IonButton, IonTextarea, IonSpinner
 } from '@ionic/angular/standalone';
@@ -28,7 +28,7 @@ import { OffersService, Offer } from '../services/offers.service';
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [
-    IonHeader, IonToolbar, IonTitle, IonContent, 
+    IonHeader, IonToolbar, IonContent, 
     IonList, IonItem, IonLabel, IonIcon,
     IonButton, IonTextarea, IonSpinner,
     FormsModule,

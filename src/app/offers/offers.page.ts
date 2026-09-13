@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { 
-  IonHeader, IonToolbar, IonTitle, IonContent,
-  IonButton, IonIcon
+  IonHeader, IonToolbar, IonContent
 } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router'; // ← Importar RouterModule
 import { WALMART_OFFERS } from '../data/offers.data';
@@ -13,8 +12,7 @@ import { WALMART_OFFERS } from '../data/offers.data';
   standalone: true,
   imports: [
     RouterModule, // ← Añadir esto para routerLink
-    IonHeader, IonToolbar, IonTitle, IonContent,
-    IonButton, IonIcon
+    IonHeader, IonToolbar, IonContent
   ]
 })
 export class OffersPage {

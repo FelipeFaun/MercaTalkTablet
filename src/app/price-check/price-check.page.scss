@@ -1,45 +1,3 @@
-/* ============================================
-   FORZAR MODO CLARO EN TODA LA APP IONIC
-   ============================================ */
-:root {
-  color-scheme: light;
-}
-
-html, body, :root {
-  --ion-background-color: #ffffff !important;
-  --ion-text-color: #000000 !important;
-
-  /* Paleta completa para evitar activación automática del dark mode */
-  --ion-color-step-50: #ffffff;
-  --ion-color-step-100: #f2f2f2;
-  --ion-color-step-150: #e6e6e6;
-  --ion-color-step-200: #d9d9d9;
-  --ion-color-step-250: #cccccc;
-  --ion-color-step-300: #bfbfbf;
-  --ion-color-step-350: #b3b3b3;
-  --ion-color-step-400: #a6a6a6;
-  --ion-color-step-450: #999999;
-  --ion-color-step-500: #8c8c8c;
-  --ion-color-step-550: #808080;
-  --ion-color-step-600: #737373;
-  --ion-color-step-650: #666666;
-  --ion-color-step-700: #595959;
-  --ion-color-step-750: #4d4d4d;
-  --ion-color-step-800: #404040;
-  --ion-color-step-850: #333333;
-  --ion-color-step-900: #262626;
-  --ion-color-step-950: #1a1a1a;
-}
-
-/* Evita que el dispositivo fuerce modo oscuro */
-@media (prefers-color-scheme: dark) {
-  html, body, :root {
-    color-scheme: light;
-    --ion-background-color: #ffffff !important;
-    --ion-text-color: #000000 !important;
-  }
-}
-
 /* FIX GLOBAL PARA INPUTS DE IONIC */
 ion-input {
   --background: #ffffff !important;
@@ -103,19 +61,6 @@ ion-item {
       }
     }
     
-    .title-section {
-      .page-title {
-        color: white;
-        font-size: 24px;
-        font-weight: 600;
-        margin: 0;
-        text-align: center;
-      }
-    }
-    
-    .empty-space {
-      width: 150px;
-    }
   }
 }
 
@@ -129,14 +74,6 @@ ion-content {
     padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
-  }
-
-  h2 {
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 32px;
-    font-weight: 700;
-    font-size: 1.8em;
   }
 
   .error-message {
@@ -669,27 +606,7 @@ ion-content {
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-  }
-  
-  .product-image {
-    height: 180px;
-    padding: 15px;
-  }
-  
-  .card-header {
-    padding: 12px;
-  }
-}
-
 @media (max-width: 480px) {
-  .products-grid {
-    grid-template-columns: 1fr;
-  }
-  
   .product-card .card-header ion-card-title {
     font-size: 13px;
   }
