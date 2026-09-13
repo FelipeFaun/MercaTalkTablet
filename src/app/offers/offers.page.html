@@ -35,9 +35,9 @@
             <h3 class="product-title">{{ offer.product }}</h3>
             
             <div class="price-section">
-              <span class="current-price">${{ offer.price }}</span>
+              <span class="current-price">{{ offer.price | clp }}</span>
               @if (offer.originalPrice > offer.price) {
-                <span class="original-price">${{ offer.originalPrice }}</span>
+                <span class="original-price">{{ offer.originalPrice | clp }}</span>
                 <span class="discount-badge">-{{ offer.discount }}%</span>
               }
             </div>

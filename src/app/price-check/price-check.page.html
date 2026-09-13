@@ -132,10 +132,10 @@
                 <div class="detail-content">
                   <div class="price-section">
                     <span class="price" [class.on-offer]="product.inOffer">
-                      ${{ product.price | number }}
+                      {{ product.price | clp }}
                     </span>
                     <span class="offer-price" *ngIf="product.inOffer">
-                      ${{ product.offerPrice | number }}
+                      {{ product.offerPrice | clp }}
                     </span>
                   </div>
                 </div>

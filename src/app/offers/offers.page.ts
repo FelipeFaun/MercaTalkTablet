@@ -4,6 +4,7 @@ import {
 } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router'; // ← Importar RouterModule
 import { WALMART_OFFERS } from '../data/offers.data';
+import { ClpPipe } from '../shared/pipes/clp.pipe';
 
 @Component({
   selector: 'app-offers',
@@ -12,7 +13,8 @@ import { WALMART_OFFERS } from '../data/offers.data';
   standalone: true,
   imports: [
     RouterModule, // ← Añadir esto para routerLink
-    IonHeader, IonToolbar, IonContent
+    IonHeader, IonToolbar, IonContent,
+    ClpPipe
   ]
 })
 export class OffersPage {

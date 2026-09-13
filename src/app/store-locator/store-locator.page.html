@@ -133,7 +133,7 @@
             
             <div class="price-info" *ngIf="selectedProduct.inOffer">
               <ion-text color="danger">
-                <strong>¡OFERTA! ${{ selectedProduct.offerPrice?.toLocaleString('es-CL') }}</strong>
+                <strong>¡OFERTA! {{ selectedProduct.offerPrice | clp }}</strong>
               </ion-text>
             </div>
           </div>

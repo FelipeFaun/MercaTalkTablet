@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { ProductsService, Product } from '../services/products';
+import { ClpPipe } from '../shared/pipes/clp.pipe';
 
 @Component({
   selector: 'app-store-locator',
@@ -25,6 +26,7 @@ import { ProductsService, Product } from '../services/products';
     IonCardHeader, IonCardTitle, IonCardContent, IonIcon, 
     IonSpinner, IonLabel,
     IonChip, IonText, IonCardSubtitle, // ✅ AÑADIDO
+    ClpPipe,
     FormsModule,
     CommonModule
   ]
