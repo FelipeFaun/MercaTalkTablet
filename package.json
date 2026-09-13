@@ -32,13 +32,8 @@
     "@capacitor/keyboard": "7.0.3",
     "@capacitor/status-bar": "7.0.3",
     "@ionic/angular": "^8.0.0",
-    "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
-    "cordova-plugin-speechrecognition": "^1.2.0",
-    "html5-qrcode": "^2.3.8",
     "ionicons": "^7.0.0",
-    "jsqr": "^1.4.0",
-    "quagga": "^0.12.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
