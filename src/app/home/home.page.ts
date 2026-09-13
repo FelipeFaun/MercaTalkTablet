@@ -4,15 +4,6 @@ import {
   IonList, IonItem, IonLabel, IonIcon,
   IonButton, IonTextarea, IonSpinner
 } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { 
-  chatbubbles, pricetag, location, 
-  megaphone, restaurant, phonePortrait,
-  personCircleOutline, sparkles, star,
-  send, arrowBack, mic, micOff,
-  volumeHigh, volumeMute, play, reload,
-  informationCircle
-} from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -56,29 +47,6 @@ export class HomePage implements OnInit, OnDestroy {
   isSpeaking = false;
   speechSupported = false;
   isMuted = false; // 🆕 NUEVA PROPIEDAD PARA SILENCIAR
-
-  constructor() {
-    addIcons({
-      chatbubbles,
-      pricetag,
-      location,
-      megaphone,
-      restaurant,
-      'phone-portrait': phonePortrait,
-      'person-circle-outline': personCircleOutline,
-      sparkles,
-      star,
-      send,
-      'arrow-back': arrowBack,
-      mic,
-      'mic-off': micOff,
-      'volume-high': volumeHigh,
-      'volume-mute': volumeMute,
-      play,
-      reload,
-      'information-circle': informationCircle
-    });
-  }
 
   ngOnInit() {
     this.checkSpeechSupport();

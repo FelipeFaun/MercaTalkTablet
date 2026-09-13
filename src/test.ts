@@ -6,6 +6,13 @@ import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting
 } from '@angular/platform-browser-dynamic/testing';
+import { registerLocaleData } from '@angular/common';
+import localeEsCl from '@angular/common/locales/es-CL';
+import { registerAppIcons } from './app/app.icons';
+
+// Mismo arranque que main.ts: locale es-CL e íconos registrados una vez.
+registerLocaleData(localeEsCl);
+registerAppIcons();
 
 // First, initialize the Angular testing environment.
 getTestBed().initTestEnvironment(

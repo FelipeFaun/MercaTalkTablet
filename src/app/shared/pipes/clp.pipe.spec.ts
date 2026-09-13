@@ -1,10 +1,4 @@
-import { registerLocaleData } from '@angular/common';
-import localeEsCl from '@angular/common/locales/es-CL';
-
 import { ClpPipe, formatClp } from './clp.pipe';
-
-// El pipe depende de los datos de locale que main.ts registra al arrancar la app
-registerLocaleData(localeEsCl);
 
 describe('ClpPipe', () => {
   const pipe = new ClpPipe();

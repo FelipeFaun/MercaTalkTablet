@@ -7,8 +7,6 @@ import {
   IonChip, IonText, IonCardSubtitle // ✅ AÑADIDO
 } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router';
-import { addIcons } from 'ionicons';
-import { search, location, navigate, storefront, arrowBack } from 'ionicons/icons';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -39,10 +37,6 @@ export class StoreLocatorPage {
   isLoading: boolean = false;
   showResults: boolean = false;
   selectedProduct: Product | null = null;
-
-  constructor() {
-    addIcons({ search, location, navigate, storefront, arrowBack });
-  }
 
 
   // 🔍 BUSCAR PRODUCTO PARA SABER SU UBICACIÓN

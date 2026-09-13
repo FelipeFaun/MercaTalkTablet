@@ -4,8 +4,6 @@ import {
   IonButton
 } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router';
-import { addIcons } from 'ionicons';
-import { download, logoGooglePlaystore } from 'ionicons/icons';
 
 @Component({
   selector: 'app-app-download',
@@ -31,10 +29,6 @@ export class AppDownloadPage {
     directDownload: 'assets/qr/QR.png',
     playStore: 'assets/qr/QR.png'
   };
-
-  constructor() {
-    addIcons({ download, logoGooglePlaystore });
-  }
 
   downloadDirect() {
     window.open(this.downloadUrls.directDownload, '_blank');
