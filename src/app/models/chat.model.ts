@@ -16,7 +16,7 @@ export type IntentType =
   | 'carrito'
   | 'general';
 
-export type CartCommand = 'add' | 'remove' | 'total' | 'clear';
+export type CartCommand = 'add' | 'remove' | 'total' | 'clear' | 'setBudget' | 'clearBudget';
 
 export interface CartIntent {
   command: CartCommand;
@@ -25,6 +25,8 @@ export interface CartIntent {
   /** Candidatos cuando la frase es ambigua ("agrega leche" con varias leches). */
   candidates: Product[];
   qty: number;
+  /** Monto en pesos para setBudget ("mi presupuesto es 30000"); sin número si no se entendió. */
+  amount?: number;
 }
 
 /** Lo que el asistente entendió de una frase, con los datos del catálogo que aplican. */

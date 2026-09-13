@@ -111,6 +111,53 @@ describe('ChatService', () => {
       expect(cart.isEmpty()).toBeTrue();
     });
   });
+
+  describe('presupuesto por chat (Fase 3, sin llamar al modelo)', () => {
+    it('"mi presupuesto es 30000" lo fija y lo confirma', async () => {
+      const reply = await service.send('mi presupuesto es 30000');
+      expect(fetchSpy).not.toHaveBeenCalled();
+      expect(cart.budget()).toBe(30000);
+      expect(reply.text).toBe('Listo, tu presupuesto queda en $30.000.');
+    });
+
+    it('sin monto pide precisar; si ya hay uno fijado, lo repite en vez de pedirlo de nuevo', async () => {
+      const ask = await service.send('quiero fijar un presupuesto');
+      expect(cart.budget()).toBeNull();
+      expect(ask.text).toContain('Dime cuánto quieres gastar');
+
+      await service.send('mi presupuesto es 20000');
+      const again = await service.send('cuál es mi presupuesto');
+      expect(again.text).toContain('Tu presupuesto actual es $20.000');
+    });
+
+    it('avisa al acercarse (warning desde el 80%) y sugiere una oferta al pasarse (over)', async () => {
+      await service.send('mi presupuesto es 1800');
+
+      const warn = await service.send('agrega arroz tucapel'); // 1.490 de 1.800 = 83%
+      expect(warn.text).toContain('Vas en $1.490 de tu presupuesto de $1.800 (83%)');
+
+      const over = await service.send('agrega dos yogures'); // +1.380 = 2.870, se pasa por 1.070
+      expect(over.text).toContain('Te pasaste del presupuesto de $1.800 por $1.070');
+      expect(over.text).toContain('Puedes reemplazar algo por');
+      expect(over.text).toContain('está en oferta a');
+    });
+
+    it('"cuánto llevo" también informa el estado del presupuesto', async () => {
+      await service.send('mi presupuesto es 1800');
+      await service.send('agrega arroz tucapel');
+      const total = await service.send('¿cuánto llevo?');
+      expect(total.text).toContain('Vas en $1.490 de tu presupuesto de $1.800 (83%)');
+    });
+
+    it('"quita mi presupuesto" lo elimina sin tocar el carrito', async () => {
+      await service.send('mi presupuesto es 10000');
+      await service.send('agrega arroz tucapel');
+      const reply = await service.send('quita mi presupuesto');
+      expect(cart.budget()).toBeNull();
+      expect(cart.isEmpty()).toBeFalse();
+      expect(reply.text).toBe('Listo, quité tu presupuesto.');
+    });
+  });
 });
 
 describe('toPlainText', () => {

@@ -111,4 +111,35 @@ describe('IntentService', () => {
       expect(parseQty('agrega azucar')).toBe(1);
     });
   });
+
+  describe('presupuesto por voz/texto (Fase 3)', () => {
+    it('"mi presupuesto es 30000" -> setBudget con el monto', () => {
+      const intent = service.analyze('mi presupuesto es 30000');
+      expect(intent.cart?.command).toBe('setBudget');
+      expect(intent.cart?.amount).toBe(30000);
+    });
+
+    it('entiende puntos de miles, "$" y "X mil"', () => {
+      expect(service.analyze('mi presupuesto es 30.000').cart?.amount).toBe(30000);
+      expect(service.analyze('no quiero gastar mas de $20000').cart?.amount).toBe(20000);
+      expect(service.analyze('tengo un presupuesto de 20 mil').cart?.amount).toBe(20000);
+      expect(service.analyze('quiero gastar treinta mil').cart?.amount).toBe(30000);
+    });
+
+    it('sin monto, queda pendiente de precisar (amount undefined)', () => {
+      const intent = service.analyze('quiero fijar un presupuesto');
+      expect(intent.cart?.command).toBe('setBudget');
+      expect(intent.cart?.amount).toBeUndefined();
+    });
+
+    it('"quita mi presupuesto" es clearBudget, no "quita [producto]"', () => {
+      const intent = service.analyze('quita mi presupuesto');
+      expect(intent.cart?.command).toBe('clearBudget');
+    });
+
+    it('el presupuesto no interfiere con agregar productos al carrito', () => {
+      const intent = service.analyze('agrega dos leches soprole');
+      expect(intent.cart?.command).toBe('add');
+    });
+  });
 });

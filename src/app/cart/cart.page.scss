@@ -8,6 +8,129 @@ ion-content {
   margin: 0 auto;
 }
 
+/* ===== PRESUPUESTO (Fase 3) ===== */
+.budget-card {
+  margin-bottom: 16px;
+}
+
+.budget-set-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: #ffffff;
+  border: 1.5px dashed #0071ce;
+  border-radius: 12px;
+  color: #0071ce;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 18px;
+  }
+
+  &:hover {
+    background: #e3f2fd;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #0071ce;
+    outline-offset: 2px;
+  }
+}
+
+.budget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  padding: 10px 14px 6px;
+
+  .budget-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #2c3e50;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+
+    ion-icon {
+      font-size: 16px;
+      color: #0071ce;
+    }
+  }
+
+  .budget-edit {
+    background: none;
+    border: none;
+    color: #0071ce;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #0071ce;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.budget-bar {
+  height: 10px;
+  background: #eef1f2;
+  border-left: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.budget-fill {
+  height: 100%;
+  border-radius: 0 6px 6px 0;
+  transition: width 0.3s ease;
+
+  &.status-ok { background: #27ae60; }
+  &.status-warning { background: #f39c12; }
+  &.status-over { background: #e74c3c; }
+}
+
+.budget-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 6px 14px 10px;
+  font-size: 12.5px;
+  color: #7f8c8d;
+  font-variant-numeric: tabular-nums;
+
+  .budget-remaining {
+    font-weight: 600;
+    color: #27ae60;
+  }
+
+  .budget-over {
+    font-weight: 700;
+    color: #e74c3c;
+  }
+}
+
 /* ===== ESTADO VACÍO ===== */
 .empty-cart {
   display: flex;
@@ -253,6 +376,11 @@ ion-content {
     color: #0071ce;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
+
+    // Pasado el presupuesto fijado (Fase 3)
+    &.over-budget {
+      color: #e74c3c;
+    }
   }
 }
 

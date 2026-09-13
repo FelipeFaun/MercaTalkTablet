@@ -17,7 +17,7 @@ export class IntentService {
 
   analyze(message: string): Intent {
     const normalized = normalize(message);
-    const cart = this.detectCart(normalized);
+    const cart = this.detectCart(normalized, message);
     if (cart) {
       return { type: 'carrito', normalized, products: [], offers: [], recipes: [], cart };
     }
@@ -100,13 +100,18 @@ export class IntentService {
     return 'general';
   }
 
-  // ÓRDENES SOBRE EL CARRITO: "agrega dos leches", "cuánto llevo", "saca el arroz"
-  private detectCart(normalized: string): CartIntent | null {
+  // ÓRDENES SOBRE EL CARRITO: "agrega dos leches", "cuánto llevo", "saca el arroz",
+  // "tengo 30 mil de presupuesto" (Fase 3: presupuesto)
+  private detectCart(normalized: string, raw: string): CartIntent | null {
     const command = this.detectCartCommand(normalized);
     if (!command) return null;
 
-    if (command === 'total' || command === 'clear') {
+    if (command === 'total' || command === 'clear' || command === 'clearBudget') {
       return { command, candidates: [], qty: 0 };
+    }
+    if (command === 'setBudget') {
+      // El texto sin normalizar conserva "30.000"; normalize() convierte el punto en espacio.
+      return { command, candidates: [], qty: 0, amount: parseAmount(raw) ?? undefined };
     }
 
     const qty = parseQty(normalized);
@@ -116,6 +121,10 @@ export class IntentService {
   }
 
   private detectCartCommand(normalized: string): CartCommand | null {
+    // El presupuesto se revisa antes que quitar/agregar: "quita mi presupuesto"
+    // no debe leerse como "quita [producto]".
+    if (hasAny(normalized, CART_BUDGET_CLEAR_WORDS)) return 'clearBudget';
+    if (hasAny(normalized, CART_BUDGET_SET_WORDS)) return 'setBudget';
     if (hasAny(normalized, CART_CLEAR_WORDS)) return 'clear';
     // Los verbos explícitos mandan: "agrega leche a mi compra" es agregar, no "ver mi compra"
     if (hasAny(normalized, CART_REMOVE_WORDS)) return 'remove';
@@ -172,6 +181,29 @@ export function parseQty(normalized: string): number {
   return 1;
 }
 
+/**
+ * Monto en pesos de una frase de presupuesto: "30.000" / "30000" / "$30000" -> 30000;
+ * "30 mil" o "treinta mil" -> 30000. Recibe el texto SIN pasar por normalize()
+ * (que convertiría el punto de "30.000" en un espacio); esta función hace su
+ * propio lowercase para las palabras. null si no se encontró ningún número.
+ */
+export function parseAmount(text: string): number | null {
+  const digits = text.match(/\$?\s?(\d{1,3}(?:[.,]\d{3})+|\d{4,7})/);
+  if (digits) {
+    const value = parseInt(digits[1].replace(/[.,]/g, ''), 10);
+    if (value > 0) return value;
+  }
+
+  const lower = text.toLowerCase();
+  const numericThousands = lower.match(/\b(\d{1,3})\s*mil\b/);
+  if (numericThousands) return parseInt(numericThousands[1], 10) * 1000;
+
+  for (const [word, value] of Object.entries(TEN_WORDS)) {
+    if (new RegExp(`\\b${word}\\s*mil\\b`).test(lower)) return value * 1000;
+  }
+  return null;
+}
+
 /** Quita plurales simples para que "leches" encuentre "leche". */
 function singularize(normalized: string): string {
   return tokenize(normalized)
@@ -182,6 +214,12 @@ function singularize(normalized: string): string {
 const NUMBER_WORDS: Record<string, number> = {
   un: 1, una: 1, uno: 1, dos: 2, tres: 3, cuatro: 4, cinco: 5,
   seis: 6, siete: 7, ocho: 8, nueve: 9, diez: 10, media: 1, medio: 1, docena: 12,
+};
+
+/** Decenas habladas para montos redondos: "treinta mil" -> 30 * 1000. */
+const TEN_WORDS: Record<string, number> = {
+  diez: 10, veinte: 20, treinta: 30, cuarenta: 40, cincuenta: 50,
+  sesenta: 60, setenta: 70, ochenta: 80, noventa: 90, cien: 100,
 };
 
 const STOPWORDS = new Set([
@@ -209,3 +247,6 @@ const CART_ADD_WORDS = new Set(['agrega', 'agregar', 'agregame', 'anade', 'anadi
 const CART_REMOVE_WORDS = new Set(['quita', 'quitame', 'saca', 'sacame', 'elimina', 'eliminame', 'borra', 'borrame', 'ya no quiero', 'sin el', 'sin la']);
 const CART_TOTAL_WORDS = new Set(['cuanto llevo', 'cuanto voy', 'cuanto va', 'cuanto suma', 'total', 'que llevo', 'que tengo', 'ver mi compra', 'ver el carrito', 'muestrame mi compra', 'muestrame el carrito', 'cuanto gastare', 'cuanto gasto', 'cuanto pagare', 'cuanto pago']);
 const CART_CLEAR_WORDS = new Set(['vacia el carrito', 'vaciar el carrito', 'vacia mi compra', 'vaciar mi compra', 'borra todo', 'quita todo', 'saca todo', 'empezar de nuevo', 'limpia el carrito']);
+
+const CART_BUDGET_SET_WORDS = new Set(['presupuesto', 'quiero gastar', 'no quiero gastar mas de', 'no gastar mas de', 'gastar maximo', 'gastar como maximo', 'tengo para gastar']);
+const CART_BUDGET_CLEAR_WORDS = new Set(['quita mi presupuesto', 'sin presupuesto', 'borra mi presupuesto', 'elimina mi presupuesto', 'saca mi presupuesto', 'olvida mi presupuesto', 'quitar presupuesto']);

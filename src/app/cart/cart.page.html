@@ -3,6 +3,35 @@
 <ion-content [fullscreen]="true">
   <div class="container">
 
+    <!-- Presupuesto: se puede fijar aunque la compra esté vacía (Fase 3) -->
+    <div class="budget-card">
+      @if (cart.budget() !== null) {
+        <div class="budget-header">
+          <span class="budget-label">
+            <ion-icon name="wallet-outline" aria-hidden="true"></ion-icon>
+            Presupuesto
+          </span>
+          <button type="button" class="budget-edit" (click)="editBudget()">Editar</button>
+        </div>
+        <div class="budget-bar" role="progressbar" [attr.aria-valuenow]="cart.total()" aria-valuemin="0" [attr.aria-valuemax]="cart.budget()">
+          <div class="budget-fill" [class]="'status-' + cart.budgetStatus()" [style.width.%]="budgetPercent()"></div>
+        </div>
+        <div class="budget-footer">
+          <span>{{ cart.total() | clp }} de {{ cart.budget() | clp }}</span>
+          @if (cart.budgetStatus() === 'over') {
+            <span class="budget-over">Te pasaste por {{ cart.total() - cart.budget()! | clp }}</span>
+          } @else {
+            <span class="budget-remaining">Quedan {{ cart.budgetRemaining() | clp }}</span>
+          }
+        </div>
+      } @else {
+        <button type="button" class="budget-set-btn" (click)="editBudget()">
+          <ion-icon name="wallet-outline" aria-hidden="true"></ion-icon>
+          Fijar un presupuesto
+        </button>
+      }
+    </div>
+
     @if (cart.isEmpty()) {
       <!-- Estado vacío: invita a la primera acción -->
       <div class="empty-cart">
@@ -77,7 +106,7 @@
       </div>
       <div class="summary-total">
         <span class="total-label">Total a pagar</span>
-        <span class="total-amount">{{ cart.total() | clp }}</span>
+        <span class="total-amount" [class.over-budget]="cart.budgetStatus() === 'over'">{{ cart.total() | clp }}</span>
       </div>
       <ion-button fill="clear" size="small" color="medium" class="clear-btn" (click)="confirmClear()">
         <ion-icon name="trash-outline" slot="start" aria-hidden="true"></ion-icon>

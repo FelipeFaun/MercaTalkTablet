@@ -109,13 +109,15 @@ export class ChatService {
     switch (cart.command) {
       case 'total': {
         if (this.cart.isEmpty()) {
-          return 'Tu compra está vacía por ahora. Dime "agrega" y un producto, o escanéalo, y te voy sumando.';
+          const budget = this.cart.budget();
+          const budgetLine = budget !== null ? ` Tu presupuesto es ${formatClp(budget)}.` : '';
+          return `Tu compra está vacía por ahora. Dime "agrega" y un producto, o escanéalo, y te voy sumando.${budgetLine}`;
         }
         const lines = this.cart.items()
           .map(item => `${item.qty} × ${item.name} (${formatClp(unitPriceOf(item) * item.qty)})`)
           .join(', ');
         const savings = this.cart.savings() > 0 ? ` Ahorras ${formatClp(this.cart.savings())} en ofertas.` : '';
-        return `Llevas ${lines}. Total: ${formatClp(this.cart.total())}.${savings}`;
+        return `Llevas ${lines}. Total: ${formatClp(this.cart.total())}.${savings}${this.budgetNote()}`;
       }
       case 'clear':
         this.cart.clear();
@@ -125,7 +127,7 @@ export class ChatService {
           this.cart.add(cart.product, cart.qty);
           const unit = cart.product.inOffer && cart.product.offerPrice !== undefined ? cart.product.offerPrice : cart.product.price;
           const offer = cart.product.inOffer ? ' en oferta' : '';
-          return `Agregué ${cart.qty} × ${name(cart.product)} a ${formatClp(unit)}${offer}. ${status()}`;
+          return `Agregué ${cart.qty} × ${name(cart.product)} a ${formatClp(unit)}${offer}. ${status()}${this.budgetNote()}`;
         }
         if (cart.candidates.length > 1) {
           const options = cart.candidates.slice(0, 4).map(p => `${name(p)} (${formatClp(p.inOffer && p.offerPrice !== undefined ? p.offerPrice : p.price)})`).join(', ');
@@ -146,7 +148,46 @@ export class ChatService {
         this.cart.remove(target.id);
         return `Quité ${name(target)} de tu compra. ${status()}`;
       }
+      case 'setBudget': {
+        if (cart.amount === undefined) {
+          const current = this.cart.budget();
+          return current !== null
+            ? `Tu presupuesto actual es ${formatClp(current)}. Dime un monto nuevo, por ejemplo "mi presupuesto es 30000", para cambiarlo.`
+            : 'Dime cuánto quieres gastar, por ejemplo "mi presupuesto es 30000" o "no quiero gastar más de 20 mil".';
+        }
+        this.cart.setBudget(cart.amount);
+        const base = `Listo, tu presupuesto queda en ${formatClp(cart.amount)}.`;
+        if (this.cart.isEmpty()) return base;
+        return this.cart.budgetStatus() === 'over'
+          ? `${base} Ya llevas ${formatClp(this.cart.total())}, te pasaste por ${formatClp(this.cart.total() - cart.amount)}.${this.suggestCheaperAlternative()}`
+          : `${base} ${status()}`;
+      }
+      case 'clearBudget':
+        this.cart.setBudget(null);
+        return 'Listo, quité tu presupuesto.';
     }
+  }
+
+  /** Aviso al 80 % y al pasarse del presupuesto (Fase 3); vacío si no aplica. */
+  private budgetNote(): string {
+    const status = this.cart.budgetStatus();
+    if (!status || status === 'ok') return '';
+    const budget = this.cart.budget()!;
+    if (status === 'over') {
+      const over = this.cart.total() - budget;
+      return ` Te pasaste del presupuesto de ${formatClp(budget)} por ${formatClp(over)}.${this.suggestCheaperAlternative()}`;
+    }
+    const percent = Math.round((this.cart.total() / budget) * 100);
+    return ` Vas en ${formatClp(this.cart.total())} de tu presupuesto de ${formatClp(budget)} (${percent}%).`;
+  }
+
+  /** El producto en oferta más barato que aún no está en el carrito. */
+  private suggestCheaperAlternative(): string {
+    const inCart = new Set(this.cart.items().map(item => item.productId));
+    const cheapest = this.catalog.getProducts()
+      .filter(p => p.inOffer && p.offerPrice !== undefined && !inCart.has(p.id))
+      .sort((a, b) => (a.offerPrice ?? a.price) - (b.offerPrice ?? b.price))[0];
+    return cheapest ? ` Puedes reemplazar algo por ${cheapest.name} ${cheapest.brand}, está en oferta a ${formatClp(cheapest.offerPrice!)}.` : '';
   }
 
   // ---------- modelo ----------

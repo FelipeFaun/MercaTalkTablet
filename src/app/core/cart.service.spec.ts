@@ -85,6 +85,74 @@ describe('CartService', () => {
     await flush();
     expect(restored.isEmpty()).toBeTrue();
   });
+
+  describe('presupuesto (Fase 3)', () => {
+    it('sin presupuesto, budgetStatus y budgetRemaining son null', () => {
+      expect(service.budget()).toBeNull();
+      expect(service.budgetStatus()).toBeNull();
+      expect(service.budgetRemaining()).toBeNull();
+    });
+
+    it('setBudget(null) o un monto <= 0 quitan el presupuesto', () => {
+      service.setBudget(30000);
+      expect(service.budget()).toBe(30000);
+      service.setBudget(0);
+      expect(service.budget()).toBeNull();
+      service.setBudget(30000);
+      service.setBudget(null);
+      expect(service.budget()).toBeNull();
+    });
+
+    it('estado ok por debajo del 80%, warning desde el 80% y over al pasarse', () => {
+      service.setBudget(10000);
+      service.add(arroz, 4); // 7.400 -> 74%
+      expect(service.budgetStatus()).toBe('ok');
+
+      service.add(leche); // + 999 -> 8.399 (84%)
+      expect(service.budgetStatus()).toBe('warning');
+
+      service.add(leche, 2); // + 1.998 -> 10.397 (>100%)
+      expect(service.budgetStatus()).toBe('over');
+      expect(service.budgetRemaining()).toBe(10000 - service.total());
+      expect(service.budgetRemaining()!).toBeLessThan(0);
+    });
+
+    it('persiste el presupuesto y se restaura en una instancia nueva, independiente del carrito', async () => {
+      service.setBudget(25000);
+      service.add(leche);
+      TestBed.tick();
+      await flush();
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const restored = TestBed.inject(CartService);
+      await flush();
+      expect(restored.budget()).toBe(25000);
+
+      restored.clear();
+      TestBed.tick();
+      await flush();
+      expect(restored.budget()).toBe(25000); // clear() no toca el presupuesto
+    });
+
+    it('quitar el presupuesto también se persiste (no queda un valor viejo)', async () => {
+      service.setBudget(15000);
+      TestBed.tick();
+      await flush();
+      service.setBudget(null);
+      TestBed.tick();
+      await flush();
+
+      const { value } = await Preferences.get({ key: 'mercatalk.budget' });
+      expect(value).toBeNull();
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({});
+      const restored = TestBed.inject(CartService);
+      await flush();
+      expect(restored.budget()).toBeNull();
+    });
+  });
 });
 
 /** Deja correr las promesas pendientes (restore y el effect de guardado). */

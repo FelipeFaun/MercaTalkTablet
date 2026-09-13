@@ -27,6 +27,45 @@ export class CartPage {
     return unitPriceOf(item) * item.qty;
   }
 
+  // % del presupuesto ya gastado, tope 100 para que la barra no se desborde (Fase 3)
+  budgetPercent(): number {
+    const budget = this.cart.budget();
+    if (!budget) return 0;
+    return Math.min(100, Math.round((this.cart.total() / budget) * 100));
+  }
+
+  // FIJAR O CAMBIAR EL PRESUPUESTO
+  async editBudget(): Promise<void> {
+    const current = this.cart.budget();
+    const alert = await this.alertController.create({
+      header: current !== null ? 'Cambiar presupuesto' : 'Fijar un presupuesto',
+      message: 'Te aviso cuando te acerques o te pases.',
+      inputs: [
+        {
+          name: 'amount',
+          type: 'number',
+          min: 0,
+          placeholder: 'Ej: 30000',
+          value: current ?? undefined,
+        },
+      ],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        ...(current !== null ? [{ text: 'Quitar', role: 'destructive', handler: () => this.cart.setBudget(null) }] : []),
+        {
+          text: 'Guardar',
+          handler: (data: { amount?: string }) => {
+            const amount = Number(data.amount);
+            if (Number.isFinite(amount) && amount > 0) {
+              this.cart.setBudget(amount);
+            }
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
   // VACIAR CON CONFIRMACIÓN (es irreversible)
   async confirmClear(): Promise<void> {
     const alert = await this.alertController.create({
