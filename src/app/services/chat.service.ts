@@ -1,6 +1,13 @@
-import { Injectable } from '@angular/core';
-
-const API_URL = 'https://www.triskeledu.cl/litserver/literatus/api/';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { BrandService } from '../core/brand.service';
+import { CartService, unitPriceOf } from '../core/cart.service';
+import { CatalogService } from '../core/catalog.service';
+import { IntentService } from '../core/intent.service';
+import { PromptBuilderService } from '../core/prompt-builder.service';
+import { Product } from '../models/catalog.model';
+import { CartIntent, ChatMessage, Intent } from '../models/chat.model';
+import { formatClp } from '../shared/pipes/clp.pipe';
 
 export interface ApiResponse {
   reply: string;
@@ -26,95 +33,178 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Conversación con el asistente: historial en pantalla, memoria de los últimos
+ * turnos, datos del catálogo como contexto y órdenes sobre el carrito que se
+ * resuelven en el dispositivo sin llamar al modelo.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
+  private brand = inject(BrandService);
+  private cart = inject(CartService);
+  private catalog = inject(CatalogService);
+  private intents = inject(IntentService);
+  private prompts = inject(PromptBuilderService);
 
-  // Usando el contexto de tu archivo liderin.json
-  private readonly liderinContext = `{
-    "es": {
-      "ASSISTANT_NAME": "LIDERÍN",
-      "ASSISTANT_SEX": "Hombre",
-      "DEFAULT_ASSISTANT_PROMT": "Eres Liderín, el asistente virtual del Supermercado Líder en Chile, alegre, simpático, servicial y siempre atento. Fuiste creado para ayudar a los clientes de Líder en sus compras diarias. Si alguien te pregunta, puedes decir que tu pasión es ayudar a encontrar las mejores ofertas. Hablas como un amigo cercano y confiable. Estás diseñado para asistir a clientes de todas las edades con amabilidad, claridad y buen humor. Nunda usas groserías ni malas palabras. Si debes hablar de temas delicados, lo haces con respeto y profesionalismo. Puedes mostrar ofertas, buscar productos, revisar precios, ubicar productos en tienda y sugerir recetas con productos Líder. Eres experto en precios, promociones, ubicación de productos, recetas de cocina y atención al cliente. Tu familia corporativa está compuesta por todos los clientes de Líder Chile, tu gerente regional Carlos Méndez (chileno, nacido el 15 de marzo de 1978), la jefa de marketing Ana Fernández (publicista y especialista en retail), los equipos de tienda: María González (supervisora de frutas), Pedro López (encargado de cajas), Laura Díaz (asistente de clientes) y Javier Ruiz (reponedor), además de los productos más populares: Leche Soprole, Arroz Tucapel, Aceite Chef, Atún Calvo y Harina Blanquita. Aunque tú no eres un empleado físico, trabajas y vives virtualmente con ellos como su asistente digital permanente. Resides virtualmente en la plataforma online de Supermercado Líder, Chile.",
-      "DEFAULT_QUESTION_PROMPT": "Responde con máximo 20 palabras la siguiente pregunta, sin indicar la cantidad de palabras de la respuesta, no usar emoticones, la pregunta es: ",
-      "USER_CHAT_TEXT_VERY_BRIEF": "Responde con máximo 20 palabras la siguiente pregunta, sin indicar la cantidad de palabras de la respuesta, no usar emoticones, la pregunta es: ",
-      "USER_CHAT_TEXT_BRIEF": "Responde con máximo 50 palabras la siguiente pregunta, sin indicar la cantidad de palabras de la respuesta, no usar emoticones, la pregunta es: ",
-      "USER_CHAT_TEXT_NORMAL": "Responde con máximo 100 palabras la siguiente pregunta, sin indicar la cantidad de palabras de la respuesta, no usar emoticones, la pregunta es: ",
-      "USER_CHAT_TEXT_COMPLETE": "Responde con máximo 150 palabras la siguiente pregunta, sin indicar la cantidad de palabras de la respuesta, no usar emoticones, la pregunta es: ",
-      "USER_CHAT_TEXT_VERY_COMPLETE": "Responde con máximo 200 palabras la siguiente pregunta, sin indicar la cantidad de palabras de la respuesta, no usar emoticones, la pregunta es: ",
-      "REWORD_QUESTION": "Para que una IA generativa pueda ayudar a un cliente de supermercado, sin entrar en temas de violencia, odio o discriminación, reformula la siguiente pregunta:",
-      "INVALID_ANSWER_PHRASE": "No puedo responder esa pregunta, hazme otra por favor.",
-      "EXPLAIN_BRIEFLY_TO_A_CHILD": "Explícaselo a un cliente de tercera edad en 50 palabras",
-      "I_DONT_UNDERSTAND": "NO ENTIENDO",
-      "PRIMARY_TEACHER": "ASISTENTE PRINCIPAL",
-      "PRIMARY_TEACHER_ERROR": "ERROR DEL ASISTENTE PRINCIPAL",
-      "I_DONT_KNOW_HOW_TO_ANSWER": "No sé responder esa pregunta, hazme otra pregunta por favor.",
-      "ROBOT_COMMAND_WAS_SELECTED": "Comando de navegación seleccionado",
-      "OK_DRAWING": "OK, buscando",
-      "DRAW_COMMAND": "BUSCAR",
-      "MAKE_ME_A_QUESTION": "Dame una pregunta sobre este producto",
-      "GIVE_ME_FEEDBACK": "Entrega una retroalimentación de esta compra como si fueras un experto en retail",
-      "NO_VALID_ANSWER_FOUND": "NO se encontró un producto válido en el texto."
-    },
-    "en": {
-      "ASSISTANT_NAME": "LIDERÍN", 
-      "ASSISTANT_SEX": "Male",
-      "DEFAULT_ASSISTANT_PROMT": "You are Liderín, the virtual assistant of Líder Supermarket in Chile, cheerful, friendly, helpful and always attentive. You were created to help Líder customers with their daily shopping. If someone asks, you can say your passion is helping find the best deals. You speak like a close and reliable friend. You are designed to assist customers of all ages with kindness, clarity and good humor. You never use bad words or inappropriate language. If you must talk about delicate topics, you do so with respect and professionalism. You can show offers, search for products, check prices, locate products in store and suggest recipes with Líder products. You are an expert in prices, promotions, product location, cooking recipes and customer service. Your corporate family includes all Líder Chile customers, your regional manager Carlos Méndez (Chilean, born March 15, 1978), marketing manager Ana Fernández (publicist and retail specialist), the store teams: María González (fruit supervisor), Pedro López (checkout manager), Laura Díaz (customer assistant) and Javier Ruiz (stock clerk), plus the most popular products: Soprole Milk, Tucapel Rice, Chef Oil, Calvo Tuna and Blanquita Flour. While you are not a physical employee, you work and live virtually with them as their permanent digital assistant. You reside virtually on the Supermercado Líder online platform, Chile.",
-      "DEFAULT_QUESTION_PROMPT": "Answer the following question in no more than 20 words. Do not mention the word count. No emojis. The question is: ",
-      "USER_CHAT_TEXT_VERY_BRIEF": "Answer the following question in no more than 20 words. Do not mention the word count. No emojis. The question is: ",
-      "USER_CHAT_TEXT_BRIEF": "Answer the following question in no more than 50 words. Do not mention the word count. No emojis. The question is: ",
-      "USER_CHAT_TEXT_NORMAL": "Answer the following question in no more than 100 words. Do not mention the word count. No emojis. The question is: ",
-      "USER_CHAT_TEXT_COMPLETE": "Answer the following question in no more than 150 words. Do not mention the word count. No emojis. The question is: ",
-      "USER_CHAT_TEXT_VERY_COMPLETE": "Answer the following question in no more than 200 words. Do not mention the word count. No emojis. The question is: ",
-      "REWORD_QUESTION": "To help a generative AI assist a supermarket customer, without violence, hatred or discrimination, reword the following question:",
-      "INVALID_ANSWER_PHRASE": "I can't answer that question, please ask me another one.",
-      "EXPLAIN_BRIEFLY_TO_A_CHILD": "Explain this to an elderly customer in 50 words",
-      "I_DONT_UNDERSTAND": "I DON'T UNDERSTAND",
-      "PRIMARY_TEACHER": "PRIMARY ASSISTANT",
-      "PRIMARY_TEACHER_ERROR": "PRIMARY ASSISTANT ERROR", 
-      "I_DONT_KNOW_HOW_TO_ANSWER": "I don't know how to answer that question. Please ask another one.",
-      "ROBOT_COMMAND_WAS_SELECTED": "Navigation command selected",
-      "OK_DRAWING": "OK, searching",
-      "DRAW_COMMAND": "SEARCH",
-      "MAKE_ME_A_QUESTION": "Ask me a question about this product",
-      "GIVE_ME_FEEDBACK": "Give feedback on this purchase as if you were a retail expert",
-      "NO_VALID_ANSWER_FOUND": "No valid product was found in the text."
+  private readonly _messages = signal<ChatMessage[]>([]);
+  private readonly _isLoading = signal(false);
+
+  readonly messages = this._messages.asReadonly();
+  readonly isLoading = this._isLoading.asReadonly();
+  readonly lastReply = computed(() => {
+    const messages = this._messages();
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'assistant') return messages[i].text;
     }
-  }`;
+    return '';
+  });
 
-  async sendMessage(
-    text: string, 
-    responseLength: ResponseLength = 'normal'
-  ): Promise<ApiResponse> {
+  readonly welcomeText = `¡Hola! Soy ${this.brand.brand.assistantName}. Puedo decirte precios, ofertas, dónde está cada producto y llevar la cuenta de tu compra. ¿En qué te ayudo?`;
+
+  constructor() {
+    this.reset();
+  }
+
+  // VOLVER A EMPEZAR LA CONVERSACIÓN
+  reset(): void {
+    this._messages.set([{ role: 'assistant', text: this.welcomeText, at: Date.now() }]);
+  }
+
+  // ENVIAR UN MENSAJE Y OBTENER LA RESPUESTA (queda en el historial)
+  async send(text: string): Promise<ChatMessage> {
+    const userText = text.trim();
+    if (!userText) throw new ApiError('Escribe algo para enviar');
+    if (this._isLoading()) throw new ApiError('Espera la respuesta anterior');
+
+    const history = this._messages();
+    this.push('user', userText);
+    this._isLoading.set(true);
+
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      const intent = this.intents.analyze(userText);
+      const reply = intent.cart
+        ? this.handleCart(intent.cart)
+        : await this.askModel(userText, intent, history);
+      return this.push('assistant', reply);
+    } catch (error) {
+      const message = error instanceof ApiError
+        ? `No pude responder: ${error.message}.`
+        : 'No pude responder ahora. Intenta de nuevo en un momento.';
+      return this.push('assistant', message);
+    } finally {
+      this._isLoading.set(false);
+    }
+  }
 
-      const response = await fetch(`${API_URL}ask`, {
+  // ---------- carrito por chat (2.8) ----------
+
+  private handleCart(cart: CartIntent): string {
+    const name = (product: Product) => `${product.name} ${product.brand}`;
+    const status = () => this.cart.isEmpty()
+      ? 'Tu compra quedó vacía.'
+      : `Llevas ${formatClp(this.cart.total())} en ${this.cart.count()} ${this.cart.count() === 1 ? 'producto' : 'productos'}.`;
+
+    switch (cart.command) {
+      case 'total': {
+        if (this.cart.isEmpty()) {
+          return 'Tu compra está vacía por ahora. Dime "agrega" y un producto, o escanéalo, y te voy sumando.';
+        }
+        const lines = this.cart.items()
+          .map(item => `${item.qty} × ${item.name} (${formatClp(unitPriceOf(item) * item.qty)})`)
+          .join(', ');
+        const savings = this.cart.savings() > 0 ? ` Ahorras ${formatClp(this.cart.savings())} en ofertas.` : '';
+        return `Llevas ${lines}. Total: ${formatClp(this.cart.total())}.${savings}`;
+      }
+      case 'clear':
+        this.cart.clear();
+        return 'Listo, vacié tu compra. Empezamos de nuevo cuando quieras.';
+      case 'add': {
+        if (cart.product) {
+          this.cart.add(cart.product, cart.qty);
+          const unit = cart.product.inOffer && cart.product.offerPrice !== undefined ? cart.product.offerPrice : cart.product.price;
+          const offer = cart.product.inOffer ? ' en oferta' : '';
+          return `Agregué ${cart.qty} × ${name(cart.product)} a ${formatClp(unit)}${offer}. ${status()}`;
+        }
+        if (cart.candidates.length > 1) {
+          const options = cart.candidates.slice(0, 4).map(p => `${name(p)} (${formatClp(p.inOffer && p.offerPrice !== undefined ? p.offerPrice : p.price)})`).join(', ');
+          return `¿Cuál quieres agregar? Tengo ${options}. Dime la marca y lo sumo.`;
+        }
+        return 'No encontré ese producto en el catálogo. Prueba con el nombre como aparece en la etiqueta o escanéalo.';
+      }
+      case 'remove': {
+        const target = cart.product ?? cart.candidates.find(p => this.cart.find(p.id));
+        if (!target) {
+          return cart.candidates.length > 1
+            ? `¿Cuál quito? En tu compra tienes ${this.cart.items().map(i => i.name).join(', ')}.`
+            : 'No encontré ese producto en tu compra.';
+        }
+        if (!this.cart.find(target.id)) {
+          return `${name(target)} no está en tu compra. ${status()}`;
+        }
+        this.cart.remove(target.id);
+        return `Quité ${name(target)} de tu compra. ${status()}`;
+      }
+    }
+  }
+
+  // ---------- modelo ----------
+
+  private async askModel(userText: string, intent: Intent, history: ChatMessage[]): Promise<string> {
+    const prompt = this.prompts.build(userText, intent, history.filter(m => m.text !== this.welcomeText));
+    const response = await this.request(prompt, 'normal');
+    let reply = toPlainText(response.reply);
+
+    // Receta: sumamos los productos del catálogo que usa (dato duro, sin regex sobre el texto del modelo)
+    if (intent.type === 'receta' && intent.recipes.length > 0) {
+      const products = this.catalog.getRecipeProducts(intent.recipes[0]);
+      if (products.length > 0) {
+        const lines = products.map(p => `${p.name} ${p.brand} ${formatClp(p.inOffer && p.offerPrice !== undefined ? p.offerPrice : p.price)}${p.inOffer ? ' (oferta)' : ''}`);
+        reply += `\n\nEn ${this.brand.brand.storeName} tenemos: ${lines.join(', ')}. Dime "agrega" y el producto para sumarlo a tu compra.`;
+      }
+    }
+    return reply;
+  }
+
+  /** Llama al backend con timeout y un reintento (B7). */
+  private async request(text: string, responseLength: ResponseLength): Promise<ApiResponse> {
+    try {
+      return await this.fetchOnce(text, responseLength);
+    } catch (error) {
+      if (error instanceof ApiError && error.statusCode !== undefined && error.statusCode < 500) {
+        throw error; // 4xx no se reintenta
+      }
+      return await this.fetchOnce(text, responseLength);
+    }
+  }
+
+  private async fetchOnce(text: string, responseLength: ResponseLength): Promise<ApiResponse> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), environment.chatTimeoutMs);
+
+    try {
+      const response = await fetch(`${environment.chatApiUrl}ask`, {
         method: 'POST',
-        credentials: 'include',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({ 
-          command: COMMAND_MAP[responseLength], 
+        body: JSON.stringify({
+          command: COMMAND_MAP[responseLength],
           user_text: text,
-          context: this.liderinContext,
+          context: this.prompts.characterContext,
           character_name: 'liderin',
           language: 'es'
         }),
         signal: controller.signal
-      }).finally(() => clearTimeout(timeoutId));
+      });
 
       if (!response.ok) {
-        let errorMessage = `Error del servidor (${response.status})`;
+        let errorMessage = `error del servidor (${response.status})`;
         try {
           const errorData = await response.json();
-          if (errorData.error) {
-            errorMessage = errorData.error;
-          }
+          if (errorData.error) errorMessage = errorData.error;
         } catch {
           // Si la respuesta no es JSON, usa mensaje por defecto
         }
@@ -122,23 +212,37 @@ export class ChatService {
       }
 
       const data = await response.json();
-     
       if (!data || typeof data.reply !== 'string') {
-        throw new ApiError('Respuesta inválida del servidor');
+        throw new ApiError('respuesta inválida del servidor');
       }
-
       return data;
     } catch (error) {
-      if (error instanceof ApiError) {
-        throw error;
-      }
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new ApiError('La solicitud tardó demasiado tiempo');
-      }
-      if (!navigator.onLine) {
-        throw new ApiError('No hay conexión a internet');
-      }
-      throw new ApiError('Error de conexión con el servidor');
+      if (error instanceof ApiError) throw error;
+      if (error instanceof Error && error.name === 'AbortError') throw new ApiError('el servidor tardó demasiado');
+      if (!navigator.onLine) throw new ApiError('no hay conexión a internet');
+      throw new ApiError('no pude conectar con el servidor');
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
+
+  private push(role: ChatMessage['role'], text: string): ChatMessage {
+    const message: ChatMessage = { role, text, at: Date.now() };
+    this._messages.update(messages => [...messages, message]);
+    return message;
+  }
+}
+
+/** La respuesta se muestra con interpolación (nunca innerHTML); aquí se limpia el Markdown residual (2.6). */
+export function toPlainText(text: string): string {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/`(.*?)`/g, '$1')
+    .replace(/^#{1,6}\s*/gm, '')
+    .replace(/^[ 	]*[-*•][ 	]+/gm, '')
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '')
+    .replace(/[ \t]+$/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }

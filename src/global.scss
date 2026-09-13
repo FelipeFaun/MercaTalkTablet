@@ -32,6 +32,12 @@
  * https://ionicframework.com/docs/theming/dark-mode
  */
 
+/*
+ * La app usa tema claro siempre (M6): no se importa dark.system.css porque
+ * cada página fija fondos blancos y el texto quedaba blanco sobre blanco en
+ * dispositivos con modo oscuro. Para soportar dark mode hay que migrar los
+ * colores fijos de los SCSS a variables --ion-color-* antes de reactivarlo.
+ */
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */

@@ -2,159 +2,171 @@
 
 <ion-content [fullscreen]="true">
   <div class="container">
-    <!-- Layout con avatar y opciones -->
-    <div class="chat-layout">
-      
-      <!-- Avatar Liderin - SIEMPRE VISIBLE -->
-      <div class="avatar-section">
-        
-        <!-- Selector de avatar - ARRIBA -->
-        <div class="avatar-selector-minimal" *ngIf="!isInConversation">
-          <div class="selector-label">
-            <ion-icon name="person-circle-outline"></ion-icon>
-            <span>Elige tu avatar</span>
+    <div class="chat-layout" [class.in-conversation]="isInConversation()">
+
+      @if (!isInConversation()) {
+        <!-- Avatar Liderin - SIEMPRE VISIBLE -->
+        <div class="avatar-section">
+
+          <!-- Selector de avatar - ARRIBA -->
+          <div class="avatar-selector-minimal">
+            <div class="selector-label">
+              <ion-icon name="person-circle-outline" aria-hidden="true"></ion-icon>
+              <span>Elige tu avatar</span>
+            </div>
+            <div class="selector-buttons">
+              @for (avatar of brand.avatars; track avatar; let i = $index) {
+                <button type="button" class="selector-btn"
+                        [class.active]="currentAvatar() === avatar"
+                        [attr.aria-pressed]="currentAvatar() === avatar"
+                        (click)="changeAvatar(avatar)">
+                  <ion-icon [name]="i === 0 ? 'sparkles' : 'star'" aria-hidden="true"></ion-icon>
+                  <span>Avatar {{ i + 1 }}</span>
+                </button>
+              }
+            </div>
           </div>
-          <div class="selector-buttons">
-            <button class="selector-btn" 
-                    [class.active]="currentAvatar === 'assets/images/liderin.png'"
-                    (click)="changeAvatar('assets/images/liderin.png')">
-              <ion-icon name="sparkles"></ion-icon>
-              <span>Avatar 1</span>
-            </button>
-            <button class="selector-btn" 
-                    [class.active]="currentAvatar === 'assets/images/liderin2.png'"
-                    (click)="changeAvatar('assets/images/liderin2.png')">
-              <ion-icon name="star"></ion-icon>
-              <span>Avatar 2</span>
-            </button>
+
+          <img [src]="currentAvatar()" [alt]="brand.assistantName" class="avatar-img">
+        </div>
+
+        <!-- OPCIONES DE CONVERSACIÓN -->
+        <div class="content-section">
+          <div class="options-section">
+            <h2>Conversa conmigo para poder ayudarte</h2>
+
+            <ion-list class="options-list">
+              <!-- Opción principal -->
+              <ion-item button class="main-option" lines="none" (click)="startConversation()">
+                <ion-icon slot="start" name="chatbubbles" aria-hidden="true"></ion-icon>
+                <ion-label>Comenzar a conversar</ion-label>
+              </ion-item>
+
+              <!-- Opciones secundarias -->
+              <ion-item button class="secondary-option" lines="none" (click)="navigateToPriceCheck()">
+                <ion-icon slot="start" name="pricetag" aria-hidden="true"></ion-icon>
+                <ion-label>Pregúntame por el precio de un producto</ion-label>
+              </ion-item>
+
+              <ion-item button class="secondary-option" lines="none" (click)="navigateToStoreLocator()">
+                <ion-icon slot="start" name="location" aria-hidden="true"></ion-icon>
+                <ion-label>Pregúntame dónde comprar un producto</ion-label>
+              </ion-item>
+
+              <ion-item button class="secondary-option" lines="none" (click)="navigateToOffers()">
+                <ion-icon slot="start" name="megaphone" aria-hidden="true"></ion-icon>
+                <ion-label>Pregúntame por ofertas</ion-label>
+              </ion-item>
+
+              <ion-item button class="secondary-option" lines="none" (click)="navigateToRecipes()">
+                <ion-icon slot="start" name="restaurant" aria-hidden="true"></ion-icon>
+                <ion-label>Pregúntame como hacer una receta de cocina</ion-label>
+              </ion-item>
+
+              <ion-item button class="secondary-option" lines="none" (click)="navigateToAppDownload()">
+                <ion-icon slot="start" name="phone-portrait" aria-hidden="true"></ion-icon>
+                <ion-label>Descarga nuestra App Móvil para registrar tus compras</ion-label>
+              </ion-item>
+            </ion-list>
           </div>
         </div>
 
-        <img [src]="currentAvatar" alt="Liderin" class="avatar-img">
-        
-        <!-- Input de chat integrado -->
-        <div class="integrated-chat-input" *ngIf="showChatInput">
-          <ion-textarea
-            [(ngModel)]="userMessage"
-            [placeholder]="speechSupported ? 'Escribe o usa el micrófono...' : 'Escribe tu mensaje...'"
-            rows="1"
-            autoGrow="true"
-            (keyup.enter)="sendMessage()"
-            class="chat-textarea"
-          ></ion-textarea>
-          
-          <!-- Botón de micrófono con tooltip -->
-          <ion-button (click)="toggleListening()" 
-                      [color]="isListening ? 'danger' : 'primary'"
-                      [disabled]="!speechSupported"
-                      title="{{ !speechSupported ? 'Reconocimiento de voz no soportado en este navegador' : 'Usar micrófono' }}"
-                      class="voice-btn">
-            <ion-icon [name]="isListening ? 'mic-off' : 'mic'"></ion-icon>
-          </ion-button>
-          
-          <!-- Botón de enviar -->
-          <ion-button (click)="sendMessage()" 
-                      [disabled]="!userMessage.trim() || isLoading"
-                      class="send-btn">
-            <ion-icon name="send"></ion-icon>
-          </ion-button>
-        </div>
+      } @else {
+        <!-- CONVERSACIÓN: historial completo, el mensaje del usuario también se ve (C4) -->
+        <div class="chat-response-section">
 
-        <!-- Indicador de escucha -->
-        <div class="voice-status" *ngIf="isListening">
-          <ion-spinner name="crescent"></ion-spinner>
-          <span>Escuchando... Habla ahora</span>
-        </div>
-
-        <!-- Mensaje de ayuda para compatibilidad -->
-        <div class="browser-support-message" *ngIf="!speechSupported && showChatInput">
-          <ion-icon name="information-circle"></ion-icon>
-          <span>El reconocimiento de voz funciona mejor en Chrome/Edge. Asegúrate de usar HTTPS.</span>
-        </div>
-      </div>
-
-      <!-- CONTENIDO DINÁMICO: OPCIONES O RESPUESTA DEL CHAT -->
-      <div class="content-section">
-        
-        <!-- OPCIONES DE CONVERSACIÓN - SE OCULTAN CUANDO SE CONVERSA -->
-        <div class="options-section" *ngIf="!isInConversation">
-          <h2>Conversa conmigo para poder ayudarte</h2>
-          
-          <ion-list class="options-list">
-            <!-- Opción principal -->
-            <ion-item button class="main-option" lines="none" (click)="startConversation()">
-              <ion-icon slot="start" name="chatbubbles"></ion-icon>
-              <ion-label>Comenzar a conversar</ion-label>
-            </ion-item>
-
-            <!-- Opciones secundarias -->
-            <ion-item button class="secondary-option" lines="none" (click)="navigateToPriceCheck()">
-              <ion-icon slot="start" name="pricetag"></ion-icon>
-              <ion-label>Pregúntame por el precio de un producto</ion-label>
-            </ion-item>
-
-            <ion-item button class="secondary-option" lines="none" (click)="navigateToStoreLocator()">
-              <ion-icon slot="start" name="location"></ion-icon>
-              <ion-label>Pregúntame dónde comprar un producto</ion-label>
-            </ion-item>
-
-            <ion-item button class="secondary-option" lines="none" (click)="navigateToOffers()">
-              <ion-icon slot="start" name="megaphone"></ion-icon>
-              <ion-label>Pregúntame por ofertas</ion-label>
-            </ion-item>
-
-            <ion-item button class="secondary-option" lines="none" (click)="navigateToRecipes()">
-              <ion-icon slot="start" name="restaurant"></ion-icon>
-              <ion-label>Pregúntame como hacer una receta de cocina</ion-label>
-            </ion-item>
-
-            <ion-item button class="secondary-option" lines="none" (click)="navigateToAppDownload()">
-              <ion-icon slot="start" name="phone-portrait"></ion-icon>
-              <ion-label>Descarga nuestra App Móvil para registrar tus compras</ion-label>
-            </ion-item>
-          </ion-list>
-        </div>
-
-        <!-- RESPUESTA DEL CHAT - APARECE CUANDO SE CONVERSA -->
-        <div class="chat-response-section" *ngIf="isInConversation">
-          
-          <!-- Cabecera con botones de control -->
           <div class="chat-header">
             <div class="chat-controls-left">
               <ion-button fill="clear" size="small" (click)="endConversation()" class="back-btn">
-                <ion-icon name="arrow-back" slot="start"></ion-icon>
+                <ion-icon name="arrow-back" slot="start" aria-hidden="true"></ion-icon>
                 Volver a opciones
               </ion-button>
             </div>
-            
+
             <div class="chat-controls-right">
-              <!-- Botón para silenciar voz -->
-              <ion-button fill="clear" size="small" (click)="toggleMute()" [color]="isMuted ? 'medium' : 'primary'" class="mute-btn">
-                <ion-icon [name]="isMuted ? 'volume-mute' : 'volume-high'" slot="start"></ion-icon>
-                {{ isMuted ? 'Silenciado' : 'Silenciar' }}
+              <ion-button fill="clear" size="small" (click)="toggleMute()" [color]="voice.muted() ? 'medium' : 'primary'" class="mute-btn"
+                          [attr.aria-pressed]="voice.muted()">
+                <ion-icon [name]="voice.muted() ? 'volume-mute' : 'volume-high'" slot="start" aria-hidden="true"></ion-icon>
+                {{ voice.muted() ? 'Silenciado' : 'Silenciar' }}
               </ion-button>
-              
-              <!-- Botón para repetir voz -->
-              <ion-button fill="clear" size="small" (click)="repeatVoice()" [disabled]="isSpeaking || isMuted" class="repeat-btn">
-                <ion-icon [name]="isSpeaking ? 'play' : 'reload'" slot="start"></ion-icon>
-                {{ isSpeaking ? 'Reproduciendo...' : 'Repetir' }}
+
+              <ion-button fill="clear" size="small" (click)="repeatVoice()" [disabled]="voice.isSpeaking() || voice.muted()" class="repeat-btn">
+                <ion-icon [name]="voice.isSpeaking() ? 'play' : 'reload'" slot="start" aria-hidden="true"></ion-icon>
+                {{ voice.isSpeaking() ? 'Reproduciendo...' : 'Repetir' }}
               </ion-button>
             </div>
           </div>
 
-          <!-- Cuadro de texto del avatar - MÁS GRANDE -->
-          <div class="avatar-bubble-response">
-            <div class="message-content">
-              <p class="chat-text">{{ chatMessage }}</p>
-              <div class="typing-indicator" *ngIf="isLoading">
-                <ion-spinner name="crescent"></ion-spinner>
-                <span>Liderín está escribiendo...</span>
-              </div>
-            </div>
-          </div>
-
+          <ol class="message-list" aria-live="polite" [attr.aria-label]="'Conversación con ' + brand.assistantName">
+            @for (message of chat.messages(); track message.at) {
+              <li class="message" [class.from-user]="message.role === 'user'" [class.from-assistant]="message.role === 'assistant'">
+                @if (message.role === 'assistant') {
+                  <img [src]="currentAvatar()" alt="" class="bubble-avatar">
+                }
+                <div class="bubble">
+                  <p class="chat-text">{{ message.text }}</p>
+                </div>
+              </li>
+            }
+            @if (chat.isLoading()) {
+              <li class="message from-assistant">
+                <img [src]="currentAvatar()" alt="" class="bubble-avatar">
+                <div class="bubble typing-indicator">
+                  <ion-spinner name="crescent"></ion-spinner>
+                  <span>{{ brand.assistantName }} está escribiendo...</span>
+                </div>
+              </li>
+            }
+          </ol>
         </div>
-      </div>
+      }
+
     </div>
   </div>
 </ion-content>
+
+@if (isInConversation()) {
+  <ion-footer class="chat-footer">
+    <div class="integrated-chat-input">
+      <ion-textarea
+        [(ngModel)]="userMessage"
+        [placeholder]="voice.recognitionSupported() ? 'Escribe o usa el micrófono...' : 'Escribe tu mensaje...'"
+        rows="1"
+        autoGrow="true"
+        enterkeyhint="send"
+        aria-label="Mensaje para el asistente"
+        (keydown.enter)="onEnter($event)"
+        class="chat-textarea"
+      ></ion-textarea>
+
+      <ion-button (click)="toggleListening()"
+                  [color]="voice.isListening() ? 'danger' : 'primary'"
+                  [disabled]="!voice.recognitionSupported() || chat.isLoading()"
+                  [attr.aria-label]="voice.isListening() ? 'Dejar de escuchar' : 'Hablar'"
+                  [attr.aria-pressed]="voice.isListening()"
+                  class="voice-btn">
+        <ion-icon [name]="voice.isListening() ? 'mic-off' : 'mic'" aria-hidden="true"></ion-icon>
+      </ion-button>
+
+      <ion-button (click)="sendMessage()"
+                  [disabled]="!userMessage.trim() || chat.isLoading()"
+                  aria-label="Enviar"
+                  class="send-btn">
+        <ion-icon name="send" aria-hidden="true"></ion-icon>
+      </ion-button>
+    </div>
+
+    @if (voice.isListening()) {
+      <div class="voice-status" role="status">
+        <ion-spinner name="crescent"></ion-spinner>
+        <span>Escuchando... Habla ahora</span>
+      </div>
+    }
+    @if (!voice.recognitionSupported()) {
+      <p class="browser-support-message">
+        <ion-icon name="information-circle" aria-hidden="true"></ion-icon>
+        <span>El micrófono no está disponible aquí; puedes escribir.</span>
+      </p>
+    }
+  </ion-footer>
+}
