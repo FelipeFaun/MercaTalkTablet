@@ -2,10 +2,11 @@
 
 import { Component, ViewChild, ElementRef, OnDestroy, NgZone, inject } from '@angular/core';
 import { Product, ProductsService } from '../services/products.service';
+import { CartFeedbackService } from '../core/cart-feedback.service';
 import { ClpPipe } from '../shared/pipes/clp.pipe';
 import { 
-  IonHeader, 
-  IonToolbar, 
+  
+  
   IonContent, 
   IonButton, 
   IonIcon, 
@@ -17,9 +18,9 @@ import {
   IonCardContent, 
   IonSpinner 
 } from '@ionic/angular/standalone';
+import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 
 // ZXing
 import { BrowserMultiFormatReader } from '@zxing/library';
@@ -30,11 +31,11 @@ import { BrowserMultiFormatReader } from '@zxing/library';
   styleUrls: ['./price-check.page.scss'],
   standalone: true,
   imports: [
+    AppHeaderComponent,
     CommonModule, 
-    FormsModule, 
-    RouterLink,
-    IonHeader, 
-    IonToolbar, 
+    FormsModule,
+    
+    
     IonContent, 
     IonButton, 
     IonIcon, 
@@ -50,6 +51,7 @@ import { BrowserMultiFormatReader } from '@zxing/library';
 })
 export class PriceCheckerPage implements OnDestroy {
   private productsService = inject(ProductsService);
+  private cartFeedback = inject(CartFeedbackService);
   private ngZone = inject(NgZone);
 
   // --- ViewChilds para cámara ---
@@ -75,6 +77,11 @@ export class PriceCheckerPage implements OnDestroy {
 
   ngOnDestroy() {
     this.stopScanner(false);
+  }
+
+  // 🛒 AGREGAR A MI COMPRA (desde búsqueda o escaneo)
+  addToCart(product: Product) {
+    void this.cartFeedback.addWithToast(product);
   }
 
   // ------------------------------------------------------------------

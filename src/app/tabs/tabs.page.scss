@@ -1,0 +1,26 @@
+// Barra inferior: misma paleta que la barra azul superior
+.main-tab-bar {
+  --background: #ffffff;
+  --border: 1px solid #e0e0e0;
+  --color: #7f8c8d;
+  --color-selected: #0071ce;
+  height: 60px;
+  padding-bottom: env(safe-area-inset-bottom);
+
+  ion-tab-button {
+    --padding-top: 6px;
+    font-size: 11px;
+    font-weight: 600;
+
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+
+  ion-badge {
+    --padding-start: 5px;
+    --padding-end: 5px;
+    font-size: 10px;
+    top: 4px;
+  }
+}

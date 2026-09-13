@@ -624,3 +624,13 @@ ion-content {
     height: 120px;
   }
 }
+
+/* ===== AGREGAR A MI COMPRA ===== */
+.add-to-cart-button {
+  margin: 12px 0 0;
+  --border-radius: 10px;
+  --background: #0071ce;
+  --background-hover: #005a9e;
+  font-weight: 600;
+  height: 44px;
+}

@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { 
-  IonHeader, IonToolbar, IonContent, 
+  IonContent, 
   IonList, IonItem, IonLabel, IonIcon,
   IonButton, IonTextarea, IonSpinner
 } from '@ionic/angular/standalone';
+import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -19,7 +20,8 @@ import { OffersService, Offer } from '../services/offers.service';
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [
-    IonHeader, IonToolbar, IonContent, 
+    AppHeaderComponent,
+    IonContent, 
     IonList, IonItem, IonLabel, IonIcon,
     IonButton, IonTextarea, IonSpinner,
     FormsModule,

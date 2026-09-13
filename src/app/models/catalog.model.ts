@@ -59,6 +59,20 @@ export interface OfferView {
   image: string;
 }
 
+/** Línea del carrito. Guarda una copia de los datos del producto para
+ *  mostrarla sin consultar el catálogo y para que sobreviva a cambios de precio. */
+export interface CartItem {
+  productId: number;
+  name: string;
+  brand: string;
+  image: string;
+  /** Precio normal por unidad. */
+  unitPrice: number;
+  /** Precio de oferta por unidad, si estaba en oferta al agregarlo. */
+  offerPrice?: number;
+  qty: number;
+}
+
 export interface Catalog {
   products: Product[];
   offers: Offer[];

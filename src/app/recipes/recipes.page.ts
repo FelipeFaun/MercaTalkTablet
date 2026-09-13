@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common'; // ← Añade esto
 import { 
-  IonHeader, IonToolbar, IonContent,
-  IonButton
+  IonContent
 } from '@ionic/angular/standalone';
+import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
 import { RouterModule } from '@angular/router';
 import { RecipesService, Recipe } from '../services/recipes.service';
 
@@ -13,10 +13,10 @@ import { RecipesService, Recipe } from '../services/recipes.service';
   styleUrls: ['./recipes.page.scss'],
   standalone: true,
   imports: [
+    AppHeaderComponent,
     CommonModule, // ← Esto incluye UpperCasePipe
     RouterModule,
-    IonHeader, IonToolbar, IonContent,
-    IonButton
+    IonContent
   ]
 })
 export class RecipesPage {

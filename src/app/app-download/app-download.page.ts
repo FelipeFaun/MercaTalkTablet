@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { 
-  IonHeader, IonToolbar, IonContent, 
-  IonButton
+  IonContent
 } from '@ionic/angular/standalone';
+import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -11,9 +11,9 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./app-download.page.scss'],
   standalone: true,
   imports: [
+    AppHeaderComponent,
     RouterModule,
-    IonHeader, IonToolbar, IonContent,
-    IonButton
+    IonContent
   ]
 })
 export class AppDownloadPage {

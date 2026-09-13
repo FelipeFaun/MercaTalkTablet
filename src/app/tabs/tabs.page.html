@@ -1,0 +1,31 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom" class="main-tab-bar">
+    <ion-tab-button tab="home">
+      <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+      <ion-label>{{ assistantName }}</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="price-check">
+      <ion-icon name="scan-outline"></ion-icon>
+      <ion-label>Escanear</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="cart">
+      <ion-icon name="cart-outline"></ion-icon>
+      <ion-label>Mi compra</ion-label>
+      @if (cartCount() > 0) {
+        <ion-badge color="danger">{{ cartCount() }}</ion-badge>
+      }
+    </ion-tab-button>
+
+    <ion-tab-button tab="offers">
+      <ion-icon name="pricetags-outline"></ion-icon>
+      <ion-label>Ofertas</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="more">
+      <ion-icon name="ellipsis-horizontal"></ion-icon>
+      <ion-label>Más</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

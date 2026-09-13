@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { 
-  IonHeader, IonToolbar, IonContent, 
+  IonContent, 
   IonButton, IonInput, IonItem, IonCard, 
   IonCardHeader, IonCardTitle, IonCardContent, IonIcon, 
   IonSpinner, IonLabel,
   IonChip, IonText, IonCardSubtitle // ✅ AÑADIDO
 } from '@ionic/angular/standalone';
+import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -19,7 +20,8 @@ import { ClpPipe } from '../shared/pipes/clp.pipe';
   styleUrls: ['./store-locator.page.scss'],
   standalone: true,
   imports: [
-    RouterModule, IonHeader, IonToolbar, IonContent,
+    AppHeaderComponent,
+    RouterModule, IonContent,
     IonButton, IonInput, IonItem, IonCard, 
     IonCardHeader, IonCardTitle, IonCardContent, IonIcon, 
     IonSpinner, IonLabel,

@@ -145,6 +145,10 @@ ion-content {
 
 .add-button {
   width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   background: #0071ce;
   color: white;
   border: none;
@@ -154,9 +158,18 @@ ion-content {
   font-weight: 600;
   cursor: pointer;
   transition: background 0.3s ease;
+
+  ion-icon {
+    font-size: 18px;
+  }
   
   &:hover {
     background: #005a9e;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #005a9e;
+    outline-offset: 2px;
   }
   
   &:active {

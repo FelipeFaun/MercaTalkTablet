@@ -36,6 +36,10 @@ export class CatalogService {
     });
   }
 
+  getProductById(id: number): Product | undefined {
+    return this.getProducts().find(product => product.id === id);
+  }
+
   getRecipes(): Recipe[] {
     return this.catalog.recipes;
   }

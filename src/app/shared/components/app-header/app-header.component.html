@@ -1,0 +1,19 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="blue-toolbar">
+    <div class="header-content">
+      <div class="logo-section">
+        <a routerLink="/home" class="logo-link" [attr.aria-label]="'Ir al inicio de ' + brand.storeName">
+          <img [src]="brand.logo" [alt]="brand.storeName" class="logo">
+        </a>
+      </div>
+
+      @if (title()) {
+        <div class="title-section">
+          <h1 class="page-title">{{ title() }}</h1>
+        </div>
+      }
+
+      <div class="empty-space"></div>
+    </div>
+  </ion-toolbar>
+</ion-header>

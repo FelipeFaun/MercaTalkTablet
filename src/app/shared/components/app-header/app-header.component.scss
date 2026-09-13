@@ -1,0 +1,87 @@
+// El host no debe crear caja propia: ion-header queda como hijo directo de la
+// página y el layout de Ionic (header / content / footer) funciona igual.
+:host {
+  display: contents;
+}
+
+// Barra azul superior (misma apariencia que tenía cada página)
+.blue-toolbar {
+  --background: #0071ce;
+  --min-height: 70px;
+  --border-width: 0;
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .logo-section {
+    display: flex;
+    align-items: center;
+
+    .logo-link {
+      display: inline-flex;
+      border-radius: 6px;
+
+      &:focus-visible {
+        outline: 2px solid #ffffff;
+        outline-offset: 3px;
+      }
+    }
+
+    .logo {
+      height: 40px;
+      width: auto;
+      max-width: 150px;
+    }
+  }
+
+  .title-section {
+    flex: 1;
+    text-align: center;
+
+    .page-title {
+      color: #ffffff;
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  .empty-space {
+    width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .blue-toolbar {
+    --min-height: 56px;
+
+    .header-content {
+      padding: 0 12px;
+    }
+
+    .logo-section .logo {
+      height: 32px;
+    }
+
+    // En móvil el título va junto al logo (no hay espacio para centrarlo)
+    .title-section {
+      text-align: left;
+      padding-left: 14px;
+
+      .page-title {
+        font-size: 18px;
+      }
+    }
+
+    .empty-space {
+      width: 0;
+    }
+  }
+}

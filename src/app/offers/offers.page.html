@@ -1,26 +1,4 @@
-<ion-header [translucent]="true">
-  <!-- Barra azul superior con logo -->
-  <ion-toolbar class="blue-toolbar">
-    <div class="header-content">
-      <!-- Logo Líder a la izquierda -->
-      <div class="logo-section">
-        <img src="https://i5.walmartimages.com/dfw/63fd9f59-4a2e/587a39f4-fa04-49c6-b70f-ed494f49ff69/v1/chile-walmart-od-logo.svg" 
-             alt="Líder" 
-             class="logo" 
-             routerLink="/home"
-             style="cursor: pointer;">
-      </div>
-      
-      <!-- Título centrado con contador -->
-      <div class="title-section">
-        <h1 class=>Ofertas </h1>
-      </div>
-      
-      <!-- Espacio vacío para balancear -->
-      <div class="empty-space"></div>
-    </div>
-  </ion-toolbar>
-</ion-header>
+<app-header title="Ofertas"></app-header>
 
 <ion-content [fullscreen]="true">
   <div class="container">
@@ -44,8 +22,13 @@
             
             <div class="product-details">
               <span class="category">{{ offer.category }}</span>
-              <span class="valid-until">Válido hasta: {{ offer.validUntil }}</span>
+              <span class="valid-until">Válido hasta: {{ offer.validUntil | date:'d MMM' }}</span>
             </div>
+
+            <button type="button" class="add-button" (click)="addToCart(offer)">
+              <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
+              Agregar a mi compra
+            </button>
           </div>
         </div>
       }

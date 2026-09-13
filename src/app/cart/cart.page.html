@@ -1,0 +1,88 @@
+<app-header title="Mi compra"></app-header>
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+
+    @if (cart.isEmpty()) {
+      <!-- Estado vacío: invita a la primera acción -->
+      <div class="empty-cart">
+        <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
+        <h2>Tu compra está vacía</h2>
+        <p>Escanea o busca un producto y aquí verás cuánto te costará en caja.</p>
+        <ion-button expand="block" routerLink="/price-check" class="primary-action">
+          <ion-icon name="scan-outline" slot="start" aria-hidden="true"></ion-icon>
+          Escanear un producto
+        </ion-button>
+        <ion-button expand="block" fill="outline" routerLink="/offers">
+          <ion-icon name="pricetags-outline" slot="start" aria-hidden="true"></ion-icon>
+          Ver ofertas
+        </ion-button>
+      </div>
+    } @else {
+      <ul class="cart-list" aria-label="Productos en mi compra">
+        @for (item of cart.items(); track item.productId) {
+          <li class="cart-item">
+            <div class="item-image">
+              <img [src]="item.image" [alt]="item.name" (error)="handleImageError($event)">
+            </div>
+
+            <div class="item-info">
+              <h3 class="item-name">{{ item.name }}</h3>
+              <span class="item-brand">{{ item.brand }}</span>
+              <div class="price-section">
+                <span class="current-price" [class.on-offer]="item.offerPrice !== undefined">{{ unitPrice(item) | clp }}</span>
+                @if (item.offerPrice !== undefined) {
+                  <span class="original-price">{{ item.unitPrice | clp }}</span>
+                }
+                <span class="per-unit">c/u</span>
+              </div>
+            </div>
+
+            <div class="item-actions">
+              <div class="qty-stepper" role="group" [attr.aria-label]="'Cantidad de ' + item.name">
+                <button type="button" class="qty-btn"
+                        (click)="cart.decrement(item.productId)"
+                        [attr.aria-label]="item.qty === 1 ? 'Quitar ' + item.name : 'Una unidad menos'">
+                  <ion-icon [name]="item.qty === 1 ? 'trash-outline' : 'remove'" aria-hidden="true"></ion-icon>
+                </button>
+                <span class="qty" aria-live="polite">{{ item.qty }}</span>
+                <button type="button" class="qty-btn" (click)="cart.increment(item.productId)" aria-label="Una unidad más">
+                  <ion-icon name="add" aria-hidden="true"></ion-icon>
+                </button>
+              </div>
+              <span class="line-total">{{ lineTotal(item) | clp }}</span>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+  </div>
+</ion-content>
+
+@if (!cart.isEmpty()) {
+  <ion-footer class="cart-footer">
+    <div class="summary">
+      <div class="summary-rows">
+        <div class="summary-row">
+          <span>{{ cart.count() }} {{ cart.count() === 1 ? 'producto' : 'productos' }}</span>
+          <span>{{ cart.total() + cart.savings() | clp }}</span>
+        </div>
+        @if (cart.savings() > 0) {
+          <div class="summary-row savings">
+            <span>Ahorraste en ofertas</span>
+            <span>−{{ cart.savings() | clp }}</span>
+          </div>
+        }
+      </div>
+      <div class="summary-total">
+        <span class="total-label">Total a pagar</span>
+        <span class="total-amount">{{ cart.total() | clp }}</span>
+      </div>
+      <ion-button fill="clear" size="small" color="medium" class="clear-btn" (click)="confirmClear()">
+        <ion-icon name="trash-outline" slot="start" aria-hidden="true"></ion-icon>
+        Vaciar
+      </ion-button>
+    </div>
+  </ion-footer>
+}

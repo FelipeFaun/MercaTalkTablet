@@ -30,6 +30,7 @@
     "@capacitor/core": "^7.4.3",
     "@capacitor/haptics": "7.0.2",
     "@capacitor/keyboard": "7.0.3",
+    "@capacitor/preferences": "^7.0.4",
     "@capacitor/status-bar": "7.0.3",
     "@ionic/angular": "^8.0.0",
     "@zxing/library": "^0.21.3",

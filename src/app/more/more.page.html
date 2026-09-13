@@ -1,0 +1,18 @@
+<app-header title="Más"></app-header>
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <ion-list class="options-list" lines="none">
+      @for (option of options; track option.link) {
+        <ion-item button detail="false" [routerLink]="option.link" routerDirection="forward" class="secondary-option">
+          <ion-icon slot="start" [name]="option.icon" aria-hidden="true"></ion-icon>
+          <ion-label>
+            <h2>{{ option.label }}</h2>
+            <p>{{ option.detail }}</p>
+          </ion-label>
+          <ion-icon slot="end" name="chevron-forward" aria-hidden="true"></ion-icon>
+        </ion-item>
+      }
+    </ion-list>
+  </div>
+</ion-content>

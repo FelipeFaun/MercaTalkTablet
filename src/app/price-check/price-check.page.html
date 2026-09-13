@@ -1,18 +1,4 @@
-<!-- Barra azul superior -->
-<ion-header [translucent]="true">
-  <ion-toolbar class="blue-toolbar">
-    <div class="header-content">
-      <div class="logo-section">
-        <ion-button fill="clear" class="logo-button" [routerLink]="['/home']">
-          <img 
-            src="https://i5.walmartimages.com/dfw/63fd9f59-4a2e/587a39f4-fa04-49c6-b70f-ed494f49ff69/v1/chile-walmart-od-logo.svg" 
-            alt="Líder" 
-            class="logo">
-        </ion-button>
-      </div>
-    </div>
-  </ion-toolbar>
-</ion-header>
+<app-header></app-header>
 
 <ion-content [fullscreen]="true" class="search-mode">
   <div class="container">
@@ -171,6 +157,11 @@
               </div>
 
             </div>
+
+            <ion-button expand="block" class="add-to-cart-button" (click)="addToCart(product)">
+              <ion-icon name="cart-outline" slot="start" aria-hidden="true"></ion-icon>
+              Agregar a mi compra
+            </ion-button>
           </ion-card-content>
         </ion-card>
       </div>
