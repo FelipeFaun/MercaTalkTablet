@@ -1,12 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PriceCheckPage } from './price-check.page';
+import { provideRouter } from '@angular/router';
+import { provideIonicAngular } from '@ionic/angular/standalone';
 
-describe('PriceCheckPage', () => {
-  let component: PriceCheckPage;
-  let fixture: ComponentFixture<PriceCheckPage>;
+import { PriceCheckerPage } from './price-check.page';
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(PriceCheckPage);
+describe('PriceCheckerPage', () => {
+  let component: PriceCheckerPage;
+  let fixture: ComponentFixture<PriceCheckerPage>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PriceCheckerPage],
+      providers: [provideRouter([]), provideIonicAngular()],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(PriceCheckerPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
