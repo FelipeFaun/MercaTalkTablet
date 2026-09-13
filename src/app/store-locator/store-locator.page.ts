@@ -10,7 +10,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { ProductsService, Product } from '../services/products';
+import { ProductsService, Product } from '../services/products.service';
 import { ClpPipe } from '../shared/pipes/clp.pipe';
 
 @Component({

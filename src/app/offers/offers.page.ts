@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { 
   IonHeader, IonToolbar, IonContent
 } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router'; // ← Importar RouterModule
-import { WALMART_OFFERS } from '../data/offers.data';
+import { OffersService, Offer } from '../services/offers.service';
 import { ClpPipe } from '../shared/pipes/clp.pipe';
 
 @Component({
@@ -18,11 +18,11 @@ import { ClpPipe } from '../shared/pipes/clp.pipe';
   ]
 })
 export class OffersPage {
-  offers = WALMART_OFFERS;
-  
-  constructor() {}
+  private offersService = inject(OffersService);
 
-  addToCart(product: any) {
-    console.log('Producto agregado al carrito:', product.product);
+  offers: Offer[] = this.offersService.getAllOffers();
+
+  addToCart(offer: Offer) {
+    console.log('Producto agregado al carrito:', offer.product);
   }
 }

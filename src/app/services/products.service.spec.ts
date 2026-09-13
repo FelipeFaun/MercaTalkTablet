@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ProductsService } from './products';
+import { ProductsService } from './products.service';
 
 describe('ProductsService', () => {
   let service: ProductsService;
@@ -26,7 +26,7 @@ describe('ProductsService', () => {
 
   it('encuentra un producto por código de barras', () => {
     const first = service.getAllProducts()[0];
-    expect(service.findProductByBarcode(first.barcode)).toBe(first);
+    expect(service.findProductByBarcode(first.barcode)).toEqual(first);
     expect(service.findProductByBarcode('0000000000000')).toBeUndefined();
   });
 

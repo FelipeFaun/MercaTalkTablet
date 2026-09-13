@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { ChatService, ApiResponse } from '../services/chat.service';
-import { ProductsService, Product } from '../services/products';
+import { ProductsService, Product } from '../services/products.service';
 import { RecipesService, Recipe } from '../services/recipes.service';
 import { OffersService, Offer } from '../services/offers.service';
 

@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common'; // ← Añade esto
 import { 
   IonHeader, IonToolbar, IonContent,
   IonButton
 } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router';
-import { WALMART_RECIPES } from '../data/recipes.data';
+import { RecipesService, Recipe } from '../services/recipes.service';
 
 @Component({
   selector: 'app-recipes',
@@ -20,11 +20,11 @@ import { WALMART_RECIPES } from '../data/recipes.data';
   ]
 })
 export class RecipesPage {
-  recipes = WALMART_RECIPES;
-  
-  constructor() {}
+  private recipesService = inject(RecipesService);
 
-  viewRecipe(recipe: any) {
+  recipes: Recipe[] = this.recipesService.getAllRecipes();
+
+  viewRecipe(recipe: Recipe) {
     console.log('Viendo receta:', recipe.name);
   }
 }

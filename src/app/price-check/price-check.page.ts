@@ -1,7 +1,7 @@
 // src/app/price-check/price-check.page.ts
 
 import { Component, ViewChild, ElementRef, OnDestroy, NgZone, inject } from '@angular/core';
-import { Product, ProductsService } from '../services/products';
+import { Product, ProductsService } from '../services/products.service';
 import { ClpPipe } from '../shared/pipes/clp.pipe';
 import { 
   IonHeader, 

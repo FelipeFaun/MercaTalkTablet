@@ -1,40 +1,32 @@
 // services/recipes.service.ts
-import { Injectable } from '@angular/core';
-import { WALMART_RECIPES } from '../data/recipes.data';
+import { Injectable, inject } from '@angular/core';
+import { CatalogService } from '../core/catalog.service';
+import { Product, Recipe } from '../models/catalog.model';
 
-export interface Recipe {
-  id: number;
-  name: string;
-  description: string;
-  mainIngredient: string;
-  category: string;
-  difficulty: string;
-  time: string;
-  ingredients: string[];
-  steps: string[];
-  image: string;
-  relatedProductId: number;
-}
+export type { Recipe } from '../models/catalog.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecipesService {
-  private recipes: Recipe[] = WALMART_RECIPES;
+  private catalog = inject(CatalogService);
 
-  constructor() {}
+  // OBTENER TODAS LAS RECETAS
+  getAllRecipes(): Recipe[] {
+    return this.catalog.getRecipes();
+  }
 
   // BUSCAR RECETAS POR TÉRMINO
   searchRecipes(query: string): Recipe[] {
     if (!query.trim()) return [];
-    
+
     const lowerQuery = query.toLowerCase();
-    return this.recipes.filter(recipe => 
+    return this.getAllRecipes().filter(recipe =>
       recipe.name.toLowerCase().includes(lowerQuery) ||
       recipe.description.toLowerCase().includes(lowerQuery) ||
       recipe.mainIngredient.toLowerCase().includes(lowerQuery) ||
       recipe.category.toLowerCase().includes(lowerQuery) ||
-      recipe.ingredients.some(ingredient => 
+      recipe.ingredients.some(ingredient =>
         ingredient.toLowerCase().includes(lowerQuery)
       )
     );
@@ -42,32 +34,36 @@ export class RecipesService {
 
   // BUSCAR RECETAS POR CATEGORÍA
   getRecipesByCategory(category: string): Recipe[] {
-    return this.recipes.filter(recipe => 
+    return this.getAllRecipes().filter(recipe =>
       recipe.category.toLowerCase().includes(category.toLowerCase())
     );
   }
 
   // OBTENER RECETA POR ID
   getRecipeById(id: number): Recipe | undefined {
-    return this.recipes.find(recipe => recipe.id === id);
+    return this.getAllRecipes().find(recipe => recipe.id === id);
+  }
+
+  // PRODUCTOS DEL CATÁLOGO QUE USA LA RECETA (con precio y oferta)
+  getRecipeProducts(recipe: Recipe): Product[] {
+    return this.catalog.getRecipeProducts(recipe);
   }
 
   // OBTENER TODAS LAS CATEGORÍAS
   getAllCategories(): string[] {
-    return [...new Set(this.recipes.map(recipe => recipe.category))];
+    return [...new Set(this.getAllRecipes().map(recipe => recipe.category))];
   }
 
   // OBTENER RECETAS FÁCILES
   getEasyRecipes(): Recipe[] {
-    return this.recipes.filter(recipe => 
-      recipe.difficulty.toLowerCase().includes('fácil') || 
-      recipe.difficulty.toLowerCase().includes('muy fácil')
+    return this.getAllRecipes().filter(recipe =>
+      recipe.difficulty.toLowerCase().includes('fácil')
     );
   }
 
   // OBTENER RECETAS RÁPIDAS (menos de 20 min)
   getQuickRecipes(): Recipe[] {
-    return this.recipes.filter(recipe => {
+    return this.getAllRecipes().filter(recipe => {
       const time = parseInt(recipe.time);
       return !isNaN(time) && time <= 20;
     });
