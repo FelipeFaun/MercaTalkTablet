@@ -3,6 +3,9 @@
 import { Component, ViewChild, ElementRef, OnDestroy, NgZone, inject } from '@angular/core';
 import { Product, ProductsService } from '../services/products.service';
 import { CartFeedbackService } from '../core/cart-feedback.service';
+import { NutritionService } from '../core/nutrition.service';
+import { NutritionResult } from '../models/nutrition.model';
+import { NutritionCardComponent } from '../shared/components/nutrition-card/nutrition-card.component';
 import { ClpPipe } from '../shared/pipes/clp.pipe';
 import { 
   
@@ -46,12 +49,14 @@ import { BrowserMultiFormatReader } from '@zxing/library';
     IonCardSubtitle, 
     IonCardContent,
     IonSpinner,
-    ClpPipe
+    ClpPipe,
+    NutritionCardComponent
   ],
 })
 export class PriceCheckerPage implements OnDestroy {
   private productsService = inject(ProductsService);
   private cartFeedback = inject(CartFeedbackService);
+  private nutritionService = inject(NutritionService);
   private ngZone = inject(NgZone);
 
   // --- ViewChilds para cámara ---
@@ -82,6 +87,31 @@ export class PriceCheckerPage implements OnDestroy {
   // 🛒 AGREGAR A MI COMPRA (desde búsqueda o escaneo)
   addToCart(product: Product) {
     void this.cartFeedback.addWithToast(product);
+  }
+
+  // ------------------------------------------------------------------
+  // 🥗 Aporte nutricional (Open Food Facts) — Fase 3
+  // ------------------------------------------------------------------
+  expandedNutritionBarcode: string | null = null;
+  nutritionLoading = false;
+  private nutritionCache = new Map<string, NutritionResult>();
+
+  async toggleNutrition(product: Product) {
+    if (this.expandedNutritionBarcode === product.barcode) {
+      this.expandedNutritionBarcode = null;
+      return;
+    }
+    this.expandedNutritionBarcode = product.barcode;
+    if (!this.nutritionCache.has(product.barcode)) {
+      this.nutritionLoading = true;
+      const result = await this.nutritionService.getByBarcode(product.barcode);
+      this.nutritionCache.set(product.barcode, result);
+      this.nutritionLoading = false;
+    }
+  }
+
+  nutritionResult(barcode: string): NutritionResult | undefined {
+    return this.nutritionCache.get(barcode);
   }
 
   // ------------------------------------------------------------------

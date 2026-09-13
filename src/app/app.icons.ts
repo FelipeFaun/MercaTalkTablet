@@ -2,13 +2,13 @@ import { addIcons } from 'ionicons';
 import {
   add, arrowBack, barcodeOutline, cameraOutline, cart, cartOutline,
   chatbubbleEllipsesOutline, chatbubbles, chevronForward, closeCircleOutline,
-  closeOutline, ellipsisHorizontal, handLeftOutline, informationCircle,
+  closeOutline, ellipsisHorizontal, fitnessOutline, handLeftOutline, informationCircle,
   location, locationOutline, map, mapOutline, megaphone, mic, micOff,
-  navigate, personCircleOutline, phonePortrait, phonePortraitOutline, play,
+  navigate, nutritionOutline, personCircleOutline, phonePortrait, phonePortraitOutline, play,
   pricetag, pricetagOutline, pricetagsOutline, reload, remove, restaurant,
   restaurantOutline, scanOutline, search, searchOutline, send, sparkles,
   star, sunnyOutline, trashOutline, videocamOutline, volumeHigh, volumeMute,
-  warningOutline
+  walletOutline, warningOutline
 } from 'ionicons/icons';
 
 /**
@@ -30,6 +30,7 @@ export function registerAppIcons(): void {
     'close-circle-outline': closeCircleOutline,
     'close-outline': closeOutline,
     'ellipsis-horizontal': ellipsisHorizontal,
+    'fitness-outline': fitnessOutline,
     'hand-left-outline': handLeftOutline,
     'information-circle': informationCircle,
     location,
@@ -40,6 +41,7 @@ export function registerAppIcons(): void {
     mic,
     'mic-off': micOff,
     navigate,
+    'nutrition-outline': nutritionOutline,
     'person-circle-outline': personCircleOutline,
     'phone-portrait': phonePortrait,
     'phone-portrait-outline': phonePortraitOutline,
@@ -62,6 +64,7 @@ export function registerAppIcons(): void {
     'videocam-outline': videocamOutline,
     'volume-high': volumeHigh,
     'volume-mute': volumeMute,
+    'wallet-outline': walletOutline,
     'warning-outline': warningOutline,
   });
 }

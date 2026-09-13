@@ -625,12 +625,21 @@ ion-content {
   }
 }
 
-/* ===== AGREGAR A MI COMPRA ===== */
-.add-to-cart-button {
-  margin: 12px 0 0;
+/* ===== AGREGAR A MI COMPRA / APORTE NUTRICIONAL (Open Food Facts) ===== */
+.add-to-cart-button,
+.nutrition-toggle-button {
+  margin: 8px 0 0;
   --border-radius: 10px;
+  font-weight: 600;
+  height: 42px;
+}
+
+.add-to-cart-button {
   --background: #0071ce;
   --background-hover: #005a9e;
-  font-weight: 600;
-  height: 44px;
+}
+
+.nutrition-toggle-button {
+  --border-color: #0071ce;
+  --color: #0071ce;
 }

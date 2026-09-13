@@ -162,6 +162,17 @@
               <ion-icon name="cart-outline" slot="start" aria-hidden="true"></ion-icon>
               Agregar a mi compra
             </ion-button>
+
+            <ion-button expand="block" fill="outline" class="nutrition-toggle-button" (click)="toggleNutrition(product)">
+              <ion-icon name="nutrition-outline" slot="start" aria-hidden="true"></ion-icon>
+              {{ expandedNutritionBarcode === product.barcode ? 'Ocultar aporte nutricional' : 'Ver aporte nutricional' }}
+            </ion-button>
+
+            <app-nutrition-card
+              *ngIf="expandedNutritionBarcode === product.barcode"
+              [loading]="nutritionLoading"
+              [result]="nutritionResult(product.barcode)">
+            </app-nutrition-card>
           </ion-card-content>
         </ion-card>
       </div>

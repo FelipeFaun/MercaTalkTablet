@@ -1,0 +1,53 @@
+<div class="nutrition-card">
+  @if (loading()) {
+    <div class="nutrition-state">
+      <ion-spinner name="crescent"></ion-spinner>
+      <span>Consultando Open Food Facts...</span>
+    </div>
+  } @else if (result()?.status === 'not-found') {
+    <div class="nutrition-state">
+      <ion-icon name="information-circle" aria-hidden="true"></ion-icon>
+      <span>Este código no tiene aporte nutricional registrado en Open Food Facts.</span>
+    </div>
+  } @else if (result()?.status === 'error') {
+    <div class="nutrition-state">
+      <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
+      <span>No se pudo consultar el aporte nutricional. Revisa tu conexión e intenta de nuevo.</span>
+    </div>
+  } @else if (facts(); as facts) {
+    <div class="nutrition-header">
+      @if (facts.nutriscoreGrade) {
+        <span class="nutriscore" [class]="'grade-' + facts.nutriscoreGrade" [attr.aria-label]="'Nutri-Score ' + facts.nutriscoreGrade.toUpperCase()">
+          {{ facts.nutriscoreGrade.toUpperCase() }}
+        </span>
+      }
+      <div class="nutrition-title">
+        <span class="nutrition-product-name">{{ facts.productName || 'Producto sin nombre en Open Food Facts' }}</span>
+        @if (facts.brands) {
+          <span class="nutrition-brand">{{ facts.brands }}</span>
+        }
+      </div>
+    </div>
+
+    @if (facts.novaGroup) {
+      <p class="nova-info">
+        <ion-icon name="fitness-outline" aria-hidden="true"></ion-icon>
+        Grupo NOVA {{ facts.novaGroup }} · {{ novaLabel() }}
+      </p>
+    }
+
+    @if (rows().length > 0) {
+      <dl class="nutrient-grid" [attr.aria-label]="'Aporte nutricional por ' + (facts.servingSize || '100 g')">
+        @for (row of rows(); track row.label) {
+          <div class="nutrient-row">
+            <dt>{{ row.label }}</dt>
+            <dd>{{ row.value }} {{ row.unit }}</dd>
+          </div>
+        }
+      </dl>
+      <p class="nutrition-basis">Valores por {{ facts.servingSize || '100 g' }}</p>
+    }
+
+    <p class="nutrition-source">Datos: Open Food Facts (código {{ facts.barcode }})</p>
+  }
+</div>
