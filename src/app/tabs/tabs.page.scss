@@ -1,26 +1,51 @@
-// Barra inferior: misma paleta que la barra azul superior
+// Barra inferior optimizada para Tablet / Kiosko
 .main-tab-bar {
   --background: #ffffff;
-  --border: 1px solid #e0e0e0;
-  --color: #7f8c8d;
-  --color-selected: #0071ce;
-  height: 60px;
+  --border: 1px solid #e2e8f0;
+  --color: #64748b;
+  --color-selected: var(--brand-primary, #0071ce);
+  height: 72px;
   padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.07);
+  display: flex;
+  justify-content: center;
 
   ion-tab-button {
-    --padding-top: 6px;
-    font-size: 11px;
-    font-weight: 600;
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    max-width: 220px;
+    transition: all 0.2s ease;
+    border-radius: 14px;
+    margin: 4px 6px;
 
     ion-icon {
-      font-size: 24px;
+      font-size: 26px;
+      margin-bottom: 3px;
+      transition: transform 0.2s ease;
+    }
+
+    &.tab-selected {
+      color: var(--brand-primary, #0071ce);
+      background: var(--brand-light, #ebf4fc);
+
+      ion-icon {
+        transform: scale(1.1);
+      }
+    }
+
+    &:hover:not(.tab-selected) {
+      background: #f8fafc;
     }
   }
 
   ion-badge {
-    --padding-start: 5px;
-    --padding-end: 5px;
-    font-size: 10px;
-    top: 4px;
+    --padding-start: 7px;
+    --padding-end: 7px;
+    font-size: 11px;
+    font-weight: 800;
+    top: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   }
 }

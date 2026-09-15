@@ -7,6 +7,7 @@ import { NutritionService } from '../core/nutrition.service';
 import { NutritionResult } from '../models/nutrition.model';
 import { NutritionCardComponent } from '../shared/components/nutrition-card/nutrition-card.component';
 import { ClpPipe } from '../shared/pipes/clp.pipe';
+import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { 
   
   
@@ -50,7 +51,8 @@ import { BrowserMultiFormatReader } from '@zxing/library';
     IonCardContent,
     IonSpinner,
     ClpPipe,
-    NutritionCardComponent
+    NutritionCardComponent,
+    TranslatePipe,
   ],
 })
 export class PriceCheckerPage implements OnDestroy {
@@ -276,6 +278,10 @@ export class PriceCheckerPage implements OnDestroy {
       // Ejecutar búsqueda por código
       this.searchProductByBarcode(this.scannedBarcode);
     }
+  }
+
+  cancelScan() {
+    this.stopScanner(false);
   }
 
   // ------------------------------------------------------------------

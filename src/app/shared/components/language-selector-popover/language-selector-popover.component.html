@@ -1,0 +1,34 @@
+<div class="lang-menu-popover" role="menu">
+  <div class="menu-header">
+    <span class="menu-header-title">{{ 'header.languages' | translate }}</span>
+    <span class="menu-header-sub">{{ 'header.selectLanguage' | translate }}</span>
+  </div>
+
+  <div class="menu-items-list">
+    @for (item of languageService.languages; track item.code) {
+      <button type="button"
+              class="menu-item-btn"
+              [class.active]="item.code === languageService.currentLang()"
+              role="menuitem"
+              (click)="selectLanguage(item)">
+        <span class="item-flag-frame">
+          <img [src]="item.flagIcon" [alt]="item.nativeLabel" class="item-flag-img">
+        </span>
+        <div class="item-text-group">
+          <span class="item-lang-name">{{ item.nativeLabel }}</span>
+          <span class="item-tier-badge">{{ item.tier }}</span>
+        </div>
+        @if (item.code === languageService.currentLang()) {
+          <ion-icon name="checkmark-circle" class="item-check-icon" aria-hidden="true"></ion-icon>
+        }
+      </button>
+    }
+  </div>
+
+  <div class="menu-footer">
+    <div class="inactivity-notice">
+      <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+      <span>{{ 'header.inactivityNotice' | translate }}</span>
+    </div>
+  </div>
+</div>

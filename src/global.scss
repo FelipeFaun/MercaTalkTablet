@@ -41,3 +41,196 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 /* @import "@ionic/angular/css/palettes/dark.system.css"; */
+
+:root {
+  --brand-primary: #0071CE;
+  --brand-secondary: #005A9E;
+  --brand-primary-rgb: 0, 113, 206;
+  --brand-header-bg: #0071CE;
+  --brand-gradient: linear-gradient(135deg, #0071CE 0%, #005A9E 100%);
+  --brand-light: #EBF4FC;
+  --brand-contrast: #FFFFFF;
+  --ion-color-primary: #0071CE;
+  --ion-color-primary-rgb: 0, 113, 206;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-shade: #005A9E;
+  --ion-color-primary-tint: #0071CE;
+}
+
+// Transición fluida para cambios de tema en barras y botones
+.blue-toolbar,
+.brand-selector-btn,
+.main-option,
+.main-tab-bar {
+  transition: background 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+// Estilos globales para el ion-popover del menú de supermercados (Overlay de primer nivel)
+ion-popover.brand-popover-overlay {
+  --width: 290px;
+  --max-width: 92vw;
+  --border-radius: 16px;
+  --box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28), 0 4px 12px rgba(0, 0, 0, 0.12);
+  --backdrop-opacity: 0.3;
+  --background: #ffffff;
+  z-index: 25000 !important;
+
+  &::part(content) {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28), 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+}
+
+/* ===== GUARDIA EXCLUSIVA PARA TABLETS ===== */
+.tablet-guard-overlay {
+  display: none;
+}
+
+@media (max-width: 767px) and (orientation: portrait) {
+  .tablet-guard-overlay {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: radial-gradient(circle at 50% 30%, #1e293b 0%, #090d16 100%);
+    color: #ffffff;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    box-sizing: border-box;
+
+    .guard-card {
+      max-width: 360px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .guard-icon-container {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(var(--brand-primary-rgb, 0, 113, 206), 0.18);
+      border: 2px solid rgba(var(--brand-primary-rgb, 0, 113, 206), 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+
+      .guard-device-icon {
+        font-size: 46px;
+        color: var(--brand-primary, #0071ce);
+      }
+
+      .guard-rotate-badge {
+        position: absolute;
+        bottom: -2px;
+        right: -2px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+        .guard-sync-icon {
+          font-size: 18px;
+          color: #1e293b;
+          animation: spinHint 3s linear infinite;
+        }
+      }
+    }
+
+    .guard-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 0 0 10px;
+      color: #ffffff;
+      letter-spacing: -0.2px;
+    }
+
+    .guard-subtitle {
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: #cbd5e1;
+      margin: 0 0 20px;
+
+      strong {
+        color: #ffffff;
+      }
+    }
+
+    .guard-instruction {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 12.5px;
+      color: #94a3b8;
+      line-height: 1.4;
+
+      .instruction-icon {
+        font-size: 22px;
+        color: var(--brand-primary, #0071ce);
+        flex-shrink: 0;
+      }
+
+      strong {
+        color: #e2e8f0;
+      }
+    }
+  }
+}
+
+@keyframes spinHint {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  50% { transform: rotate(90deg); }
+  75% { transform: rotate(180deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== TABLET ERGONOMICS & BASE TOKENS ===== */
+:root {
+  --tablet-content-max-width: 1360px;
+  --tablet-header-height: 78px;
+  --tablet-tabbar-height: 72px;
+  --tablet-touch-min-height: 52px;
+}
+
+// Barra de scroll estilizada para pantallas táctiles y tablets
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+
+

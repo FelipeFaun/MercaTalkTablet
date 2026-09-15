@@ -1,117 +1,143 @@
-<app-header title="Mi compra"></app-header>
+<app-header [title]="'cart.title' | translate"></app-header>
 
 <ion-content [fullscreen]="true">
   <div class="container">
 
-    <!-- Presupuesto: se puede fijar aunque la compra esté vacía (Fase 3) -->
-    <div class="budget-card">
-      @if (cart.budget() !== null) {
-        <div class="budget-header">
-          <span class="budget-label">
-            <ion-icon name="wallet-outline" aria-hidden="true"></ion-icon>
-            Presupuesto
-          </span>
-          <button type="button" class="budget-edit" (click)="editBudget()">Editar</button>
-        </div>
-        <div class="budget-bar" role="progressbar" [attr.aria-valuenow]="cart.total()" aria-valuemin="0" [attr.aria-valuemax]="cart.budget()">
-          <div class="budget-fill" [class]="'status-' + cart.budgetStatus()" [style.width.%]="budgetPercent()"></div>
-        </div>
-        <div class="budget-footer">
-          <span>{{ cart.total() | clp }} de {{ cart.budget() | clp }}</span>
-          @if (cart.budgetStatus() === 'over') {
-            <span class="budget-over">Te pasaste por {{ cart.total() - cart.budget()! | clp }}</span>
-          } @else {
-            <span class="budget-remaining">Quedan {{ cart.budgetRemaining() | clp }}</span>
-          }
-        </div>
-      } @else {
-        <button type="button" class="budget-set-btn" (click)="editBudget()">
-          <ion-icon name="wallet-outline" aria-hidden="true"></ion-icon>
-          Fijar un presupuesto
-        </button>
-      }
-    </div>
-
     @if (cart.isEmpty()) {
       <!-- Estado vacío: invita a la primera acción -->
       <div class="empty-cart">
-        <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
-        <h2>Tu compra está vacía</h2>
-        <p>Escanea o busca un producto y aquí verás cuánto te costará en caja.</p>
-        <ion-button expand="block" routerLink="/price-check" class="primary-action">
-          <ion-icon name="scan-outline" slot="start" aria-hidden="true"></ion-icon>
-          Escanear un producto
-        </ion-button>
-        <ion-button expand="block" fill="outline" routerLink="/offers">
-          <ion-icon name="pricetags-outline" slot="start" aria-hidden="true"></ion-icon>
-          Ver ofertas
-        </ion-button>
+        <div class="empty-icon-circle">
+          <ion-icon name="cart-outline" class="empty-cart-icon" aria-hidden="true"></ion-icon>
+        </div>
+        <h2>{{ 'cart.emptyTitle' | translate }}</h2>
+        <p>{{ 'cart.emptyDesc' | translate }}</p>
+        <div class="empty-actions">
+          <ion-button routerLink="/price-check" class="empty-action-btn primary-action">
+            <ion-icon name="scan-outline" slot="start" aria-hidden="true"></ion-icon>
+            <span>{{ 'cart.scanAProduct' | translate }}</span>
+          </ion-button>
+          <ion-button fill="outline" routerLink="/offers" class="empty-action-btn secondary-action">
+            <ion-icon name="pricetags-outline" slot="start" aria-hidden="true"></ion-icon>
+            <span>{{ 'cart.viewOffers' | translate }}</span>
+          </ion-button>
+        </div>
       </div>
     } @else {
-      <ul class="cart-list" aria-label="Productos en mi compra">
-        @for (item of cart.items(); track item.productId) {
-          <li class="cart-item">
-            <div class="item-image">
-              <img [src]="item.image" [alt]="item.name" (error)="handleImageError($event)">
+      <!-- Layout Tablet de 2 Columnas: Lista de Productos a la izquierda y Resumen a la derecha -->
+      <div class="tablet-cart-grid">
+        <div class="cart-items-column">
+          <div class="column-header">
+            <h3>{{ 'cart.productsInCart' | translate:{ count: cart.count() } }}</h3>
+          </div>
+
+          <ul class="cart-list" [attr.aria-label]="'cart.productsInCart' | translate:{ count: cart.count() }">
+            @for (item of cart.items(); track item.productId) {
+              <li class="cart-item">
+                <div class="item-image">
+                  <img [src]="item.image" [alt]="item.name" (error)="handleImageError($event)">
+                </div>
+
+                <div class="item-info">
+                  <h3 class="item-name">{{ item.name }}</h3>
+                  <span class="item-brand">{{ item.brand }}</span>
+                  <div class="price-section">
+                    <span class="current-price" [class.on-offer]="item.offerPrice !== undefined">{{ unitPrice(item) | clp }}</span>
+                    @if (item.offerPrice !== undefined) {
+                      <span class="original-price">{{ item.unitPrice | clp }}</span>
+                    }
+                    <span class="per-unit">{{ 'cart.perUnit' | translate }}</span>
+                  </div>
+                </div>
+
+                <div class="item-actions">
+                  <div class="qty-stepper" role="group" [attr.aria-label]="'Cantidad de ' + item.name">
+                    <button type="button" class="qty-btn"
+                            (click)="cart.decrement(item.productId)"
+                            [attr.aria-label]="item.qty === 1 ? 'Quitar ' + item.name : 'Una unidad menos'">
+                      <ion-icon [name]="item.qty === 1 ? 'trash-outline' : 'remove'" aria-hidden="true"></ion-icon>
+                    </button>
+                    <span class="qty" aria-live="polite">{{ item.qty }}</span>
+                    <button type="button" class="qty-btn" (click)="cart.increment(item.productId)" aria-label="Una unidad más">
+                      <ion-icon name="add" aria-hidden="true"></ion-icon>
+                    </button>
+                  </div>
+                  <span class="line-total">{{ lineTotal(item) | clp }}</span>
+                </div>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <!-- Columna Derecha: Tarjeta de Presupuesto y Resumen Fijo -->
+        <div class="cart-summary-column">
+          <div class="summary-sticky-card">
+            <!-- Presupuesto integrado -->
+            <div class="budget-card">
+              @if (cart.budget() !== null) {
+                <div class="budget-header">
+                  <span class="budget-label">
+                    <ion-icon name="wallet-outline" aria-hidden="true"></ion-icon>
+                    {{ 'cart.budget' | translate }}
+                  </span>
+                  <button type="button" class="budget-edit" (click)="editBudget()">{{ 'cart.edit' | translate }}</button>
+                </div>
+                <div class="budget-bar" role="progressbar" [attr.aria-valuenow]="cart.total()" aria-valuemin="0" [attr.aria-valuemax]="cart.budget()">
+                  <div class="budget-fill" [class]="'status-' + cart.budgetStatus()" [style.width.%]="budgetPercent()"></div>
+                </div>
+                <div class="budget-footer">
+                  <span>{{ 'cart.budgetStatusOf' | translate:{ total: (cart.total() | clp), budget: (cart.budget() | clp) } }}</span>
+                  @if (cart.budgetStatus() === 'over') {
+                    <span class="budget-over">{{ 'cart.budgetOver' | translate:{ amount: (cart.total() - cart.budget()! | clp) } }}</span>
+                  } @else {
+                    <span class="budget-remaining">{{ 'cart.budgetRemaining' | translate:{ amount: (cart.budgetRemaining() | clp) } }}</span>
+                  }
+                </div>
+              } @else {
+                <button type="button" class="budget-set-btn" (click)="editBudget()">
+                  <ion-icon name="wallet-outline" aria-hidden="true"></ion-icon>
+                  {{ 'cart.setBudget' | translate }}
+                </button>
+              }
             </div>
 
-            <div class="item-info">
-              <h3 class="item-name">{{ item.name }}</h3>
-              <span class="item-brand">{{ item.brand }}</span>
-              <div class="price-section">
-                <span class="current-price" [class.on-offer]="item.offerPrice !== undefined">{{ unitPrice(item) | clp }}</span>
-                @if (item.offerPrice !== undefined) {
-                  <span class="original-price">{{ item.unitPrice | clp }}</span>
-                }
-                <span class="per-unit">c/u</span>
+            <div class="tablet-order-summary">
+              <h4>{{ 'cart.orderSummary' | translate }}</h4>
+              <div class="summary-line">
+                <span>{{ 'cart.subtotal' | translate:{ count: cart.count(), label: ((cart.count() === 1 ? 'cart.productSingular' : 'cart.productPlural') | translate) } }}</span>
+                <span>{{ cart.total() + cart.savings() | clp }}</span>
               </div>
-            </div>
+              @if (cart.savings() > 0) {
+                <div class="summary-line savings">
+                  <span>{{ 'cart.savings' | translate }}</span>
+                  <span>−{{ cart.savings() | clp }}</span>
+                </div>
+              }
+              <div class="summary-divider"></div>
+              <div class="summary-total-row">
+                <span class="total-title">{{ 'cart.total' | translate }}</span>
+                <span class="total-value" [class.over-budget]="cart.budgetStatus() === 'over'">{{ cart.total() | clp }}</span>
+              </div>
 
-            <div class="item-actions">
-              <div class="qty-stepper" role="group" [attr.aria-label]="'Cantidad de ' + item.name">
-                <button type="button" class="qty-btn"
-                        (click)="cart.decrement(item.productId)"
-                        [attr.aria-label]="item.qty === 1 ? 'Quitar ' + item.name : 'Una unidad menos'">
-                  <ion-icon [name]="item.qty === 1 ? 'trash-outline' : 'remove'" aria-hidden="true"></ion-icon>
-                </button>
-                <span class="qty" aria-live="polite">{{ item.qty }}</span>
-                <button type="button" class="qty-btn" (click)="cart.increment(item.productId)" aria-label="Una unidad más">
-                  <ion-icon name="add" aria-hidden="true"></ion-icon>
-                </button>
+              <div class="summary-actions">
+                <ion-button expand="block" fill="outline" class="take-phone-btn" (click)="openExpressQr()">
+                  <ion-icon name="qr-code-outline" slot="start" aria-hidden="true"></ion-icon>
+                  <span>{{ 'calculator.takeToPhone' | translate }}</span>
+                </ion-button>
+
+                <ion-button fill="clear" color="medium" class="clear-cart-btn" (click)="confirmClear()">
+                  <ion-icon name="trash-outline" slot="start" aria-hidden="true"></ion-icon>
+                  <span>{{ 'cart.clear' | translate }}</span>
+                </ion-button>
               </div>
-              <span class="line-total">{{ lineTotal(item) | clp }}</span>
             </div>
-          </li>
-        }
-      </ul>
+          </div>
+        </div>
+      </div>
     }
 
   </div>
 </ion-content>
 
-@if (!cart.isEmpty()) {
-  <ion-footer class="cart-footer">
-    <div class="summary">
-      <div class="summary-rows">
-        <div class="summary-row">
-          <span>{{ cart.count() }} {{ cart.count() === 1 ? 'producto' : 'productos' }}</span>
-          <span>{{ cart.total() + cart.savings() | clp }}</span>
-        </div>
-        @if (cart.savings() > 0) {
-          <div class="summary-row savings">
-            <span>Ahorraste en ofertas</span>
-            <span>−{{ cart.savings() | clp }}</span>
-          </div>
-        }
-      </div>
-      <div class="summary-total">
-        <span class="total-label">Total a pagar</span>
-        <span class="total-amount" [class.over-budget]="cart.budgetStatus() === 'over'">{{ cart.total() | clp }}</span>
-      </div>
-      <ion-button fill="clear" size="small" color="medium" class="clear-btn" (click)="confirmClear()">
-        <ion-icon name="trash-outline" slot="start" aria-hidden="true"></ion-icon>
-        Vaciar
-      </ion-button>
-    </div>
-  </ion-footer>
+@if (showQrModal()) {
+  <app-express-qr-modal (dismissModal)="closeQrModal()"></app-express-qr-modal>
 }

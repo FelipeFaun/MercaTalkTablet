@@ -4,8 +4,14 @@ import { Preferences } from '@capacitor/preferences';
 import { SpeechRecognition } from '@capacitor-community/speech-recognition';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 
-const LANG = 'es-CL';
+const DEFAULT_LOCALE = 'es-CL';
 const MUTED_KEY = 'mercatalk.voice.muted';
+
+const LOCALE_MAP: Record<string, string> = {
+  es: 'es-CL',
+  en: 'en-US',
+  pt: 'pt-BR',
+};
 
 // Web Speech API (no está en las tipificaciones estándar de TS)
 type WebRecognition = {
@@ -30,6 +36,9 @@ export class VoiceService {
   private zone = inject(NgZone);
   private readonly native = Capacitor.isNativePlatform();
 
+  private readonly _currentLocale = signal<string>(DEFAULT_LOCALE);
+  readonly currentLocale = this._currentLocale.asReadonly();
+
   readonly isListening = signal(false);
   readonly isSpeaking = signal(false);
   readonly muted = signal(false);
@@ -41,6 +50,12 @@ export class VoiceService {
   constructor() {
     void this.detectSupport();
     void this.restoreMuted();
+  }
+
+  /** Configura el locale según el código de idioma activo ('es', 'en', 'pt') */
+  setLocale(langCode: string): void {
+    const locale = LOCALE_MAP[langCode] || DEFAULT_LOCALE;
+    this._currentLocale.set(locale);
   }
 
   // ---------- reconocimiento ----------
@@ -73,7 +88,7 @@ export class VoiceService {
     const permission = await SpeechRecognition.requestPermissions();
     if (permission.speechRecognition !== 'granted') return null;
     const { matches } = await SpeechRecognition.start({
-      language: LANG,
+      language: this._currentLocale(),
       maxResults: 1,
       partialResults: false,
       popup: false,
@@ -88,7 +103,7 @@ export class VoiceService {
     return new Promise(resolve => {
       const recognition = new Ctor();
       this.webRecognition = recognition;
-      recognition.lang = LANG;
+      recognition.lang = this._currentLocale();
       recognition.continuous = false;
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
@@ -114,7 +129,7 @@ export class VoiceService {
     this.isSpeaking.set(true);
     try {
       if (this.native) {
-        await TextToSpeech.speak({ text: clean, lang: LANG, rate: 0.95, pitch: 1.0, volume: 1.0 });
+        await TextToSpeech.speak({ text: clean, lang: this._currentLocale(), rate: 0.95, pitch: 1.0, volume: 1.0 });
         this.isSpeaking.set(false);
       } else {
         await this.speakWeb(clean);
@@ -142,8 +157,17 @@ export class VoiceService {
     return new Promise(resolve => {
       const utterance = new SpeechSynthesisUtterance(text);
       this.webUtterance = utterance;
-      utterance.lang = LANG;
+      const locale = this._currentLocale();
+      utterance.lang = locale;
       utterance.rate = 0.95;
+
+      const voices = speechSynthesis.getVoices();
+      const prefix = locale.slice(0, 2).toLowerCase();
+      const matchedVoice = voices.find(v => v.lang.toLowerCase().startsWith(prefix));
+      if (matchedVoice) {
+        utterance.voice = matchedVoice;
+      }
+
       const done = () => this.zone.run(() => {
         // Ignorar el "end" de una locución que ya fue reemplazada
         if (this.webUtterance === utterance) {

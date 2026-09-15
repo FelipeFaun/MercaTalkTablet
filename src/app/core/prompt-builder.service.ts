@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { LanguageService } from './language.service';
 import { BrandService } from './brand.service';
 import { ChatMessage, Intent } from '../models/chat.model';
 import { OfferView, Product, Recipe } from '../models/catalog.model';
@@ -19,9 +20,12 @@ export const HISTORY_TURNS = 8;
 })
 export class PromptBuilderService {
   private brand = inject(BrandService);
+  private langService = inject(LanguageService);
 
   /** Contexto del personaje (formato que espera el backend: JSON con "es" y "en"). */
-  readonly characterContext = JSON.stringify(buildCharacterContext(this.brand.brand.assistantName, this.brand.brand.storeName));
+  get characterContext(): string {
+    return JSON.stringify(buildCharacterContext(this.brand.currentBrand().assistantName, this.brand.currentBrand().storeName));
+  }
 
   build(userText: string, intent: Intent, history: ChatMessage[]): string {
     const parts: string[] = [];
@@ -29,7 +33,7 @@ export class PromptBuilderService {
     const previous = history.slice(-HISTORY_TURNS);
     if (previous.length > 0) {
       const transcript = previous
-        .map(message => `${message.role === 'user' ? 'Cliente' : this.brand.brand.assistantName}: ${message.text}`)
+        .map(message => `${message.role === 'user' ? 'Cliente' : this.brand.currentBrand().assistantName}: ${message.text}`)
         .join('\n');
       parts.push(`CONVERSACIÓN PREVIA (para entender referencias como "y la otra?" o "esa"):\n${transcript}`);
     }
@@ -44,7 +48,15 @@ export class PromptBuilderService {
       parts.push(`RECETAS:\n${intent.recipes.map(describeRecipe).join('\n\n')}`);
     }
 
-    parts.push(`INSTRUCCIÓN: ${instructionFor(intent)} Usa solo los datos entregados; si no tienes el dato, dilo. Responde en texto plano: sin Markdown, sin asteriscos, sin listas con símbolos ni emoticones.`);
+    const currentLang = this.langService.currentLang();
+    let langInstruction = 'Responde en español de Chile.';
+    if (currentLang === 'en') {
+      langInstruction = 'IMPORTANT: Answer completely in English.';
+    } else if (currentLang === 'pt') {
+      langInstruction = 'IMPORTANTE: Responda totalmente em português.';
+    }
+
+    parts.push(`INSTRUCCIÓN: ${instructionFor(intent)} ${langInstruction} Usa solo los datos entregados; si no tienes el dato, dilo. Responde en texto plano: sin Markdown, sin asteriscos, sin listas con símbolos ni emoticones.`);
     parts.push(`PREGUNTA ACTUAL DEL CLIENTE: "${userText}"`);
 
     return parts.join('\n\n');
@@ -130,6 +142,29 @@ function buildCharacterContext(assistantName: string, storeName: string): Record
       MAKE_ME_A_QUESTION: 'Ask me a question about this product',
       GIVE_ME_FEEDBACK: 'Give feedback on this purchase as if you were a retail expert',
       NO_VALID_ANSWER_FOUND: 'No valid product was found in the text.',
+    },
+    pt: {
+      ASSISTANT_NAME: assistantName.toUpperCase(),
+      DEFAULT_ASSISTANT_PROMT: `Você é ${assistantName}, o assistente virtual do supermercado ${storeName} no Chile: alegre, simpático, prestativo e sempre atencioso. Você ajuda os clientes em suas compras diárias: preços, ofertas, localização de produtos na loja, receitas e o que eles têm no carrinho. Você fala como um amigo próximo e confiável, com gentileza, clareza e bom humor. Nunca use palavrões. Se um assunto for delicado, responda com respeito. Apenas forneça preços e dados que constem nas informações fornecidas; se não souber a informação, diga e ofereça ajuda de outra forma. Responda em texto simples, sem Markdown, sem emojis, sem indicar a contagem de palavras.`,
+      DEFAULT_QUESTION_PROMPT: 'Responda com no máximo 20 palavras a seguinte pergunta. Responda em texto simples: ',
+      USER_CHAT_TEXT_VERY_BRIEF: 'Responda com no máximo 20 palavras a seguinte pergunta. Responda em texto simples: ',
+      USER_CHAT_TEXT_BRIEF: 'Responda com no máximo 50 palavras a seguinte pergunta. Responda em texto simples: ',
+      USER_CHAT_TEXT_NORMAL: 'Responda com no máximo 100 palavras a seguinte pergunta. Responda em texto simples: ',
+      USER_CHAT_TEXT_COMPLETE: 'Responda com no máximo 150 palavras a seguinte pergunta. Responda em texto simples: ',
+      USER_CHAT_TEXT_VERY_COMPLETE: 'Responda com no máximo 200 palavras a seguinte pergunta. Responda em texto simples: ',
+      REWORD_QUESTION: 'Para que uma IA generativa possa ajudar um cliente de supermercado, reformule a seguinte pergunta:',
+      INVALID_ANSWER_PHRASE: 'Não posso responder a essa pergunta, por favor faça outra.',
+      EXPLAIN_BRIEFLY_TO_A_CHILD: 'Explique para um cliente idoso em 50 palavras',
+      I_DONT_UNDERSTAND: 'NÃO ENTENDI',
+      PRIMARY_TEACHER: 'ASSISTENTE PRINCIPAL',
+      PRIMARY_TEACHER_ERROR: 'ERRO DO ASSISTENTE PRINCIPAL',
+      I_DONT_KNOW_HOW_TO_ANSWER: 'Não sei responder a essa pergunta, faça outra pergunta por favor.',
+      ROBOT_COMMAND_WAS_SELECTED: 'Comando de navegação selecionado',
+      OK_DRAWING: 'OK, procurando',
+      DRAW_COMMAND: 'BUSCAR',
+      MAKE_ME_A_QUESTION: 'Faça uma pergunta sobre este produto',
+      GIVE_ME_FEEDBACK: 'Dê feedback sobre esta compra como um especialista em varejo',
+      NO_VALID_ANSWER_FOUND: 'Nenhum produto válido foi encontrado no texto.',
     },
   };
 }

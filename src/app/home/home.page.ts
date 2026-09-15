@@ -1,19 +1,27 @@
-import { Component, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
-  IonButton, IonContent, IonFooter, IonIcon, IonItem, IonLabel, IonList, IonSpinner, IonTextarea
+  IonButton, IonContent, IonFooter, IonIcon, IonSpinner, IonTextarea
 } from '@ionic/angular/standalone';
 
 import { BrandService } from '../core/brand.service';
 import { VoiceService } from '../core/voice.service';
 import { ChatService } from '../services/chat.service';
 import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
+import { TranslatePipe } from '../shared/pipes/translate.pipe';
+
+import { EventCalculatorModalComponent } from '../shared/components/event-calculator-modal/event-calculator-modal.component';
+import { StockAlertModalComponent } from '../shared/components/stock-alert-modal/stock-alert-modal.component';
+import { IncidentReportModalComponent } from '../shared/components/incident-report-modal/incident-report-modal.component';
+import { ExpressListQrModalComponent, QrModalPayload } from '../shared/components/express-qr-modal/express-qr-modal.component';
+
+export type HomeActiveModal = 'eventCalculator' | 'stockAlert' | 'incidentReport' | 'expressQr' | null;
 
 /**
- * Inicio: el avatar con sus opciones y, al conversar, el historial del chat
- * con el input fijo abajo. La lógica de intención, prompt y voz vive en
- * IntentService, PromptBuilderService, ChatService y VoiceService (M3).
+ * Inicio: Jerarquía UX/UI con el Protagonista al centro-superior,
+ * Cuadrícula 2x2 de Atajos Rápidos y Módulos de Valor Añadido (Herramientas Especiales).
+ * Al conversar, despliega el historial interactivo y controles de voz/texto.
  */
 @Component({
   selector: 'app-home',
@@ -22,9 +30,14 @@ import { AppHeaderComponent } from '../shared/components/app-header/app-header.c
   standalone: true,
   imports: [
     AppHeaderComponent,
-    IonContent, IonFooter, IonList, IonItem, IonLabel, IonIcon,
+    IonContent, IonFooter, IonIcon,
     IonButton, IonTextarea, IonSpinner,
     FormsModule,
+    TranslatePipe,
+    EventCalculatorModalComponent,
+    StockAlertModalComponent,
+    IncidentReportModalComponent,
+    ExpressListQrModalComponent
   ]
 })
 export class HomePage {
@@ -33,13 +46,15 @@ export class HomePage {
 
   readonly chat = inject(ChatService);
   readonly voice = inject(VoiceService);
-  readonly brand = this.brandService.brand;
-
+  readonly currentBrand = this.brandService.currentBrand;
+  readonly currentAvatar = computed(() => this.currentBrand().avatar);
   private content = viewChild(IonContent);
-
-  readonly currentAvatar = signal(this.brand.avatars[0]);
   readonly isInConversation = signal(false);
   userMessage = '';
+
+  /** Estado del modal activo en pantalla */
+  readonly activeModal = signal<HomeActiveModal>(null);
+  readonly qrPayload = signal<QrModalPayload | null>(null);
 
   constructor() {
     // Al llegar un mensaje nuevo, bajar al final del historial
@@ -57,11 +72,37 @@ export class HomePage {
     this.voice.stopListening();
   }
 
-  // ---------- conversación ----------
+  // ---------- Modales de Valor Añadido ----------
+
+  openEventCalculator() {
+    this.activeModal.set('eventCalculator');
+  }
+
+  openStockAlert() {
+    this.activeModal.set('stockAlert');
+  }
+
+  openIncidentReport() {
+    this.activeModal.set('incidentReport');
+  }
+
+  openExpressQr(payload?: QrModalPayload) {
+    this.qrPayload.set(payload ?? null);
+    this.activeModal.set('expressQr');
+  }
+
+  closeModal() {
+    this.activeModal.set(null);
+  }
+
+  // ---------- Conversación ----------
 
   startConversation() {
     this.isInConversation.set(true);
     this.userMessage = '';
+    if (this.chat.messages().length <= 1) {
+      this.chat.reset();
+    }
     void this.voice.speak(this.chat.lastReply());
   }
 
@@ -89,7 +130,7 @@ export class HomePage {
     void this.sendMessage();
   }
 
-  // ---------- voz ----------
+  // ---------- Voz ----------
 
   async toggleListening() {
     if (this.voice.isListening()) {
@@ -111,11 +152,7 @@ export class HomePage {
     void this.voice.speak(this.chat.lastReply());
   }
 
-  // ---------- navegación y avatar ----------
-
-  changeAvatar(avatarPath: string) {
-    this.currentAvatar.set(avatarPath);
-  }
+  // ---------- Navegación ----------
 
   navigateToPriceCheck() { void this.router.navigate(['/price-check']); }
   navigateToStoreLocator() { void this.router.navigate(['/store-locator']); }

@@ -1,0 +1,30 @@
+<div class="brand-menu-popover" role="menu">
+  <div class="menu-header">
+    <span class="menu-header-title">Supermercados</span>
+    <span class="menu-header-sub">Selecciona para cambiar tema y avatar</span>
+  </div>
+
+  <div class="menu-items-list">
+    @for (item of brandService.brands; track item.id) {
+      <button type="button"
+              class="menu-item-btn"
+              [class.active]="item.id === brandService.currentBrand().id"
+              role="menuitem"
+              (click)="selectBrand(item.id)">
+        <span class="item-avatar-frame">
+          <img [src]="item.avatar" [alt]="item.assistantName" class="item-avatar-img">
+        </span>
+        <div class="item-text-group">
+          <span class="item-store-name">{{ item.storeName }}</span>
+          <span class="item-assistant-badge">
+            <span class="item-color-indicator" [style.backgroundColor]="item.primaryColor"></span>
+            {{ item.assistantName }}
+          </span>
+        </div>
+        @if (item.id === brandService.currentBrand().id) {
+          <ion-icon name="checkmark-circle" class="item-check-icon" aria-hidden="true"></ion-icon>
+        }
+      </button>
+    }
+  </div>
+</div>

@@ -1,4 +1,4 @@
-<app-header title="Más"></app-header>
+<app-header [title]="'more.title' | translate"></app-header>
 
 <ion-content [fullscreen]="true">
   <div class="container">
@@ -7,8 +7,8 @@
         <ion-item button detail="false" [routerLink]="option.link" routerDirection="forward" class="secondary-option">
           <ion-icon slot="start" [name]="option.icon" aria-hidden="true"></ion-icon>
           <ion-label>
-            <h2>{{ option.label }}</h2>
-            <p>{{ option.detail }}</p>
+            <h2>{{ option.labelKey | translate }}</h2>
+            <p>{{ option.detailKey | translate }}</p>
           </ion-label>
           <ion-icon slot="end" name="chevron-forward" aria-hidden="true"></ion-icon>
         </ion-item>

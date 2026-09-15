@@ -1,5 +1,6 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { LanguageService } from '../core/language.service';
 import { BrandService } from '../core/brand.service';
 import { CartService, unitPriceOf } from '../core/cart.service';
 import { CatalogService } from '../core/catalog.service';
@@ -43,6 +44,7 @@ export class ApiError extends Error {
 })
 export class ChatService {
   private brand = inject(BrandService);
+  private langService = inject(LanguageService);
   private cart = inject(CartService);
   private catalog = inject(CatalogService);
   private intents = inject(IntentService);
@@ -61,10 +63,24 @@ export class ChatService {
     return '';
   });
 
-  readonly welcomeText = `¡Hola! Soy ${this.brand.brand.assistantName}. Puedo decirte precios, ofertas, dónde está cada producto y llevar la cuenta de tu compra. ¿En qué te ayudo?`;
+  get welcomeText(): string {
+    const assistantName = this.brand.currentBrand().assistantName;
+    const storeName = this.brand.currentBrand().storeName;
+    return this.langService.t('home.chatWelcome', { name: assistantName, store: storeName });
+  }
 
   constructor() {
     this.reset();
+
+    // Al cambiar el idioma de la app, si la conversación solo contiene el saludo inicial, actualizarlo reactivamente
+    effect(() => {
+      this.langService.currentLang(); // dependencia reactiva
+      untracked(() => {
+        if (this._messages().length <= 1) {
+          this.reset();
+        }
+      });
+    });
   }
 
   // VOLVER A EMPEZAR LA CONVERSACIÓN
@@ -89,9 +105,10 @@ export class ChatService {
         : await this.askModel(userText, intent, history);
       return this.push('assistant', reply);
     } catch (error) {
+      const defaultErr = this.langService.t('home.cannotAnswer');
       const message = error instanceof ApiError
-        ? `No pude responder: ${error.message}.`
-        : 'No pude responder ahora. Intenta de nuevo en un momento.';
+        ? `${defaultErr}: ${error.message}.`
+        : defaultErr;
       return this.push('assistant', message);
     } finally {
       this._isLoading.set(false);
@@ -235,8 +252,8 @@ export class ChatService {
           command: COMMAND_MAP[responseLength],
           user_text: text,
           context: this.prompts.characterContext,
-          character_name: 'liderin',
-          language: 'es'
+          character_name: this.brand.currentBrand().id,
+          language: this.langService.currentLang()
         }),
         signal: controller.signal
       });

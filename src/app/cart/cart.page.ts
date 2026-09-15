@@ -1,10 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AlertController, IonButton, IonContent, IonFooter, IonIcon } from '@ionic/angular/standalone';
+import { AlertController, IonButton, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { CartService, unitPriceOf } from '../core/cart.service';
 import { CartItem } from '../models/catalog.model';
 import { ClpPipe } from '../shared/pipes/clp.pipe';
+import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
+import { ExpressListQrModalComponent } from '../shared/components/express-qr-modal/express-qr-modal.component';
 
 /** "Mi compra": lo que la persona lleva y cuánto le costará en caja. */
 @Component({
@@ -12,12 +14,30 @@ import { AppHeaderComponent } from '../shared/components/app-header/app-header.c
   templateUrl: './cart.page.html',
   styleUrls: ['./cart.page.scss'],
   standalone: true,
-  imports: [RouterLink, IonContent, IonFooter, IonButton, IonIcon, ClpPipe, AppHeaderComponent],
+  imports: [
+    RouterLink,
+    IonContent,
+    IonButton,
+    IonIcon,
+    ClpPipe,
+    TranslatePipe,
+    AppHeaderComponent,
+    ExpressListQrModalComponent
+  ],
 })
 export class CartPage {
   private alertController = inject(AlertController);
 
   readonly cart = inject(CartService);
+  readonly showQrModal = signal<boolean>(false);
+
+  openExpressQr(): void {
+    this.showQrModal.set(true);
+  }
+
+  closeQrModal(): void {
+    this.showQrModal.set(false);
+  }
 
   unitPrice(item: CartItem): number {
     return unitPriceOf(item);

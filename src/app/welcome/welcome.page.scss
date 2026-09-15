@@ -1,0 +1,373 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.welcome-content {
+  --background: radial-gradient(circle at 50% 28%, var(--brand-light, #ebf4fc) 0%, #ffffff 68%, #f8fafc 100%);
+  height: 100%;
+
+  &::part(scroll) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
+// Barra superior Kiosko
+.welcome-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px max(24px, env(safe-area-inset-right)) 12px max(24px, env(safe-area-inset-left));
+  width: 100%;
+  box-sizing: border-box;
+
+  // Logo MercaTalk discreto sin fondo (2 tonos más oscuro que el fondo)
+  .mercatalk-logo-box {
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+
+    .mercatalk-logo {
+      height: 38px;
+      width: auto;
+      display: block;
+      // Blanco 2 tonos más oscuro que el fondo (efecto marca de agua sutil y discreto)
+      filter: invert(1) opacity(0.22);
+      transition: filter 0.25s ease, transform 0.2s ease;
+
+      &:hover {
+        filter: invert(1) opacity(0.38);
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  // Selector de supermercado arriba a la derecha
+  .brand-switcher-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    padding: 7px 22px 7px 9px;
+    border-radius: 36px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: var(--brand-primary, #0071ce);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .switcher-thumb {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .switcher-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1e293b;
+    }
+
+    ion-icon {
+      font-size: 19px;
+      color: #64748b;
+    }
+  }
+}
+
+// Escenario central Kiosko espaciado para Tablet
+.welcome-center-stage {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 16px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  flex: 1;
+  justify-content: center;
+}
+
+.identity-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+
+  // Avatar agrandado (230px de presencia)
+  .avatar-glow-ring {
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+    padding: 8px;
+    background: linear-gradient(135deg, var(--brand-primary, #0071ce), var(--brand-secondary, #005a9e));
+    box-shadow: 0 16px 48px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.35);
+    margin-bottom: 24px;
+    animation: pulseRing 3.5s ease-in-out infinite alternate;
+
+    .avatar-frame {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #ffffff;
+      border: 5px solid #ffffff;
+
+      .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+
+  .welcome-headings {
+    transition: opacity 0.22s ease-in-out, transform 0.22s ease-in-out;
+
+    &.fading {
+      opacity: 0.18;
+      transform: translateY(-4px);
+    }
+
+    .main-title {
+      font-size: 46px;
+      font-weight: 900;
+      color: #0f172a;
+      margin: 0 0 8px 0;
+      letter-spacing: -0.8px;
+    }
+
+    // Slogan debajo del nombre del supermercado
+    .store-tagline-hero {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--brand-primary, #0071ce);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin: 0 0 12px 0;
+    }
+
+    .sub-title {
+      font-size: 20px;
+      color: #64748b;
+      margin: 0 0 18px 0;
+      font-weight: 500;
+
+      strong {
+        color: var(--brand-primary, #0071ce);
+      }
+    }
+
+    .prompt-text {
+      font-size: 19px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+      background: rgba(var(--brand-primary-rgb, 0, 113, 206), 0.08);
+      padding: 8px 28px;
+      border-radius: 28px;
+      display: inline-block;
+    }
+  }
+}
+
+// Las 3 tarjetas de idioma centradas y ampliadas para Tablet
+.languages-centered-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  width: 100%;
+  max-width: 1140px;
+
+  .lang-kiosk-card {
+    background: #ffffff;
+    border: 2.5px solid #e2e8f0;
+    border-radius: 28px;
+    padding: 34px 24px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    min-height: 240px;
+    outline: none;
+
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--brand-primary, #0071ce);
+      box-shadow: 0 20px 48px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.25);
+
+      .card-flag-badge {
+        transform: scale(1.12);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+      }
+
+      .card-action-icon ion-icon {
+        color: var(--brand-primary, #0071ce);
+        transform: translateX(5px);
+      }
+    }
+
+    &:active {
+      transform: translateY(-3px) scale(1.01);
+    }
+
+    .card-flag-badge {
+      width: 96px;
+      height: 64px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px auto;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      transition: all 0.25s ease;
+
+      .card-flag-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+      }
+
+      .flag-emoji {
+        font-size: 44px;
+        line-height: 1;
+      }
+    }
+
+    .card-text-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      align-items: center;
+      gap: 8px;
+
+      .lang-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
+        letter-spacing: -0.3px;
+      }
+
+      .lang-sub {
+        font-size: 16px;
+        font-weight: 600;
+        color: #64748b;
+      }
+    }
+
+    .card-action-icon {
+      margin-top: 16px;
+
+      ion-icon {
+        font-size: 26px;
+        color: #94a3b8;
+        transition: all 0.2s ease;
+      }
+    }
+  }
+}
+
+// Pie de página del kiosko
+.welcome-kiosk-footer {
+  padding: 16px 0 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  transition: opacity 0.22s ease-in-out;
+
+  &.fading {
+    opacity: 0.35;
+  }
+
+  .kiosk-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid #e2e8f0;
+    padding: 12px 28px;
+    border-radius: 28px;
+    font-size: 14.5px;
+    color: #64748b;
+    font-weight: 600;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+
+    .pulse-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulseGreen 2s infinite;
+    }
+
+    ion-icon {
+      font-size: 19px;
+      color: #3b82f6;
+    }
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    box-shadow: 0 10px 30px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.25);
+    transform: translateY(0);
+  }
+  100% {
+    box-shadow: 0 20px 56px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.45);
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes pulseGreen {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}

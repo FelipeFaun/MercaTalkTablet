@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AlertController, provideIonicAngular } from '@ionic/angular/standalone';
 
+import { Preferences } from '@capacitor/preferences';
+
 import { CartPage } from './cart.page';
 import { CartService } from '../core/cart.service';
 import { Product } from '../models/catalog.model';
@@ -17,6 +19,7 @@ describe('CartPage', () => {
   let cart: CartService;
 
   beforeEach(async () => {
+    await Preferences.clear();
     await TestBed.configureTestingModule({
       imports: [CartPage],
       providers: [provideRouter([]), provideIonicAngular()],
@@ -25,6 +28,8 @@ describe('CartPage', () => {
     fixture = TestBed.createComponent(CartPage);
     component = fixture.componentInstance;
     cart = TestBed.inject(CartService);
+    cart.clear();
+    cart.setBudget(null);
     fixture.detectChanges();
   });
 
@@ -73,6 +78,7 @@ describe('CartPage', () => {
     });
 
     it('editBudget ignora un monto inválido o negativo', async () => {
+      cart.setBudget(null);
       const alertController = TestBed.inject(AlertController);
       const createSpy = spyOn(alertController, 'create').and.callThrough();
 

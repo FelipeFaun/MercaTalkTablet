@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common'; // ← Añade esto
 import { 
-  IonContent
+  IonContent, IonIcon
 } from '@ionic/angular/standalone';
 import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
 import { RouterModule } from '@angular/router';
 import { RecipesService, Recipe } from '../services/recipes.service';
+import { TranslatePipe } from '../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-recipes',
@@ -16,7 +17,9 @@ import { RecipesService, Recipe } from '../services/recipes.service';
     AppHeaderComponent,
     CommonModule, // ← Esto incluye UpperCasePipe
     RouterModule,
-    IonContent
+    IonContent,
+    IonIcon,
+    TranslatePipe
   ]
 })
 export class RecipesPage {

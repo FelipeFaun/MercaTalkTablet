@@ -1,0 +1,92 @@
+<div class="modal-backdrop" (click)="onDismiss()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    
+    <!-- Encabezado -->
+    <div class="modal-header">
+      <div class="header-title-group">
+        <div class="header-icon-badge">
+          <ion-icon name="megaphone-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <div>
+          <h2 class="modal-title">{{ 'incident.title' | translate }}</h2>
+          <p class="modal-subtitle">{{ 'incident.subtitle' | translate }}</p>
+        </div>
+      </div>
+      <button type="button" class="close-btn" (click)="onDismiss()" aria-label="Cerrar">
+        <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      
+      @if (!submitted()) {
+        <!-- Opciones con Pictogramas Claros (Regla Solicitada) -->
+        <div class="incidents-grid">
+          
+          <!-- Opción 1: Derrame / Líquido en el suelo -->
+          <button type="button" class="incident-card spill-card" (click)="selectIncident('spill')">
+            <div class="pictogram-circle spill-pic">
+              <ion-icon name="water-outline" class="pic-icon" aria-hidden="true"></ion-icon>
+            </div>
+            <div class="incident-info">
+              <h3 class="incident-title">{{ 'incident.spill' | translate }}</h3>
+              <p class="incident-desc">Alerta rápida para secado y prevención de caídas</p>
+            </div>
+            <ion-icon name="chevron-forward" class="chevron-arrow" aria-hidden="true"></ion-icon>
+          </button>
+
+          <!-- Opción 2: Problema de aseo en pasillos -->
+          <button type="button" class="incident-card cleaning-card" (click)="selectIncident('cleaning')">
+            <div class="pictogram-circle cleaning-pic">
+              <ion-icon name="brush-outline" class="pic-icon" aria-hidden="true"></ion-icon>
+            </div>
+            <div class="incident-info">
+              <h3 class="incident-title">{{ 'incident.cleaning' | translate }}</h3>
+              <p class="incident-desc">Aseo de pasillo, retiro de cajas vacías o residuos</p>
+            </div>
+            <ion-icon name="chevron-forward" class="chevron-arrow" aria-hidden="true"></ion-icon>
+          </button>
+
+          <!-- Opción 3: Otro inconveniente -->
+          <button type="button" class="incident-card other-card" (click)="selectIncident('other')">
+            <div class="pictogram-circle other-pic">
+              <ion-icon name="chatbubbles-outline" class="pic-icon" aria-hidden="true"></ion-icon>
+            </div>
+            <div class="incident-info">
+              <h3 class="incident-title">{{ 'incident.other' | translate }}</h3>
+              <p class="incident-desc">Precios no coincidentes, carritos u otro detalle operativo</p>
+            </div>
+            <ion-icon name="chevron-forward" class="chevron-arrow" aria-hidden="true"></ion-icon>
+          </button>
+
+        </div>
+      } @else {
+        <!-- Confirmación y Retorno en 5 Segundos (Regla Solicitada) -->
+        <div class="response-screen" role="alert">
+          <div class="check-circle-pulse">
+            <ion-icon name="checkmark" aria-hidden="true"></ion-icon>
+          </div>
+
+          <h3 class="thanks-message">{{ 'incident.thankYou' | translate }}</h3>
+
+          <div class="countdown-wrapper">
+            <div class="timer-badge">
+              <ion-icon name="timer-outline" aria-hidden="true"></ion-icon>
+              <span>{{ 'incident.returning' | translate:{ seconds: countdownSeconds() } }}</span>
+            </div>
+
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" [style.width.%]="(countdownSeconds() / 5) * 100"></div>
+            </div>
+          </div>
+
+          <button type="button" class="return-now-btn" (click)="onDismiss()">
+            {{ 'incident.returnNow' | translate }}
+          </button>
+        </div>
+      }
+
+    </div>
+
+  </div>
+</div>

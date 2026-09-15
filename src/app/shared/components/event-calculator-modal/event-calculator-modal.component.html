@@ -1,0 +1,314 @@
+<div class="modal-backdrop" (click)="onDismiss()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    
+    <!-- Encabezado -->
+    <div class="modal-header">
+      <div class="header-title-group">
+        <div class="header-icon-badge">
+          <ion-icon name="calculator-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <div>
+          <h2 class="modal-title">{{ 'calculator.title' | translate }}</h2>
+          <p class="modal-subtitle">{{ 'calculator.subtitle' | translate }}</p>
+        </div>
+      </div>
+      <button type="button" class="close-btn" (click)="onDismiss()" aria-label="Cerrar">
+        <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </div>
+
+    <!-- Contenido Scrollable -->
+    <div class="modal-body">
+      
+      <!-- Paso 1: Tipo de Evento -->
+      <div class="step-section">
+        <span class="step-label">{{ 'calculator.step1' | translate }}</span>
+        <div class="event-selector-grid">
+          <button type="button"
+                  class="event-btn"
+                  [class.active]="selectedEvent() === 'asado'"
+                  (click)="setEvent('asado')">
+            <ion-icon name="flame-outline" class="event-icon" aria-hidden="true"></ion-icon>
+            <span class="event-name">{{ 'calculator.eventAsado' | translate }}</span>
+          </button>
+
+          <button type="button"
+                  class="event-btn"
+                  [class.active]="selectedEvent() === 'cumple'"
+                  (click)="setEvent('cumple')">
+            <ion-icon name="gift-outline" class="event-icon" aria-hidden="true"></ion-icon>
+            <span class="event-name">{{ 'calculator.eventCumple' | translate }}</span>
+          </button>
+
+          <button type="button"
+                  class="event-btn"
+                  [class.active]="selectedEvent() === 'fiesta'"
+                  (click)="setEvent('fiesta')">
+            <ion-icon name="sparkles-outline" class="event-icon" aria-hidden="true"></ion-icon>
+            <span class="event-name">{{ 'calculator.eventFiesta' | translate }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Paso 2: Cantidad de Personas -->
+      <div class="step-section">
+        <span class="step-label">{{ 'calculator.step2' | translate }}</span>
+        <div class="range-selector-grid">
+          <button type="button"
+                  class="range-btn"
+                  [class.active]="selectedRange() === '1-5'"
+                  (click)="setRange('1-5')">
+            <ion-icon name="people-outline" class="range-icon" aria-hidden="true"></ion-icon>
+            <span class="range-name">{{ 'calculator.range1to5' | translate }}</span>
+          </button>
+
+          <button type="button"
+                  class="range-btn"
+                  [class.active]="selectedRange() === '6-10'"
+                  (click)="setRange('6-10')">
+            <ion-icon name="people" class="range-icon" aria-hidden="true"></ion-icon>
+            <span class="range-name">{{ 'calculator.range6to10' | translate }}</span>
+          </button>
+
+          <button type="button"
+                  class="range-btn"
+                  [class.active]="selectedRange() === '10+'"
+                  (click)="setRange('10+')">
+            <ion-icon name="apps-outline" class="range-icon" aria-hidden="true"></ion-icon>
+            <span class="range-name">{{ 'calculator.rangeMore10' | translate }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Preferencias Rápidas: Opción Sin Alcohol con compensación inteligente -->
+      <div class="preferences-bar">
+        <button type="button"
+                class="preference-pill"
+                [class.active]="isAlcoholExcluded()"
+                (click)="toggleAlcoholExclusion()">
+          <ion-icon [name]="isAlcoholExcluded() ? 'checkmark-circle' : 'water-outline'" aria-hidden="true"></ion-icon>
+          <span>{{ 'calculator.noAlcohol' | translate }}</span>
+        </button>
+
+        @if (hasAlcoholCompensated()) {
+          <div class="compensation-banner" role="status">
+            <ion-icon name="sparkles-outline" aria-hidden="true"></ion-icon>
+            <span>{{ 'calculator.alcoholCompensated' | translate }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Resultado: Lista Estimada con Pasillos -->
+      <div class="result-section">
+        <div class="result-header">
+          <h3 class="result-title">
+            <ion-icon name="list-circle" aria-hidden="true"></ion-icon>
+            {{ 'calculator.estimatedList' | translate }}
+          </h3>
+
+          <div class="result-header-actions">
+            <span class="items-count">{{ calculateItems().length }} productos</span>
+            <button type="button" class="add-suggested-btn" (click)="openAddSuggestedModal()">
+              <ion-icon name="add-circle-outline" aria-hidden="true"></ion-icon>
+              <span>{{ 'calculator.addSuggested' | translate }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Banner Contextual de Compensación al Quitar Productos -->
+        @if (lastRemovedItem(); as removed) {
+          <div class="removal-compensation-card" role="region" aria-label="Compensación de producto">
+            <div class="rc-header">
+              <div class="rc-title-group">
+                <div class="rc-badge-icon">
+                  <ion-icon name="swap-horizontal-outline" aria-hidden="true"></ion-icon>
+                </div>
+                <div>
+                  <div class="rc-title-row">
+                    <span class="rc-title">{{ 'calculator.removedNotification' | translate:{ name: removed.name } }}</span>
+                    <button type="button" class="rc-undo-btn" (click)="undoLastRemoval()">
+                      <ion-icon name="sync-outline" aria-hidden="true"></ion-icon>
+                      <span>{{ 'calculator.undo' | translate }}</span>
+                    </button>
+                  </div>
+                  <p class="rc-subtitle">{{ 'calculator.compensationQuestion' | translate }}</p>
+                </div>
+              </div>
+
+              <button type="button" class="rc-dismiss-btn" (click)="dismissRemovalPrompt()" [attr.aria-label]="'calculator.close' | translate">
+                <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+              </button>
+            </div>
+
+            <!-- Opciones Rápidas para Añadir o Compensar -->
+            <div class="rc-actions-container">
+              @if (topCompensationSuggestion(); as topSug) {
+                <button type="button" class="rc-primary-comp-btn" (click)="applyRemovalCompensation(topSug)">
+                  <ion-icon [name]="topSug.icon" aria-hidden="true"></ion-icon>
+                  <span>{{ 'calculator.autoCompensateWith' | translate:{ name: topSug.name } }}</span>
+                </button>
+              }
+
+              <div class="rc-chips-list">
+                @for (sug of removalCompensationSuggestions(); track sug.id) {
+                  @if (sug.id !== topCompensationSuggestion()?.id) {
+                    <button type="button" class="rc-chip-btn" (click)="applyRemovalCompensation(sug)">
+                      <ion-icon name="add-circle-outline" aria-hidden="true"></ion-icon>
+                      <span>+ {{ sug.name }}</span>
+                    </button>
+                  }
+                }
+
+                <button type="button" class="rc-chip-btn rc-more-chip" (click)="openAddSuggestedModal(removed.category)">
+                  <ion-icon name="grid-outline" aria-hidden="true"></ion-icon>
+                  <span>{{ 'calculator.seeMoreOptions' | translate }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
+        <ul class="calculated-items-list">
+          @for (item of calculateItems(); track item.id) {
+            <li class="calc-item-row" [class.is-compensated]="item.isCompensated">
+              <div class="calc-item-left">
+                <div class="item-badge-icon" [class.alcohol-badge]="item.isAlcohol">
+                  <ion-icon [name]="item.isAlcohol ? 'beer-outline' : item.category === 'drinks' ? 'water-outline' : 'pricetag-outline'" aria-hidden="true"></ion-icon>
+                </div>
+                <div class="item-details">
+                  <div class="item-name-row">
+                    <span class="item-name">{{ item.name }}</span>
+                    @if (item.isCompensated) {
+                      <span class="compensated-chip">{{ 'calculator.compensatedBadge' | translate }}</span>
+                    }
+                  </div>
+                  <span class="item-aisle-tag">
+                    <ion-icon name="navigate-outline" aria-hidden="true"></ion-icon>
+                    {{ item.aisle }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="calc-item-right">
+                <div class="item-pricing">
+                  <span class="item-quantity">{{ item.quantityText }}</span>
+                  <span class="item-price">{{ item.totalPrice | clp }}</span>
+                </div>
+
+                <div class="item-row-actions">
+                  <button type="button" class="row-action-btn replace-btn" (click)="openReplaceModal(item.id)" [attr.aria-label]="'calculator.replace' | translate">
+                    <ion-icon name="swap-horizontal-outline" aria-hidden="true"></ion-icon>
+                  </button>
+                  <button type="button" class="row-action-btn remove-btn" (click)="removeItem(item.id)" [attr.aria-label]="'calculator.remove' | translate">
+                    <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+                  </button>
+                </div>
+              </div>
+            </li>
+          }
+        </ul>
+
+        <!-- Total y Acciones del Asistente -->
+        <div class="calc-summary-card">
+          <div class="total-row">
+            <span class="total-label">{{ 'calculator.totalEstimated' | translate }}</span>
+            <span class="total-amount">{{ totalEstimated() | clp }}</span>
+          </div>
+
+          @if (addedToCartSuccess()) {
+            <div class="success-toast" role="alert">
+              <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+              <span>{{ 'calculator.addedSuccess' | translate }}</span>
+            </div>
+          }
+
+          <div class="calc-actions-grid">
+            <button type="button" class="action-btn qr-action-btn" (click)="triggerExpressQr()">
+              <ion-icon name="qr-code-outline" aria-hidden="true"></ion-icon>
+              <span>{{ 'calculator.takeToPhone' | translate }}</span>
+            </button>
+
+            <button type="button" class="action-btn cart-action-btn" (click)="addAllToCart()">
+              <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
+              <span>{{ 'calculator.addAllToCart' | translate }}</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Panel de Productos Sugeridos (Modal Secundario para Elegir/Cambiar) -->
+    @if (showSuggestedModal()) {
+      <div class="suggested-catalog-overlay" (click)="closeSuggestedModal()">
+        <div class="suggested-catalog-sheet" (click)="$event.stopPropagation()">
+          
+          <div class="sheet-header">
+            <div>
+              <h3 class="sheet-title">
+                {{ replaceTargetId() ? ('calculator.replace' | translate) : ('calculator.suggestedCatalogTitle' | translate) }}
+              </h3>
+              <p class="sheet-sub">{{ 'calculator.suggestedCatalogSubtitle' | translate }}</p>
+            </div>
+            <button type="button" class="sheet-close-btn" (click)="closeSuggestedModal()" aria-label="Cerrar">
+              <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+            </button>
+          </div>
+
+          <!-- Filtro de Categorías -->
+          <div class="catalog-filters-bar">
+            <button type="button" class="cat-filter-btn" [class.active]="selectedCategoryFilter() === 'all'" (click)="selectedCategoryFilter.set('all')">
+              {{ 'calculator.categoryAll' | translate }}
+            </button>
+            <button type="button" class="cat-filter-btn" [class.active]="selectedCategoryFilter() === 'protein'" (click)="selectedCategoryFilter.set('protein')">
+              {{ 'calculator.categoryProteins' | translate }}
+            </button>
+            <button type="button" class="cat-filter-btn" [class.active]="selectedCategoryFilter() === 'sides'" (click)="selectedCategoryFilter.set('sides')">
+              {{ 'calculator.categorySides' | translate }}
+            </button>
+            <button type="button" class="cat-filter-btn" [class.active]="selectedCategoryFilter() === 'drinks'" (click)="selectedCategoryFilter.set('drinks')">
+              {{ 'calculator.categoryDrinks' | translate }}
+            </button>
+            <button type="button" class="cat-filter-btn" [class.active]="selectedCategoryFilter() === 'supplies'" (click)="selectedCategoryFilter.set('supplies')">
+              {{ 'calculator.categorySupplies' | translate }}
+            </button>
+          </div>
+
+          <!-- Listado de Productos Sugeridos -->
+          <div class="suggested-items-grid">
+            @for (item of getSuggestedCatalog(); track item.id) {
+              <div class="suggested-product-card" [class.already-in-list]="isItemInList(item.id)">
+                <div class="s-card-left">
+                  <div class="s-icon-box">
+                    <ion-icon [name]="item.icon" aria-hidden="true"></ion-icon>
+                  </div>
+                  <div class="s-info">
+                    <h4 class="s-name">{{ item.name }}</h4>
+                    <span class="s-aisle">{{ item.aisle }}</span>
+                    <span class="s-price">{{ item.unitPrice | clp }}</span>
+                  </div>
+                </div>
+
+                <button type="button"
+                        class="s-select-btn"
+                        [class.btn-added]="isItemInList(item.id)"
+                        (click)="selectSuggestedProduct(item)">
+                  @if (isItemInList(item.id)) {
+                    <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+                    <span>{{ 'calculator.alreadyAdded' | translate }}</span>
+                  } @else {
+                    <ion-icon name="add-circle-outline" aria-hidden="true"></ion-icon>
+                    <span>{{ replaceTargetId() ? ('calculator.replace' | translate) : ('calculator.addSuggested' | translate) }}</span>
+                  }
+                </button>
+              </div>
+            }
+          </div>
+
+        </div>
+      </div>
+    }
+
+  </div>
+</div>

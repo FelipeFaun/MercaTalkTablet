@@ -1,3 +1,25 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
+
+  <!-- Guardia de Pantalla: Alerta exclusiva para pantallas pequeñas de celular -->
+  <aside class="tablet-guard-overlay" aria-live="polite">
+    <div class="guard-card">
+      <div class="guard-icon-container">
+        <ion-icon name="tablet-landscape-outline" class="guard-device-icon" aria-hidden="true"></ion-icon>
+        <div class="guard-rotate-badge">
+          <ion-icon name="sync-outline" class="guard-sync-icon" aria-hidden="true"></ion-icon>
+        </div>
+      </div>
+
+      <h1 class="guard-title">{{ 'tabletGuard.title' | translate }}</h1>
+      <p class="guard-subtitle">
+        {{ 'tabletGuard.desc' | translate }}
+      </p>
+
+      <div class="guard-instruction">
+        <ion-icon name="information-circle" class="instruction-icon" aria-hidden="true"></ion-icon>
+        <span>{{ 'tabletGuard.tip' | translate }}</span>
+      </div>
+    </div>
+  </aside>
 </ion-app>

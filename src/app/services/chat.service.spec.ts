@@ -3,6 +3,7 @@ import { Preferences } from '@capacitor/preferences';
 
 import { ChatService, toPlainText } from './chat.service';
 import { CartService } from '../core/cart.service';
+import { LanguageService } from '../core/language.service';
 
 function fakeReply(reply: string): Response {
   return new Response(JSON.stringify({ reply }), { status: 200, headers: { 'Content-Type': 'application/json' } });
@@ -11,6 +12,7 @@ function fakeReply(reply: string): Response {
 describe('ChatService', () => {
   let service: ChatService;
   let cart: CartService;
+  let langService: LanguageService;
   let fetchSpy: jasmine.Spy<typeof fetch>;
 
   beforeEach(async () => {
@@ -18,6 +20,8 @@ describe('ChatService', () => {
     TestBed.configureTestingModule({});
     service = TestBed.inject(ChatService);
     cart = TestBed.inject(CartService);
+    langService = TestBed.inject(LanguageService);
+    langService.setLanguage('es');
     fetchSpy = spyOn(window, 'fetch');
     await new Promise(resolve => setTimeout(resolve, 0));
   });
@@ -26,6 +30,23 @@ describe('ChatService', () => {
     expect(service.messages().length).toBe(1);
     expect(service.messages()[0].role).toBe('assistant');
     expect(service.lastReply()).toContain('Liderín');
+  });
+
+  it('actualiza el saludo del asistente automáticamente al cambiar de idioma (en, pt, es)', () => {
+    // Cambiar a inglés
+    langService.setLanguage('en');
+    service.reset();
+    expect(service.lastReply()).toContain('Hello! I am Liderín');
+
+    // Cambiar a portugués
+    langService.setLanguage('pt');
+    service.reset();
+    expect(service.lastReply()).toContain('Olá! Sou o Liderín');
+
+    // Volver a español
+    langService.setLanguage('es');
+    service.reset();
+    expect(service.lastReply()).toContain('¡Hola! Soy Liderín');
   });
 
   it('el mensaje del usuario y la respuesta quedan en el historial (C4)', async () => {

@@ -1,9 +1,9 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar class="blue-toolbar">
     <div class="header-content">
       <div class="logo-section">
-        <a routerLink="/home" class="logo-link" [attr.aria-label]="'Ir al inicio de ' + brand.storeName">
-          <img [src]="brand.logo" [alt]="brand.storeName" class="logo">
+        <a routerLink="/home" class="logo-link" [attr.aria-label]="'Ir al inicio de ' + brandService.currentBrand().storeName">
+          <img [src]="brandService.currentBrand().logo" [alt]="brandService.currentBrand().storeName" class="logo">
         </a>
       </div>
 
@@ -13,7 +13,38 @@
         </div>
       }
 
-      <div class="empty-space"></div>
+      <div class="header-controls-group">
+        <!-- Selector de Supermercado -->
+        <div class="brand-dropdown-wrapper">
+          <button type="button"
+                  class="brand-trigger-btn"
+                  (click)="openBrandMenu($event)"
+                  [attr.aria-label]="'header.changeSupermarket' | translate:{ store: brandService.currentBrand().storeName }">
+            <span class="trigger-avatar-thumb">
+              <img [src]="brandService.currentBrand().avatar" [alt]="brandService.currentBrand().assistantName">
+            </span>
+            <span class="trigger-store-name">{{ brandService.currentBrand().storeName }}</span>
+            <ion-icon name="chevron-down" class="trigger-chevron" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+
+        <!-- Selector de Idioma (al lado derecho del supermercado) -->
+        <div class="lang-dropdown-wrapper">
+          <button type="button"
+                  class="lang-trigger-btn"
+                  (click)="openLanguageMenu($event)"
+                  [attr.aria-label]="'header.changeLanguage' | translate">
+            <span class="trigger-flag-icon">
+              <img [src]="languageService.currentLanguageOption().flagIcon"
+                   [alt]="languageService.currentLanguageOption().nativeLabel"
+                   class="trigger-flag-img">
+            </span>
+            <span class="trigger-lang-code">{{ languageService.currentLang().toUpperCase() }}</span>
+            <ion-icon name="chevron-down" class="trigger-chevron" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </div>
+
     </div>
   </ion-toolbar>
 </ion-header>

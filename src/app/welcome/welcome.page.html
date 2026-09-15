@@ -1,0 +1,82 @@
+<ion-content [fullscreen]="true" class="welcome-content">
+  <!-- Barra superior Kiosko -->
+  <header class="welcome-topbar">
+    <!-- Logo MercaTalk discreto sin fondo (2 tonos más oscuro que el fondo) -->
+    <div class="mercatalk-logo-box">
+      <img src="assets/brand/logo.svg" alt="MercaTalk" class="mercatalk-logo">
+    </div>
+
+    <!-- Botón selector de supermercado arriba a la derecha -->
+    <button type="button"
+            class="brand-switcher-btn"
+            (click)="openBrandMenu($event)"
+            [attr.aria-label]="'welcome.switchStore' | translate">
+      <span class="switcher-thumb">
+        <img [src]="brandService.currentBrand().avatar" [alt]="brandService.currentBrand().assistantName">
+      </span>
+      <span class="switcher-name">{{ brandService.currentBrand().storeName }}</span>
+      <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+    </button>
+  </header>
+
+  <!-- Escenario central Kiosko (Amplitud y ergonomía para Tablet) -->
+  <main class="welcome-center-stage">
+    
+    <!-- Identidad y Asistente Oficial con Avatar grande -->
+    <div class="identity-block">
+      <div class="avatar-glow-ring">
+        <div class="avatar-frame">
+          <img [src]="brandService.currentBrand().avatar" [alt]="brandService.currentBrand().assistantName" class="avatar-img">
+        </div>
+      </div>
+
+      <div class="welcome-headings" [class.fading]="isFading()">
+        <h1 class="main-title">{{ 'welcome.storeWelcome' | translate:{ store: brandService.currentBrand().storeName } }}</h1>
+        <p class="store-tagline-hero">{{ getStoreTagline() }}</p>
+        <p class="sub-title">{{ 'welcome.sub' | translate }} · <strong>{{ brandService.currentBrand().assistantName }}</strong></p>
+        <p class="prompt-text">{{ 'welcome.prompt' | translate }}</p>
+      </div>
+    </div>
+
+    <!-- Las 3 tarjetas de idioma centradas y ampliadas -->
+    <div class="languages-centered-grid">
+      @for (lang of languageService.languages; track lang.code) {
+        <button type="button"
+                class="lang-kiosk-card"
+                (click)="onSelectLanguage(lang)">
+          <div class="card-flag-badge">
+            <img [src]="lang.flagIcon" [alt]="lang.nativeLabel" class="card-flag-img">
+          </div>
+
+          <div class="card-text-group">
+            <h2 class="lang-title">{{ lang.nativeLabel }}</h2>
+            <span class="lang-sub">
+              @if (lang.code === 'es') {
+                Toca para comenzar
+              } @else if (lang.code === 'en') {
+                Tap to start
+              } @else {
+                Toque para começar
+              }
+            </span>
+          </div>
+
+          <div class="card-action-icon">
+            <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon>
+          </div>
+        </button>
+      }
+    </div>
+
+  </main>
+
+  <!-- Pie de página informativo del kiosko -->
+  <footer class="welcome-kiosk-footer" [class.fading]="isFading()">
+    <div class="kiosk-status-pill">
+      <span class="pulse-dot"></span>
+      <ion-icon name="hand-left-outline" aria-hidden="true"></ion-icon>
+      <span>{{ 'welcome.kioskFooter' | translate }}</span>
+    </div>
+  </footer>
+</ion-content>
+

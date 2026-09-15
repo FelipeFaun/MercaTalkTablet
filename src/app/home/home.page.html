@@ -2,139 +2,237 @@
 
 <ion-content [fullscreen]="true">
   <div class="container">
-    <div class="chat-layout" [class.in-conversation]="isInConversation()">
 
-      @if (!isInConversation()) {
-        <!-- Avatar Liderin - SIEMPRE VISIBLE -->
-        <div class="avatar-section">
+    @if (!isInConversation()) {
+      <!-- ======================================================== -->
+      <!-- VISTA PRINCIPAL: JERARQUÍA VISUAL CLARA PARA KIOSKO      -->
+      <!-- ======================================================== -->
+      <div class="home-hierarchy-wrapper">
 
-          <!-- Selector de avatar - ARRIBA -->
-          <div class="avatar-selector-minimal">
-            <div class="selector-label">
-              <ion-icon name="person-circle-outline" aria-hidden="true"></ion-icon>
-              <span>Elige tu avatar</span>
-            </div>
-            <div class="selector-buttons">
-              @for (avatar of brand.avatars; track avatar; let i = $index) {
-                <button type="button" class="selector-btn"
-                        [class.active]="currentAvatar() === avatar"
-                        [attr.aria-pressed]="currentAvatar() === avatar"
-                        (click)="changeAvatar(avatar)">
-                  <ion-icon [name]="i === 0 ? 'sparkles' : 'star'" aria-hidden="true"></ion-icon>
-                  <span>Avatar {{ i + 1 }}</span>
-                </button>
-              }
-            </div>
-          </div>
-
-          <img [src]="currentAvatar()" [alt]="brand.assistantName" class="avatar-img">
-        </div>
-
-        <!-- OPCIONES DE CONVERSACIÓN -->
-        <div class="content-section">
-          <div class="options-section">
-            <h2>Conversa conmigo para poder ayudarte</h2>
-
-            <ion-list class="options-list">
-              <!-- Opción principal -->
-              <ion-item button class="main-option" lines="none" (click)="startConversation()">
-                <ion-icon slot="start" name="chatbubbles" aria-hidden="true"></ion-icon>
-                <ion-label>Comenzar a conversar</ion-label>
-              </ion-item>
-
-              <!-- Opciones secundarias -->
-              <ion-item button class="secondary-option" lines="none" (click)="navigateToPriceCheck()">
-                <ion-icon slot="start" name="pricetag" aria-hidden="true"></ion-icon>
-                <ion-label>Pregúntame por el precio de un producto</ion-label>
-              </ion-item>
-
-              <ion-item button class="secondary-option" lines="none" (click)="navigateToStoreLocator()">
-                <ion-icon slot="start" name="location" aria-hidden="true"></ion-icon>
-                <ion-label>Pregúntame dónde comprar un producto</ion-label>
-              </ion-item>
-
-              <ion-item button class="secondary-option" lines="none" (click)="navigateToOffers()">
-                <ion-icon slot="start" name="megaphone" aria-hidden="true"></ion-icon>
-                <ion-label>Pregúntame por ofertas</ion-label>
-              </ion-item>
-
-              <ion-item button class="secondary-option" lines="none" (click)="navigateToRecipes()">
-                <ion-icon slot="start" name="restaurant" aria-hidden="true"></ion-icon>
-                <ion-label>Pregúntame como hacer una receta de cocina</ion-label>
-              </ion-item>
-
-              <ion-item button class="secondary-option" lines="none" (click)="navigateToAppDownload()">
-                <ion-icon slot="start" name="phone-portrait" aria-hidden="true"></ion-icon>
-                <ion-label>Descarga nuestra App Móvil para registrar tus compras</ion-label>
-              </ion-item>
-            </ion-list>
-          </div>
-        </div>
-
-      } @else {
-        <!-- CONVERSACIÓN: historial completo, el mensaje del usuario también se ve (C4) -->
-        <div class="chat-response-section">
-
-          <div class="chat-header">
-            <div class="chat-controls-left">
-              <ion-button fill="clear" size="small" (click)="endConversation()" class="back-btn">
-                <ion-icon name="arrow-back" slot="start" aria-hidden="true"></ion-icon>
-                Volver a opciones
-              </ion-button>
+        <!-- 🌟 1. EL PROTAGONISTA (CENTRO-SUPERIOR) -->
+        <section class="protagonist-section">
+          <div class="protagonist-card">
+            
+            <div class="protagonist-avatar-box">
+              <div class="avatar-ring">
+                <img [src]="currentAvatar()" [alt]="currentBrand().assistantName" class="avatar-img">
+              </div>
+              <div class="online-indicator" title="Asistente activo"></div>
             </div>
 
-            <div class="chat-controls-right">
-              <ion-button fill="clear" size="small" (click)="toggleMute()" [color]="voice.muted() ? 'medium' : 'primary'" class="mute-btn"
-                          [attr.aria-pressed]="voice.muted()">
-                <ion-icon [name]="voice.muted() ? 'volume-mute' : 'volume-high'" slot="start" aria-hidden="true"></ion-icon>
-                {{ voice.muted() ? 'Silenciado' : 'Silenciar' }}
-              </ion-button>
+            <div class="protagonist-content">
+              <div class="assistant-tagline-badge">
+                <span class="assistant-name">{{ currentBrand().assistantName }}</span>
+                <span class="assistant-role">{{ 'home.officialAssistant' | translate:{ store: currentBrand().storeName } }}</span>
+              </div>
+              
+              <p class="protagonist-speech">
+                {{ 'home.welcome' | translate:{ name: currentBrand().assistantName } }}
+              </p>
 
-              <ion-button fill="clear" size="small" (click)="repeatVoice()" [disabled]="voice.isSpeaking() || voice.muted()" class="repeat-btn">
-                <ion-icon [name]="voice.isSpeaking() ? 'play' : 'reload'" slot="start" aria-hidden="true"></ion-icon>
-                {{ voice.isSpeaking() ? 'Reproduciendo...' : 'Repetir' }}
-              </ion-button>
-            </div>
-          </div>
-
-          <ol class="message-list" aria-live="polite" [attr.aria-label]="'Conversación con ' + brand.assistantName">
-            @for (message of chat.messages(); track message.at) {
-              <li class="message" [class.from-user]="message.role === 'user'" [class.from-assistant]="message.role === 'assistant'">
-                @if (message.role === 'assistant') {
-                  <img [src]="currentAvatar()" alt="" class="bubble-avatar">
-                }
-                <div class="bubble">
-                  <p class="chat-text">{{ message.text }}</p>
+              <!-- Botón Principal Destacado: Comenzar a conversar -->
+              <button type="button"
+                      class="hero-start-chat-btn"
+                      (click)="startConversation()"
+                      [attr.aria-label]="'home.startChat' | translate">
+                <div class="chat-btn-pulse">
+                  <ion-icon name="chatbubbles" aria-hidden="true"></ion-icon>
                 </div>
-              </li>
-            }
-            @if (chat.isLoading()) {
-              <li class="message from-assistant">
+                <div class="chat-btn-text">
+                  <span class="chat-btn-title">{{ 'home.startChat' | translate }}</span>
+                  <span class="chat-btn-sub">{{ 'home.startChatDesc' | translate }}</span>
+                </div>
+                <ion-icon name="arrow-forward" class="chat-btn-arrow" aria-hidden="true"></ion-icon>
+              </button>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ⚡ 2. CUADRÍCULA DE ATAJOS RÁPIDOS (2x2) -->
+        <section class="shortcuts-section">
+          <div class="shortcuts-grid-2x2">
+            
+            <!-- Atajo 1: Consultar Precio -->
+            <button type="button" class="shortcut-card price-shortcut" (click)="navigateToPriceCheck()">
+              <div class="shortcut-icon-box">
+                <ion-icon name="barcode-outline" aria-hidden="true"></ion-icon>
+              </div>
+              <div class="shortcut-info">
+                <h3 class="shortcut-title">{{ 'home.checkPrice' | translate }}</h3>
+                <p class="shortcut-desc">{{ 'home.checkPriceDesc' | translate }}</p>
+              </div>
+              <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
+            </button>
+
+            <!-- Atajo 2: Dónde Encontrar -->
+            <button type="button" class="shortcut-card locator-shortcut" (click)="navigateToStoreLocator()">
+              <div class="shortcut-icon-box">
+                <ion-icon name="map-outline" aria-hidden="true"></ion-icon>
+              </div>
+              <div class="shortcut-info">
+                <h3 class="shortcut-title">{{ 'home.whereToFind' | translate }}</h3>
+                <p class="shortcut-desc">{{ 'home.whereToFindDesc' | translate }}</p>
+              </div>
+              <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
+            </button>
+
+            <!-- Atajo 3: Ofertas Destacadas -->
+            <button type="button" class="shortcut-card offers-shortcut" (click)="navigateToOffers()">
+              <div class="shortcut-icon-box">
+                <ion-icon name="pricetags-outline" aria-hidden="true"></ion-icon>
+              </div>
+              <div class="shortcut-info">
+                <h3 class="shortcut-title">{{ 'home.featuredOffers' | translate }}</h3>
+                <p class="shortcut-desc">{{ 'home.featuredOffersDesc' | translate }}</p>
+              </div>
+              <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
+            </button>
+
+            <!-- Atajo 4: Recetas con Ofertas -->
+            <button type="button" class="shortcut-card recipes-shortcut" (click)="navigateToRecipes()">
+              <div class="shortcut-icon-box">
+                <ion-icon name="restaurant-outline" aria-hidden="true"></ion-icon>
+              </div>
+              <div class="shortcut-info">
+                <h3 class="shortcut-title">{{ 'home.recipesWithOffers' | translate }}</h3>
+                <p class="shortcut-desc">{{ 'home.recipesWithOffersDesc' | translate }}</p>
+              </div>
+              <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
+            </button>
+
+          </div>
+        </section>
+
+        <!-- 3. MÓDULOS DE VALOR AÑADIDO (HERRAMIENTAS ESPECIALES) -->
+        <section class="special-tools-section">
+          <div class="section-title-bar">
+            <ion-icon name="apps-outline" class="title-icon" aria-hidden="true"></ion-icon>
+            <h3 class="section-heading">{{ 'home.specialTools' | translate }}</h3>
+            <span class="section-line"></span>
+          </div>
+
+          <div class="tools-grid-4">
+            
+            <!-- Herramienta 1: Calculadora de Eventos -->
+            <button type="button" class="tool-btn event-tool" (click)="openEventCalculator()">
+              <div class="tool-icon-wrapper">
+                <ion-icon name="calculator-outline" aria-hidden="true"></ion-icon>
+              </div>
+              <div class="tool-text">
+                <span class="tool-name">{{ 'home.eventCalculator' | translate }}</span>
+                <span class="tool-hint">{{ 'home.eventCalculatorDesc' | translate }}</span>
+              </div>
+              <span class="tool-action-tag">Calcular</span>
+            </button>
+
+            <!-- Herramienta 2: Lista Express / QR -->
+            <button type="button" class="tool-btn qr-tool" (click)="openExpressQr()">
+              <div class="tool-icon-wrapper">
+                <ion-icon name="qr-code-outline" aria-hidden="true"></ion-icon>
+              </div>
+              <div class="tool-text">
+                <span class="tool-name">{{ 'home.expressList' | translate }}</span>
+                <span class="tool-hint">{{ 'home.expressListDesc' | translate }}</span>
+              </div>
+              <span class="tool-action-tag">Generar</span>
+            </button>
+
+            <!-- Herramienta 3: Reporte de Stock Cruzado -->
+            <button type="button" class="tool-btn stock-tool" (click)="openStockAlert()">
+              <div class="tool-icon-wrapper">
+                <ion-icon name="cube-outline" aria-hidden="true"></ion-icon>
+              </div>
+              <div class="tool-text">
+                <span class="tool-name">{{ 'home.stockCrossCheck' | translate }}</span>
+                <span class="tool-hint">{{ 'home.stockCrossCheckDesc' | translate }}</span>
+              </div>
+              <span class="tool-action-tag">Consultar</span>
+            </button>
+
+            <!-- Herramienta 4: Sugerencias y Avisos Operativos -->
+            <button type="button" class="tool-btn incident-tool" (click)="openIncidentReport()">
+              <div class="tool-icon-wrapper">
+                <ion-icon name="megaphone-outline" aria-hidden="true"></ion-icon>
+              </div>
+              <div class="tool-text">
+                <span class="tool-name">{{ 'home.incidentReport' | translate }}</span>
+                <span class="tool-hint">{{ 'home.incidentReportDesc' | translate }}</span>
+              </div>
+              <span class="tool-action-tag">Avisar</span>
+            </button>
+
+          </div>
+        </section>
+
+      </div>
+
+    } @else {
+      <!-- ======================================================== -->
+      <!-- MODO CONVERSACIÓN LIBRE (VOZ Y TEXTO CON HISTORIAL)     -->
+      <!-- ======================================================== -->
+      <div class="chat-response-section">
+
+        <div class="chat-header">
+          <div class="chat-controls-left">
+            <ion-button fill="clear" size="small" (click)="endConversation()" class="back-btn">
+              <ion-icon name="arrow-back" slot="start" aria-hidden="true"></ion-icon>
+              {{ 'home.backToOptions' | translate }}
+            </ion-button>
+          </div>
+
+          <div class="chat-controls-right">
+            <ion-button fill="clear" size="small" (click)="toggleMute()" [color]="voice.muted() ? 'medium' : 'primary'" class="mute-btn"
+                        [attr.aria-pressed]="voice.muted()">
+              <ion-icon [name]="voice.muted() ? 'volume-mute' : 'volume-high'" slot="start" aria-hidden="true"></ion-icon>
+              {{ (voice.muted() ? 'home.muted' : 'home.mute') | translate }}
+            </ion-button>
+
+            <ion-button fill="clear" size="small" (click)="repeatVoice()" [disabled]="voice.isSpeaking() || voice.muted()" class="repeat-btn">
+              <ion-icon [name]="voice.isSpeaking() ? 'play' : 'reload'" slot="start" aria-hidden="true"></ion-icon>
+              {{ (voice.isSpeaking() ? 'home.playing' : 'home.repeat') | translate }}
+            </ion-button>
+          </div>
+        </div>
+
+        <ol class="message-list" aria-live="polite" [attr.aria-label]="'home.chatAriaLabel' | translate:{ name: currentBrand().assistantName }">
+          @for (message of chat.messages(); track message.at) {
+            <li class="message" [class.from-user]="message.role === 'user'" [class.from-assistant]="message.role === 'assistant'">
+              @if (message.role === 'assistant') {
                 <img [src]="currentAvatar()" alt="" class="bubble-avatar">
-                <div class="bubble typing-indicator">
-                  <ion-spinner name="crescent"></ion-spinner>
-                  <span>{{ brand.assistantName }} está escribiendo...</span>
-                </div>
-              </li>
-            }
-          </ol>
-        </div>
-      }
+              }
+              <div class="bubble">
+                <p class="chat-text">{{ message.text }}</p>
+              </div>
+            </li>
+          }
+          @if (chat.isLoading()) {
+            <li class="message from-assistant">
+              <img [src]="currentAvatar()" alt="" class="bubble-avatar">
+              <div class="bubble typing-indicator">
+                <ion-spinner name="crescent"></ion-spinner>
+                <span>{{ currentBrand().assistantName }} {{ 'home.isTyping' | translate }}</span>
+              </div>
+            </li>
+          }
+        </ol>
+      </div>
+    }
 
-    </div>
   </div>
 </ion-content>
 
+<!-- FOOTER DEL CHAT (SÓLO ACTIVO EN MODO CONVERSACIÓN) -->
 @if (isInConversation()) {
   <ion-footer class="chat-footer">
     <div class="integrated-chat-input">
       <ion-textarea
         [(ngModel)]="userMessage"
-        [placeholder]="voice.recognitionSupported() ? 'Escribe o usa el micrófono...' : 'Escribe tu mensaje...'"
+        [placeholder]="(voice.recognitionSupported() ? 'home.inputPlaceholder' : 'home.typePlaceholder') | translate"
         rows="1"
         autoGrow="true"
         enterkeyhint="send"
-        aria-label="Mensaje para el asistente"
+        [attr.aria-label]="'home.textareaAriaLabel' | translate"
         (keydown.enter)="onEnter($event)"
         class="chat-textarea"
       ></ion-textarea>
@@ -142,7 +240,7 @@
       <ion-button (click)="toggleListening()"
                   [color]="voice.isListening() ? 'danger' : 'primary'"
                   [disabled]="!voice.recognitionSupported() || chat.isLoading()"
-                  [attr.aria-label]="voice.isListening() ? 'Dejar de escuchar' : 'Hablar'"
+                  [attr.aria-label]="(voice.isListening() ? 'home.stopListening' : 'home.startListening') | translate"
                   [attr.aria-pressed]="voice.isListening()"
                   class="voice-btn">
         <ion-icon [name]="voice.isListening() ? 'mic-off' : 'mic'" aria-hidden="true"></ion-icon>
@@ -150,7 +248,7 @@
 
       <ion-button (click)="sendMessage()"
                   [disabled]="!userMessage.trim() || chat.isLoading()"
-                  aria-label="Enviar"
+                  [attr.aria-label]="'home.send' | translate"
                   class="send-btn">
         <ion-icon name="send" aria-hidden="true"></ion-icon>
       </ion-button>
@@ -159,14 +257,33 @@
     @if (voice.isListening()) {
       <div class="voice-status" role="status">
         <ion-spinner name="crescent"></ion-spinner>
-        <span>Escuchando... Habla ahora</span>
+        <span>{{ 'home.listening' | translate }}</span>
       </div>
     }
     @if (!voice.recognitionSupported()) {
       <p class="browser-support-message">
         <ion-icon name="information-circle" aria-hidden="true"></ion-icon>
-        <span>El micrófono no está disponible aquí; puedes escribir.</span>
+        <span>{{ 'home.micUnavailable' | translate }}</span>
       </p>
     }
   </ion-footer>
+}
+
+<!-- ======================================================== -->
+<!-- MODALES INTERACTIVOS DE HERRAMIENTAS ESPECIALES          -->
+<!-- ======================================================== -->
+@if (activeModal() === 'eventCalculator') {
+  <app-event-calculator-modal (dismissModal)="closeModal()" (openExpressQr)="openExpressQr($event)"></app-event-calculator-modal>
+}
+
+@if (activeModal() === 'stockAlert') {
+  <app-stock-alert-modal (dismissModal)="closeModal()"></app-stock-alert-modal>
+}
+
+@if (activeModal() === 'incidentReport') {
+  <app-incident-report-modal (dismissModal)="closeModal()"></app-incident-report-modal>
+}
+
+@if (activeModal() === 'expressQr') {
+  <app-express-qr-modal [payload]="qrPayload()" (dismissModal)="closeModal()"></app-express-qr-modal>
 }

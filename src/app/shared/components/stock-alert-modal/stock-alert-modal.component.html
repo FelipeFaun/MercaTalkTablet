@@ -1,0 +1,126 @@
+<div class="modal-backdrop" (click)="onDismiss()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    
+    <!-- Encabezado -->
+    <div class="modal-header">
+      <div class="header-title-group">
+        <div class="header-icon-badge">
+          <ion-icon name="cube-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <div>
+          <h2 class="modal-title">{{ 'stock.title' | translate }}</h2>
+          <p class="modal-subtitle">{{ 'stock.subtitle' | translate }}</p>
+        </div>
+      </div>
+      <button type="button" class="close-btn" (click)="onDismiss()" aria-label="Cerrar">
+        <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      
+      <!-- Buscador de Producto -->
+      <div class="search-box-wrapper">
+        <div class="input-with-icon">
+          <ion-icon name="search" aria-hidden="true"></ion-icon>
+          <input type="text"
+                 [(ngModel)]="searchQuery"
+                 (input)="onSearchChange()"
+                 [placeholder]="'stock.searchPlaceholder' | translate"
+                 class="search-input" />
+          @if (searchQuery) {
+            <button type="button" class="clear-search-btn" (click)="searchQuery = ''; onSearchChange()">
+              <ion-icon name="close-circle" aria-hidden="true"></ion-icon>
+            </button>
+          }
+        </div>
+
+        <!-- Resultados de Búsqueda Flotantes -->
+        @if (searchResults().length > 0) {
+          <ul class="search-results-dropdown">
+            @for (p of searchResults(); track p.id) {
+              <li class="result-item" (click)="selectProduct(p)">
+                <span class="p-name">{{ p.name }}</span>
+                <span class="p-meta">{{ p.brand }} · {{ p.price | clp }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <!-- Sugerencias Rápidas de Productos -->
+      <div class="sample-chips-row">
+        <span class="chips-label">Prueba rápida:</span>
+        <div class="chips-list">
+          @for (p of sampleProducts(); track p.id) {
+            <button type="button" class="chip-btn" (click)="selectProduct(p)">
+              {{ p.name }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Detalle del Producto y Alerta de Stock Cruzado -->
+      @if (selectedStockInfo(); as info) {
+        <div class="product-stock-card">
+          
+          <div class="product-info-row">
+            <div class="product-img-box">
+              <img [src]="info.product.image" [alt]="info.product.name" (error)="handleImgError($event)" />
+            </div>
+            <div class="product-meta">
+              <h3 class="prod-title">{{ info.product.name }}</h3>
+              <span class="prod-brand">{{ info.product.brand }}</span>
+              <span class="prod-price">{{ info.product.price | clp }}</span>
+              <div class="location-badge">
+                <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+                <span>{{ info.aisle }} · {{ info.section }} · {{ info.shelf }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alerta de Stock en Góndola vs Bodega (Condición Solicitada) -->
+          <div class="stock-status-banner">
+            <div class="banner-icon-box">
+              <ion-icon name="alert-circle" aria-hidden="true"></ion-icon>
+            </div>
+            <div class="banner-text">
+              <h4 class="warning-title">{{ 'stock.emptyShelfWarning' | translate }}</h4>
+              <p class="warehouse-badge">
+                <ion-icon name="storefront-outline" aria-hidden="true"></ion-icon>
+                {{ 'stock.inWarehouse' | translate:{ count: info.warehouseStock } }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Acción: Avisar a Reponedor -->
+          @if (!staffNotified()) {
+            <div class="action-container">
+              <button type="button" class="notify-btn" (click)="notifyStaff()">
+                <ion-icon name="megaphone-outline" aria-hidden="true"></ion-icon>
+                <span>{{ 'stock.notifyStaffBtn' | translate }}</span>
+              </button>
+            </div>
+          } @else {
+            <!-- Confirmación Exitosa (Regla Solicitada) -->
+            <div class="success-notified-banner" role="status">
+              <div class="success-icon-box">
+                <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+              </div>
+              <div class="success-content">
+                <p class="success-message">{{ 'stock.notifiedSuccess' | translate }}</p>
+                <span class="eta-text">
+                  <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+                  Tiempo estimado de reposición: ~3 a 5 minutos
+                </span>
+              </div>
+            </div>
+          }
+
+        </div>
+      }
+
+    </div>
+
+  </div>
+</div>

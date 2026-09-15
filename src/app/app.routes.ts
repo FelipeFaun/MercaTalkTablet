@@ -1,8 +1,12 @@
 import { Routes } from '@angular/router';
 
-// Todas las páginas viven dentro de la barra de pestañas (TabsPage).
-// Las URLs se mantienen: /home, /price-check, /cart, /offers, /more, /recipes...
 export const routes: Routes = [
+  // Pantalla de Reposo / Inicio Kiosko con 3 idiomas centrados
+  {
+    path: 'welcome',
+    loadComponent: () => import('./welcome/welcome.page').then((m) => m.WelcomePage),
+  },
+  // Contenedor principal de la app con barra de pestañas (TabsPage)
   {
     path: '',
     loadComponent: () => import('./tabs/tabs.page').then((m) => m.TabsPage),
@@ -48,6 +52,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'home',
+    redirectTo: 'welcome',
   },
 ];

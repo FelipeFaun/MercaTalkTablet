@@ -7,7 +7,7 @@
 
 // Navbar igual que ofertas
 .blue-toolbar {
-  --background: #0071ce;
+  --background: var(--brand-header-bg, #0071ce);
   --min-height: 70px;
   --border-width: 0;
   
@@ -53,16 +53,17 @@ ion-content {
 }
 
 .container {
-  max-width: 1200px;
+  max-width: var(--tablet-content-max-width, 1360px);
   margin: 0 auto;
-  padding: 20px;
+  padding: 28px 36px;
+  box-sizing: border-box;
 }
 
 .recipe-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 25px;
-  margin-top: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 24px;
 }
 
 .recipe-card {
@@ -267,7 +268,7 @@ ion-content {
   }
 }
 .explanation-banner {
-  background: linear-gradient(135deg, #0071ce 0%, #005a9e 100%);
+  background: var(--brand-gradient, linear-gradient(135deg, #0071ce 0%, #005a9e 100%));
   border-radius: 12px;
   padding: 20px 25px;
   margin-bottom: 30px;
@@ -275,7 +276,7 @@ ion-content {
   align-items: center;
   gap: 20px;
   color: white;
-  box-shadow: 0 4px 20px rgba(0, 113, 206, 0.3);
+  box-shadow: 0 4px 20px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.3);
   
   .banner-icon {
     font-size: 3rem;

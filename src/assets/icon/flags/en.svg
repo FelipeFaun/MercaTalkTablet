@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 741 390" width="100%" height="100%">
+  <!-- 13 Rayas Alternas Rojas y Blancas -->
+  <rect width="741" height="390" fill="#B22234"/>
+  <path d="M0,30 H741 M0,90 H741 M0,150 H741 M0,210 H741 M0,270 H741 M0,330 H741" stroke="#FFFFFF" stroke-width="30"/>
+  <!-- Cantón Azul (Field) -->
+  <rect width="296.4" height="210" fill="#3C3B6E"/>
+  <!-- Estrellas representativas -->
+  <g fill="#FFFFFF">
+    <g id="sRow6">
+      <polygon points="25,18 28,26 36,26 30,31 32,39 25,34 18,39 20,31 14,26 22,26" transform="translate(0,0) scale(0.65)"/>
+      <polygon points="25,18 28,26 36,26 30,31 32,39 25,34 18,39 20,31 14,26 22,26" transform="translate(48,0) scale(0.65)"/>
+      <polygon points="25,18 28,26 36,26 30,31 32,39 25,34 18,39 20,31 14,26 22,26" transform="translate(96,0) scale(0.65)"/>
+      <polygon points="25,18 28,26 36,26 30,31 32,39 25,34 18,39 20,31 14,26 22,26" transform="translate(144,0) scale(0.65)"/>
+      <polygon points="25,18 28,26 36,26 30,31 32,39 25,34 18,39 20,31 14,26 22,26" transform="translate(192,0) scale(0.65)"/>
+      <polygon points="25,18 28,26 36,26 30,31 32,39 25,34 18,39 20,31 14,26 22,26" transform="translate(240,0) scale(0.65)"/>
+    </g>
+    <g id="sRow5" transform="translate(24, 21)">
+      <polygon points="25,18 28,26 36,26 30,31 32,39 25,34 18,39 20,31 14,26 22,26" transform="translate(0,0) scale(0.65)"/>
+      <polygon points="25,18 28,26 36,26 30,31 32,39 25,34 18,39 20,31 14,26 22,26" transform="translate(48,0) scale(0.65)"/>
+      <polygon points="25,18 28,26 36,26 30,31 32,39 25,34 18,39 20,31 14,26 22,26" transform="translate(96,0) scale(0.65)"/>
+      <polygon points="25,18 28,26 36,26 30,31 32,39 25,34 18,39 20,31 14,26 22,26" transform="translate(144,0) scale(0.65)"/>
+      <polygon points="25,18 28,26 36,26 30,31 32,39 25,34 18,39 20,31 14,26 22,26" transform="translate(192,0) scale(0.65)"/>
+    </g>
+    <use href="#sRow6" y="42"/>
+    <use href="#sRow5" y="42"/>
+    <use href="#sRow6" y="84"/>
+    <use href="#sRow5" y="84"/>
+    <use href="#sRow6" y="126"/>
+    <use href="#sRow5" y="126"/>
+    <use href="#sRow6" y="168"/>
+  </g>
+</svg>

@@ -21,9 +21,9 @@ ion-content {
 /* BARRA AZUL SUPERIOR                                        */
 /* ========================================================= */
 .blue-toolbar {
-  --background: #0071ce !important;
+  --background: var(--brand-header-bg, #0071ce) !important;
   --min-height: 70px;
-  background: #0071ce !important;
+  background: var(--brand-header-bg, #0071ce) !important;
 }
 
 /* header-content */

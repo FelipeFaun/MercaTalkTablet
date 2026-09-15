@@ -1,13 +1,15 @@
-<app-header title="Recetas Destacadas"></app-header>
+<app-header [title]="'recipes.title' | translate"></app-header>
 
 <ion-content [fullscreen]="true">
   <div class="container">
     <!-- Banner explicativo mejorado -->
     <div class="explanation-banner">
-      <div class="banner-icon">🍳</div>
+      <div class="banner-icon">
+        <ion-icon name="restaurant-outline" aria-hidden="true"></ion-icon>
+      </div>
       <div class="banner-message">
-        <h2>¡Aprovecha las ofertas del día!</h2>
-        <p>Con estas recetas especiales podrás cocinar delicioso y ahorrar dinero usando los productos en promoción.</p>
+        <h2>{{ 'recipes.bannerTitle' | translate }}</h2>
+        <p>{{ 'recipes.bannerDesc' | translate }}</p>
       </div>
       <div class="banner-arrow"></div>
     </div>
@@ -19,16 +21,16 @@
           <div class="recipe-image" [style.background-image]="'url(' + recipe.image + ')'"></div>
           
           <div class="recipe-content">
-            <div class="recipe-category">Receta Destacada</div>
+            <div class="recipe-category">{{ 'recipes.cardBadge' | translate }}</div>
             <h2 class="recipe-title">{{ recipe.name }}</h2>
             
             <div class="recipe-meta">
               <span>{{ recipe.time }}</span>
-              <span>{{ recipe.ingredients.length }} INGREDIENTES</span>
+              <span>{{ 'recipes.ingredientsCount' | translate:{ count: recipe.ingredients.length } }}</span>
             </div>
             
             <div class="recipe-ingredient">
-              <strong>Ingrediente principal:</strong> {{ recipe.mainIngredient }}
+              <strong>{{ 'recipes.mainIngredient' | translate }}</strong> {{ recipe.mainIngredient }}
             </div>
             
             <p class="recipe-description">
@@ -36,7 +38,7 @@
             </p>
             
             <button class="view-recipe-btn" (click)="viewRecipe(recipe)">
-              Ver Receta
+              {{ 'recipes.viewRecipe' | translate }}
             </button>
           </div>
         </div>

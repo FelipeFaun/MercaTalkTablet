@@ -1,4 +1,4 @@
-<app-header title="Ofertas"></app-header>
+<app-header [title]="'offers.title' | translate"></app-header>
 
 <ion-content [fullscreen]="true">
   <div class="container">
@@ -22,12 +22,12 @@
             
             <div class="product-details">
               <span class="category">{{ offer.category }}</span>
-              <span class="valid-until">Válido hasta: {{ offer.validUntil | date:'d MMM' }}</span>
+              <span class="valid-until">{{ 'offers.validUntil' | translate:{ date: (offer.validUntil | date:'d MMM') } }}</span>
             </div>
 
             <button type="button" class="add-button" (click)="addToCart(offer)">
               <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
-              Agregar a mi compra
+              {{ 'offers.addToCart' | translate }}
             </button>
           </div>
         </div>

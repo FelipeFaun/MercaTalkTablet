@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { IonBadge, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular/standalone';
 import { CartService } from '../core/cart.service';
 import { BrandService } from '../core/brand.service';
+import { TranslatePipe } from '../shared/pipes/translate.pipe';
 
 /**
  * Navegación principal de la app móvil (barra inferior).
@@ -12,12 +13,12 @@ import { BrandService } from '../core/brand.service';
   templateUrl: './tabs.page.html',
   styleUrls: ['./tabs.page.scss'],
   standalone: true,
-  imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonBadge],
+  imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonBadge, TranslatePipe],
 })
 export class TabsPage {
   private cartService = inject(CartService);
   private brandService = inject(BrandService);
 
   readonly cartCount = this.cartService.count;
-  readonly assistantName = this.brandService.brand.assistantName;
+  readonly assistantName = computed(() => this.brandService.currentBrand().assistantName);
 }

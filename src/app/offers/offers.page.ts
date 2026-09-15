@@ -7,6 +7,7 @@ import { OffersService, Offer } from '../services/offers.service';
 import { CatalogService } from '../core/catalog.service';
 import { CartFeedbackService } from '../core/cart-feedback.service';
 import { ClpPipe } from '../shared/pipes/clp.pipe';
+import { TranslatePipe } from '../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-offers',
@@ -17,7 +18,7 @@ import { ClpPipe } from '../shared/pipes/clp.pipe';
     AppHeaderComponent,
     RouterModule, // ← Añadir esto para routerLink
     IonContent, IonIcon,
-    ClpPipe, DatePipe
+    ClpPipe, DatePipe, TranslatePipe
   ]
 })
 export class OffersPage {

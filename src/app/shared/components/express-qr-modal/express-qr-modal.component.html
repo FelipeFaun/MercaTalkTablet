@@ -1,0 +1,81 @@
+<div class="modal-backdrop" (click)="onDismiss()">
+  <div class="modal-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    
+    <!-- Encabezado -->
+    <div class="modal-header">
+      <div class="header-title-group">
+        <div class="header-icon-badge">
+          <ion-icon name="qr-code-outline" aria-hidden="true"></ion-icon>
+        </div>
+        <div>
+          <h2 class="modal-title">{{ 'expressQr.title' | translate }}</h2>
+          <p class="modal-subtitle">{{ modalTitle() }}</p>
+        </div>
+      </div>
+      <button type="button" class="close-btn" (click)="onDismiss()" aria-label="Cerrar">
+        <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      
+      <!-- Contenedor del Código QR Dinámico -->
+      <div class="qr-display-container">
+        
+        <div class="qr-frame">
+          <div class="qr-corner top-left"></div>
+          <div class="qr-corner top-right"></div>
+          <div class="qr-corner bottom-left"></div>
+          <div class="qr-corner bottom-right"></div>
+          <img [src]="qrImageSrc" alt="Código QR de Ruta y Lista Express" class="qr-image" />
+        </div>
+
+        <!-- Texto Exacto Solicitado -->
+        <p class="qr-instruction-text">
+          <ion-icon name="camera-outline" aria-hidden="true"></ion-icon>
+          <span>{{ 'expressQr.instruction' | translate }}</span>
+        </p>
+
+      </div>
+
+      <!-- Resumen de Lista / Ruta al Teléfono -->
+      <div class="items-summary-card">
+        <div class="summary-header">
+          <span class="summary-title">{{ 'expressQr.summaryTitle' | translate }}</span>
+          <span class="items-badge">{{ displayItems().length }} ítems</span>
+        </div>
+
+        <ul class="qr-items-list">
+          @for (item of displayItems(); track item.name) {
+            <li class="qr-item-row">
+              <div class="item-left">
+                <span class="bullet-dot"></span>
+                <span class="item-name">{{ item.name }}</span>
+              </div>
+              <span class="item-aisle-pill">
+                <ion-icon name="navigate-outline" aria-hidden="true"></ion-icon>
+                {{ item.aisle }}
+              </span>
+            </li>
+          }
+        </ul>
+
+        @if (estimatedTotal() > 0) {
+          <div class="total-bar">
+            <span>Total estimado:</span>
+            <span class="total-val">{{ estimatedTotal() | clp }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="bottom-actions">
+        <button type="button" class="done-btn" (click)="onDismiss()">
+          <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+          <span>{{ 'expressQr.close' | translate }}</span>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+</div>

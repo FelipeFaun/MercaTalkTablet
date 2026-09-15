@@ -4,6 +4,7 @@ import {
 } from '@ionic/angular/standalone';
 import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
 import { RouterModule } from '@angular/router';
+import { TranslatePipe } from '../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-app-download',
@@ -13,7 +14,8 @@ import { RouterModule } from '@angular/router';
   imports: [
     AppHeaderComponent,
     RouterModule,
-    IonContent
+    IonContent,
+    TranslatePipe
   ]
 })
 export class AppDownloadPage {
