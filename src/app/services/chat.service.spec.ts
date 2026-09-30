@@ -76,7 +76,7 @@ describe('ChatService', () => {
   });
 
   it('limpia el Markdown de la respuesta (2.6)', async () => {
-    fetchSpy.and.resolveTo(fakeReply('**Leche Entera Soprole** a *999* 🔥\n\n\n- oferta'));
+    fetchSpy.and.resolveTo(fakeReply('**Leche Entera Soprole** a *999*\n\n\n- oferta'));
     await service.send('precio de la leche');
     expect(service.lastReply()).toBe('Leche Entera Soprole a 999\n\noferta');
   });
@@ -183,6 +183,6 @@ describe('ChatService', () => {
 
 describe('toPlainText', () => {
   it('quita negritas, títulos, viñetas y emojis', () => {
-    expect(toPlainText('# Título\n**negrita** y *cursiva* `código` 🍳')).toBe('Título\nnegrita y cursiva código');
+    expect(toPlainText('# Título\n**negrita** y *cursiva* `código` \u{1F373}')).toBe('Título\nnegrita y cursiva código');
   });
 });

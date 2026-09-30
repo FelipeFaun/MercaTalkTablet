@@ -3,64 +3,101 @@
 <ion-content [fullscreen]="true" class="search-mode">
   <div class="container">
     
+    <!-- Banner de Encabezado Moderno con Identidad de Marca Dinámica -->
+    <header class="price-check-hero">
+      <div class="hero-brand-badge">
+        <div class="assistant-avatar-ring">
+          <img [src]="currentBrand().avatar" [alt]="currentBrand().assistantName" class="avatar-img">
+        </div>
+        <div class="hero-brand-text">
+          <div class="store-pill">
+            <span class="store-name">{{ currentBrand().storeName }}</span>
+            <span class="pill-dot"></span>
+            <span class="assistant-tag">Asistente {{ currentBrand().assistantName }}</span>
+          </div>
+          <h2 class="hero-title">{{ 'priceCheck.searchTitle' | translate }} & {{ 'priceCheck.scanTitle' | translate }}</h2>
+          <p class="hero-desc">{{ 'home.checkPriceDesc' | translate }}</p>
+        </div>
+      </div>
+    </header>
+
     <!-- Panel superior en Tablet: Búsqueda y Escáner en Paralelo -->
     <div class="tablet-search-scan-grid">
-      <!-- Formulario de búsqueda -->
+      
+      <!-- Panel 1: Búsqueda por Nombre -->
       <div class="search-section card-box">
-        <div class="section-title">
-          <ion-icon name="search-outline"></ion-icon>
-          <h3>{{ 'priceCheck.searchTitle' | translate }}</h3>
+        <div class="card-box-header">
+          <div class="box-icon-wrapper search-theme-icon">
+            <ion-icon name="search-outline"></ion-icon>
+          </div>
+          <div class="box-title-group">
+            <h3>{{ 'priceCheck.searchTitle' | translate }}</h3>
+            <p>Escribe el nombre o marca para consultar el precio</p>
+          </div>
         </div>
         
-        <ion-item class="tablet-input-item">
-          <ion-input 
-            [(ngModel)]="searchQuery"
-            [placeholder]="'priceCheck.placeholder' | translate"
-            (keyup.enter)="searchProducts()"
-            clearInput>
-          </ion-input>
-        </ion-item>
+        <div class="search-input-container">
+          <ion-item class="tablet-input-item" lines="none">
+            <ion-icon name="search-outline" class="input-inline-icon" slot="start"></ion-icon>
+            <ion-input 
+              [(ngModel)]="searchQuery"
+              [placeholder]="'priceCheck.placeholder' | translate"
+              (keyup.enter)="searchProducts()"
+              clearInput>
+            </ion-input>
+          </ion-item>
+        </div>
         
         <div class="search-actions-row">
-          <ion-button 
-            expand="block" 
-            class="search-button"
+          <button 
+            type="button" 
+            class="kiosk-action-btn primary-brand-btn"
             (click)="searchProducts()"
             [disabled]="!searchQuery.trim()">
-            <ion-icon name="search-outline" slot="start"></ion-icon>
-            {{ 'priceCheck.searchBtn' | translate }}
-          </ion-button>
+            <ion-icon name="search-outline"></ion-icon>
+            <span>{{ 'priceCheck.searchBtn' | translate }}</span>
+          </button>
 
-          <ion-button 
-            expand="block" 
-            fill="outline"
-            class="clear-button"
+          <button 
+            type="button" 
+            class="kiosk-action-btn outline-brand-btn"
             (click)="clearSearch()"
             *ngIf="searchQuery || hasSearched">
-            <ion-icon name="close-outline" slot="start"></ion-icon>
-            {{ 'priceCheck.clearBtn' | translate }}
-          </ion-button>
+            <ion-icon name="close-outline"></ion-icon>
+            <span>{{ 'priceCheck.clearBtn' | translate }}</span>
+          </button>
         </div>
       </div>
 
-      <!-- Sección de escaneo -->
+      <!-- Panel 2: Escaneo Táctil -->
       <div class="scan-section card-box">
-        <div class="section-title">
-          <ion-icon name="camera-outline"></ion-icon>
-          <h3>{{ 'priceCheck.scanTitle' | translate }}</h3>
+        <div class="card-box-header">
+          <div class="box-icon-wrapper scan-theme-icon">
+            <ion-icon name="barcode-outline"></ion-icon>
+          </div>
+          <div class="box-title-group">
+            <h3>{{ 'priceCheck.scanTitle' | translate }}</h3>
+            <p>Apunta el código de barras a la cámara del módulo</p>
+          </div>
         </div>
         
-        <ion-button 
-          expand="block" 
-          class="scan-button"
+        <button 
+          type="button" 
+          class="kiosk-action-btn scan-hero-btn"
           (click)="startBarcodeScan()"
           [disabled]="isScanning">
-          <ion-icon name="camera-outline" slot="start"></ion-icon>
-          {{ (isScanning ? 'priceCheck.scanning' : 'priceCheck.startScan') | translate }}
-        </ion-button>
+          <div class="scan-btn-pulse">
+            <ion-icon name="camera-outline"></ion-icon>
+          </div>
+          <div class="scan-btn-text">
+            <span class="scan-btn-title">{{ (isScanning ? 'priceCheck.scanning' : 'priceCheck.startScan') | translate }}</span>
+            <span class="scan-btn-sub">Lectura instantánea de código de barras</span>
+          </div>
+          <ion-icon name="arrow-forward" class="scan-btn-arrow"></ion-icon>
+        </button>
 
         <!-- Ayuda para escaneo -->
-        <div class="scan-help">
+        <div class="scan-help-row">
           <div class="help-pill">
             <ion-icon name="barcode-outline"></ion-icon>
             <span>{{ 'priceCheck.helpFocus' | translate }}</span>
@@ -71,6 +108,20 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Mensaje de aviso/error -->
+    <div class="error-banner" *ngIf="scanError && !isLoading">
+      <div class="error-icon-box">
+        <ion-icon name="warning-outline"></ion-icon>
+      </div>
+      <div class="error-text">
+        <strong>Aviso del escáner</strong>
+        <span>{{ scanError }}</span>
+      </div>
+      <button type="button" class="dismiss-error-btn" (click)="scanError = null">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
     </div>
 
     <!-- Estado de carga -->
@@ -85,168 +136,214 @@
     <div class="results-section" *ngIf="!isLoading && searchResults.length > 0">
       <div class="results-header">
         <div class="results-info">
-          <ion-icon name="search-outline"></ion-icon>
+          <div class="results-icon-badge">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
           <div class="results-text">
             <h3>{{ 'priceCheck.resultsTitle' | translate }}</h3>
             <div class="scan-info">
-              <ion-icon name="barcode-outline"></ion-icon>
               <span>{{ 'priceCheck.resultsCount' | translate:{ count: searchResults.length } }}</span>
             </div>
           </div>
         </div>
+
+        <button type="button" class="header-new-search-btn" (click)="clearSearch()">
+          <ion-icon name="refresh-outline"></ion-icon>
+          <span>Nueva Búsqueda</span>
+        </button>
       </div>
 
       <div class="products-grid">
-        <ion-card class="product-card" *ngFor="let product of searchResults">
+        <div class="modern-product-card" *ngFor="let product of searchResults">
           
-          <!-- Imagen del producto con manejo de errores -->
-          <div class="product-image">
+          <!-- Imagen del producto con insignia de oferta -->
+          <div class="product-image-container">
             <img 
               [src]="product.image" 
               [alt]="product.name" 
-              (error)="handleImageError($event)" />
-            <div class="product-badge" *ngIf="product.inOffer">
+              (error)="handleImageError($event)" 
+              class="product-img" />
+            <div class="offer-floating-badge" *ngIf="product.inOffer">
+              <ion-icon name="pricetag"></ion-icon>
               <span>{{ 'priceCheck.offer' | translate }}</span>
             </div>
           </div>
 
-          <div class="card-header">
-            <ion-card-title>{{ product.name }}</ion-card-title>
-            <ion-card-subtitle>{{ product.brand }}</ion-card-subtitle>
-          </div>
-
-          <ion-card-content>
-            <div class="product-details">
-              
-              <!-- Precio -->
-              <div class="detail-item">
-                <ion-icon name="pricetag-outline"></ion-icon>
-                <div class="detail-content">
-                  <div class="price-section">
-                    <span class="price" [class.on-offer]="product.inOffer">
-                      {{ product.price | clp }}
-                    </span>
-                    <span class="offer-price" *ngIf="product.inOffer">
-                      {{ product.offerPrice | clp }}
-                    </span>
-                  </div>
-                </div>
+          <div class="product-card-body">
+            <!-- Título y Marca -->
+            <div class="product-title-row">
+              <div class="badges-row">
+                <span class="brand-tag">{{ product.brand }}</span>
+                <span class="category-tag">{{ product.category }}</span>
               </div>
-
-              <!-- Código de barras -->
-              <div class="detail-item">
-                <ion-icon name="barcode-outline"></ion-icon>
-                <div class="detail-content">
-                  <span class="barcode">{{ product.barcode }}</span>
-                </div>
-              </div>
-
-              <!-- Categoría -->
-              <div class="detail-item">
-                <ion-icon name="pricetags-outline"></ion-icon>
-                <div class="detail-content">
-                  <span class="category">{{ product.category }}</span>
-                </div>
-              </div>
-
-              <!-- Ubicación -->
-              <div class="detail-item" *ngIf="product.supermarketLocation">
-                <ion-icon name="location-outline"></ion-icon>
-                <div class="detail-content">
-                  <div class="location-info">
-                    <strong>{{ 'priceCheck.location' | translate }}</strong><br>
-                    {{ product.supermarketLocation.aisle }}, 
-                    {{ product.supermarketLocation.section }}, 
-                    {{ product.supermarketLocation.shelf }}
-                  </div>
-                </div>
-              </div>
-
+              <h3 class="product-title">{{ product.name }}</h3>
             </div>
 
-            <ion-button expand="block" class="add-to-cart-button" (click)="addToCart(product)">
-              <ion-icon name="cart-outline" slot="start" aria-hidden="true"></ion-icon>
-              {{ 'priceCheck.addToCart' | translate }}
-            </ion-button>
+            <!-- Bloque de Precio -->
+            <div class="price-hero-block">
+              <span class="price-eyebrow">Precio en caja</span>
+              <div class="price-row">
+                <span class="original-price" [class.struck]="product.inOffer">
+                  {{ product.price | clp }}
+                </span>
+                <div class="offer-price-pill" *ngIf="product.inOffer">
+                  <span class="offer-text">{{ product.offerPrice | clp }}</span>
+                  <span class="offer-save-tag">OFERTA</span>
+                </div>
+              </div>
+            </div>
 
-            <ion-button expand="block" fill="outline" class="nutrition-toggle-button" (click)="toggleNutrition(product)">
-              <ion-icon name="nutrition-outline" slot="start" aria-hidden="true"></ion-icon>
-              {{ (expandedNutritionBarcode === product.barcode ? 'priceCheck.hideNutrition' : 'priceCheck.viewNutrition') | translate }}
-            </ion-button>
+            <!-- Metadatos: Código de Barras y Ubicación -->
+            <div class="product-meta-grid">
+              <div class="meta-box">
+                <ion-icon name="barcode-outline" class="meta-icon"></ion-icon>
+                <div class="meta-info">
+                  <span class="meta-title">Código</span>
+                  <span class="meta-value barcode-font">{{ product.barcode }}</span>
+                </div>
+              </div>
+
+              <div class="meta-box location-box" *ngIf="product.supermarketLocation">
+                <ion-icon name="location-outline" class="meta-icon location-icon"></ion-icon>
+                <div class="meta-info">
+                  <span class="meta-title">{{ 'priceCheck.location' | translate }}</span>
+                  <span class="meta-value">{{ product.supermarketLocation.aisle }}, {{ product.supermarketLocation.section }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="product-card-actions">
+              <button type="button" class="btn-add-cart" (click)="addToCart(product)">
+                <ion-icon name="cart-outline"></ion-icon>
+                <span>{{ 'priceCheck.addToCart' | translate }}</span>
+              </button>
+
+              <button type="button" class="btn-toggle-nutrition" (click)="toggleNutrition(product)">
+                <ion-icon name="nutrition-outline"></ion-icon>
+                <span>{{ (expandedNutritionBarcode === product.barcode ? 'priceCheck.hideNutrition' : 'priceCheck.viewNutrition') | translate }}</span>
+              </button>
+            </div>
 
             <app-nutrition-card
               *ngIf="expandedNutritionBarcode === product.barcode"
               [loading]="nutritionLoading"
               [result]="nutritionResult(product.barcode)">
             </app-nutrition-card>
-          </ion-card-content>
-        </ion-card>
+          </div>
+        </div>
       </div>
 
       <!-- Botón para nueva búsqueda -->
-      <div class="new-search">
-        <ion-button 
-          expand="block" 
-          fill="outline"
-          (click)="clearSearch()">
-          <ion-icon name="search-outline" slot="start"></ion-icon>
-          {{ 'priceCheck.newSearch' | translate }}
-        </ion-button>
+      <div class="new-search-footer">
+        <button type="button" class="kiosk-action-btn outline-brand-btn" (click)="clearSearch()">
+          <ion-icon name="search-outline"></ion-icon>
+          <span>{{ 'priceCheck.newSearch' | translate }}</span>
+        </button>
       </div>
     </div>
 
     <!-- Sin resultados -->
-    <div class="no-results" *ngIf="!isLoading && hasSearched && searchResults.length === 0">
-      <div class="no-results-content">
-        <ion-icon name="search-outline"></ion-icon>
+    <div class="no-results-modern" *ngIf="!isLoading && hasSearched && searchResults.length === 0">
+      <div class="no-results-card">
+        <div class="empty-icon-ring">
+          <ion-icon name="search-outline"></ion-icon>
+        </div>
         <h4>{{ 'priceCheck.noResultsTitle' | translate }}</h4>
-        <p>{{ 'priceCheck.noResultsDesc' | translate:{ query: searchQuery } }}</p>
-        <p>{{ 'priceCheck.noResultsTip' | translate }}</p>
-      </div>
-    </div>
-
-    <!-- Mensaje de error -->
-    <div class="error-message" *ngIf="scanError && !isLoading">
-      <ion-icon name="warning-outline"></ion-icon>
-      <div class="error-content">
-        <strong>Error</strong>
-        <span>{{ scanError }}</span>
+        <p class="empty-query-text">{{ 'priceCheck.noResultsDesc' | translate:{ query: searchQuery } }}</p>
+        <p class="empty-tip-text">{{ 'priceCheck.noResultsTip' | translate }}</p>
+        <button type="button" class="retry-search-btn" (click)="clearSearch()">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+          <span>Intentar otra búsqueda</span>
+        </button>
       </div>
     </div>
 
   </div>
 </ion-content>
 
-<!-- Modo cámara (oculto por defecto) -->
-<div class="camera-mode" *ngIf="isScanning">
-  
-  <!-- Vista de la cámara -->
-  <video #videoElement class="camera-view" autoplay playsinline></video>
-  <canvas #canvasElement class="hidden-canvas"></canvas>
-  
-  <!-- Overlay del escáner -->
-  <div class="scanner-overlay">
-    <div class="scanner-frame">
-      <div class="scanning-laser"></div>
-      
-      <!-- Esquinas del marco -->
-      <div class="corner top-left"></div>
-      <div class="corner top-right"></div>
-      <div class="corner bottom-left"></div>
-      <div class="corner bottom-right"></div>
-    </div>
-    
-    <div class="scanner-instructions">
-      <p>Apunta la cámara al código de barras</p>
-      <small>Mantén el código dentro del marco</small>
-    </div>
-  </div>
+<!-- Modal de Escáner Táctil Moderno Fullscreen Centrado -->
+<div class="camera-mode" *ngIf="isScanning" role="dialog" aria-modal="true" aria-label="Escáner táctil de código de barras">
+  <div class="scanner-backdrop" (click)="cancelScan()"></div>
 
-  <!-- Botones de control del escáner -->
-  <div class="scanner-controls">
-    <button class="scanner-btn cancel-btn" (click)="cancelScan()">
-      <ion-icon name="close-outline"></ion-icon>
-      <span>Cancelar</span>
-    </button>
+  <div class="scanner-container">
+    
+    <!-- Barra superior del escáner -->
+    <header class="scanner-header">
+      <div class="scanner-brand-pill">
+        <div class="live-dot" title="Cámara activa"></div>
+        <ion-icon name="barcode-outline" class="brand-pill-icon"></ion-icon>
+        <span class="brand-pill-text">Escáner Táctil de Precios</span>
+      </div>
+
+      <button type="button" class="scanner-close-btn" (click)="cancelScan()" aria-label="Cerrar escáner">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </header>
+
+    <!-- Visor de la cámara y retículo de enfoque centrado -->
+    <main class="scanner-viewport-wrapper">
+      <div class="camera-viewport">
+        <!-- Elemento de video de la cámara -->
+        <video #videoElement class="camera-view" autoplay playsinline muted></video>
+        <canvas #canvasElement class="hidden-canvas"></canvas>
+
+        <!-- Sombra viñeta alrededor del retículo -->
+        <div class="viewport-vignette"></div>
+
+        <!-- Marco / Retículo de escaneo moderno -->
+        <div class="scanner-reticle">
+          <div class="reticle-corner top-left"></div>
+          <div class="reticle-corner top-right"></div>
+          <div class="reticle-corner bottom-left"></div>
+          <div class="reticle-corner bottom-right"></div>
+          
+          <!-- Láser de barrido animado -->
+          <div class="scanning-laser-line"></div>
+
+          <!-- Guía visual central -->
+          <div class="reticle-watermark">
+            <ion-icon name="barcode-outline"></ion-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta flotante de instrucciones -->
+      <div class="scanner-guidance-card">
+        <div class="guidance-main">
+          <ion-icon name="scan-outline" class="guidance-icon"></ion-icon>
+          <div class="guidance-text">
+            <h4>Alinea el código dentro del marco</h4>
+            <p>Se detectará automáticamente con la cámara</p>
+          </div>
+        </div>
+
+        <div class="guidance-tips">
+          <div class="tip-badge">
+            <ion-icon name="sunny-outline"></ion-icon>
+            <span>Buena luz</span>
+          </div>
+          <div class="tip-badge">
+            <ion-icon name="resize-outline"></ion-icon>
+            <span>A 10–15 cm</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Barra de acciones inferiores del escáner -->
+    <footer class="scanner-footer">
+      <button type="button" class="kiosk-cancel-scan-btn" (click)="cancelScan()">
+        <ion-icon name="close-circle-outline"></ion-icon>
+        <span>Cancelar y Volver</span>
+      </button>
+
+      <!-- Botón de prueba rápida para demostración en kiosko/browser -->
+      <button type="button" class="kiosk-demo-scan-btn" (click)="simulateDemoScan('7801234567890')">
+        <ion-icon name="flash-outline"></ion-icon>
+        <span>Probar con producto demo (Leche Soprole)</span>
+      </button>
+    </footer>
+
   </div>
 </div>

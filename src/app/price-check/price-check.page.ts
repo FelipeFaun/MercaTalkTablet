@@ -9,17 +9,10 @@ import { NutritionCardComponent } from '../shared/components/nutrition-card/nutr
 import { ClpPipe } from '../shared/pipes/clp.pipe';
 import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { 
-  
-  
   IonContent, 
-  IonButton, 
   IonIcon, 
   IonInput, 
   IonItem, 
-  IonCard, 
-  IonCardTitle, 
-  IonCardSubtitle, 
-  IonCardContent, 
   IonSpinner 
 } from '@ionic/angular/standalone';
 import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
@@ -28,6 +21,7 @@ import { FormsModule } from '@angular/forms';
 
 // ZXing
 import { BrowserMultiFormatReader } from '@zxing/library';
+import { BrandService } from '../core/brand.service';
 
 @Component({
   selector: 'app-price-checker',
@@ -38,17 +32,10 @@ import { BrowserMultiFormatReader } from '@zxing/library';
     AppHeaderComponent,
     CommonModule, 
     FormsModule,
-    
-    
     IonContent, 
-    IonButton, 
     IonIcon, 
     IonInput, 
     IonItem, 
-    IonCard, 
-    IonCardTitle, 
-    IonCardSubtitle, 
-    IonCardContent,
     IonSpinner,
     ClpPipe,
     NutritionCardComponent,
@@ -60,6 +47,9 @@ export class PriceCheckerPage implements OnDestroy {
   private cartFeedback = inject(CartFeedbackService);
   private nutritionService = inject(NutritionService);
   private ngZone = inject(NgZone);
+  private brandService = inject(BrandService);
+
+  readonly currentBrand = this.brandService.currentBrand;
 
   // --- ViewChilds para cámara ---
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef<HTMLVideoElement>;
@@ -86,13 +76,13 @@ export class PriceCheckerPage implements OnDestroy {
     this.stopScanner(false);
   }
 
-  // 🛒 AGREGAR A MI COMPRA (desde búsqueda o escaneo)
+  // AGREGAR A MI COMPRA (desde búsqueda o escaneo)
   addToCart(product: Product) {
     void this.cartFeedback.addWithToast(product);
   }
 
   // ------------------------------------------------------------------
-  // 🥗 Aporte nutricional (Open Food Facts) — Fase 3
+  // Aporte nutricional (Open Food Facts) — Fase 3
   // ------------------------------------------------------------------
   expandedNutritionBarcode: string | null = null;
   nutritionLoading = false;
@@ -117,7 +107,7 @@ export class PriceCheckerPage implements OnDestroy {
   }
 
   // ------------------------------------------------------------------
-  // 🖼️ Manejo de Imágenes
+  // Manejo de Imágenes
   // ------------------------------------------------------------------
   handleImageError(event: any) {
     const fallbackImage = 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=300&fit=crop';
@@ -125,7 +115,7 @@ export class PriceCheckerPage implements OnDestroy {
   }
 
   // ------------------------------------------------------------------
-  // 🔍 Lógica de Búsqueda por Nombre
+  // Lógica de Búsqueda por Nombre
   // ------------------------------------------------------------------
   searchProduct() {
     this.clearState();
@@ -158,7 +148,7 @@ export class PriceCheckerPage implements OnDestroy {
   }
 
   // ------------------------------------------------------------------
-  // 📸 Escaneo real con ZXing
+  // Escaneo real con ZXing
   // ------------------------------------------------------------------
 
   /**
@@ -284,8 +274,13 @@ export class PriceCheckerPage implements OnDestroy {
     this.stopScanner(false);
   }
 
+  simulateDemoScan(barcode: string = '7801234567890') {
+    this.stopScanner(false);
+    this.searchProductByBarcode(barcode);
+  }
+
   // ------------------------------------------------------------------
-  // 🔎 Búsqueda por código
+  // Búsqueda por código
   // ------------------------------------------------------------------
   searchProductByBarcode(barcode: string) {
     this.isLoading = true;
@@ -312,7 +307,7 @@ export class PriceCheckerPage implements OnDestroy {
   }
 
   // ------------------------------------------------------------------
-  // 🧹 Utilidades
+  // Utilidades
   // ------------------------------------------------------------------
   clearState() {
     this.isLoading = false;

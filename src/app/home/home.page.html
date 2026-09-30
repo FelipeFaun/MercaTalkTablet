@@ -9,7 +9,7 @@
       <!-- ======================================================== -->
       <div class="home-hierarchy-wrapper">
 
-        <!-- 🌟 1. EL PROTAGONISTA (CENTRO-SUPERIOR) -->
+        <!-- 1. EL PROTAGONISTA (CENTRO-SUPERIOR) -->
         <section class="protagonist-section">
           <div class="protagonist-card">
             
@@ -49,9 +49,9 @@
           </div>
         </section>
 
-        <!-- ⚡ 2. CUADRÍCULA DE ATAJOS RÁPIDOS (2x2) -->
+        <!-- 2. CUADRÍCULA DE ATAJOS RÁPIDOS (TODAS LAS OPCIONES INCLUIDAS) -->
         <section class="shortcuts-section">
-          <div class="shortcuts-grid-2x2">
+          <div class="shortcuts-grid">
             
             <!-- Atajo 1: Consultar Precio -->
             <button type="button" class="shortcut-card price-shortcut" (click)="navigateToPriceCheck()">
@@ -65,19 +65,31 @@
               <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
             </button>
 
-            <!-- Atajo 2: Dónde Encontrar -->
-            <button type="button" class="shortcut-card locator-shortcut" (click)="navigateToStoreLocator()">
+            <!-- Atajo 2: Productos -->
+            <button type="button" class="shortcut-card products-shortcut" (click)="navigateToProducts()">
               <div class="shortcut-icon-box">
-                <ion-icon name="map-outline" aria-hidden="true"></ion-icon>
+                <ion-icon name="basket-outline" aria-hidden="true"></ion-icon>
               </div>
               <div class="shortcut-info">
-                <h3 class="shortcut-title">{{ 'home.whereToFind' | translate }}</h3>
-                <p class="shortcut-desc">{{ 'home.whereToFindDesc' | translate }}</p>
+                <h3 class="shortcut-title">{{ 'home.allProducts' | translate }}</h3>
+                <p class="shortcut-desc">{{ 'home.allProductsDesc' | translate }}</p>
               </div>
               <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
             </button>
 
-            <!-- Atajo 3: Ofertas Destacadas -->
+            <!-- Atajo 3: Mi Compra -->
+            <button type="button" class="shortcut-card cart-shortcut" (click)="navigateToCart()">
+              <div class="shortcut-icon-box">
+                <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
+              </div>
+              <div class="shortcut-info">
+                <h3 class="shortcut-title">{{ 'home.myCart' | translate }}</h3>
+                <p class="shortcut-desc">{{ 'home.myCartDesc' | translate }}</p>
+              </div>
+              <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
+            </button>
+
+            <!-- Atajo 4: Ofertas Destacadas -->
             <button type="button" class="shortcut-card offers-shortcut" (click)="navigateToOffers()">
               <div class="shortcut-icon-box">
                 <ion-icon name="pricetags-outline" aria-hidden="true"></ion-icon>
@@ -89,7 +101,19 @@
               <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
             </button>
 
-            <!-- Atajo 4: Recetas con Ofertas -->
+            <!-- Atajo 5: Dónde Encontrar -->
+            <button type="button" class="shortcut-card locator-shortcut" (click)="navigateToStoreLocator()">
+              <div class="shortcut-icon-box">
+                <ion-icon name="map-outline" aria-hidden="true"></ion-icon>
+              </div>
+              <div class="shortcut-info">
+                <h3 class="shortcut-title">{{ 'home.whereToFind' | translate }}</h3>
+                <p class="shortcut-desc">{{ 'home.whereToFindDesc' | translate }}</p>
+              </div>
+              <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
+            </button>
+
+            <!-- Atajo 6: Recetas con Ofertas -->
             <button type="button" class="shortcut-card recipes-shortcut" (click)="navigateToRecipes()">
               <div class="shortcut-icon-box">
                 <ion-icon name="restaurant-outline" aria-hidden="true"></ion-icon>
@@ -123,7 +147,6 @@
                 <span class="tool-name">{{ 'home.eventCalculator' | translate }}</span>
                 <span class="tool-hint">{{ 'home.eventCalculatorDesc' | translate }}</span>
               </div>
-              <span class="tool-action-tag">Calcular</span>
             </button>
 
             <!-- Herramienta 2: Lista Express / QR -->
@@ -135,7 +158,6 @@
                 <span class="tool-name">{{ 'home.expressList' | translate }}</span>
                 <span class="tool-hint">{{ 'home.expressListDesc' | translate }}</span>
               </div>
-              <span class="tool-action-tag">Generar</span>
             </button>
 
             <!-- Herramienta 3: Reporte de Stock Cruzado -->
@@ -147,7 +169,6 @@
                 <span class="tool-name">{{ 'home.stockCrossCheck' | translate }}</span>
                 <span class="tool-hint">{{ 'home.stockCrossCheckDesc' | translate }}</span>
               </div>
-              <span class="tool-action-tag">Consultar</span>
             </button>
 
             <!-- Herramienta 4: Sugerencias y Avisos Operativos -->
@@ -159,7 +180,6 @@
                 <span class="tool-name">{{ 'home.incidentReport' | translate }}</span>
                 <span class="tool-hint">{{ 'home.incidentReportDesc' | translate }}</span>
               </div>
-              <span class="tool-action-tag">Avisar</span>
             </button>
 
           </div>

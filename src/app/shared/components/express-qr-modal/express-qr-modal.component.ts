@@ -57,15 +57,10 @@ export class ExpressListQrModalComponent implements OnInit {
         }));
         this.estimatedTotal.set(this.cart.total());
       } else {
-        // Ejemplo por defecto de ruta y lista de tienda
-        this.modalTitle.set('Ruta de Compras Express');
-        this.displayItems.set([
-          { name: 'Leche Entera Soprole', aisle: 'Pasillo 1 · Refrigerados', qty: '2 un' },
-          { name: 'Arroz Grado 1 Miraflores', aisle: 'Pasillo 2 · Abarrotes', qty: '1 un' },
-          { name: 'Aceite Vegetal 900ml', aisle: 'Pasillo 2 · Despensa', qty: '1 un' },
-          { name: 'Detergente Líquido Omo', aisle: 'Pasillo 4 · Limpieza', qty: '1 un' }
-        ]);
-        this.estimatedTotal.set(11890);
+        // Canasta vacía: no inventar productos falsos
+        this.modalTitle.set('Tu canasta está vacía');
+        this.displayItems.set([]);
+        this.estimatedTotal.set(0);
       }
     }
   }

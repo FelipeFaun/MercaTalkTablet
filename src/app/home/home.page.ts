@@ -155,6 +155,8 @@ export class HomePage {
   // ---------- Navegación ----------
 
   navigateToPriceCheck() { void this.router.navigate(['/price-check']); }
+  navigateToProducts() { void this.router.navigate(['/products']); }
+  navigateToCart() { void this.router.navigate(['/cart']); }
   navigateToStoreLocator() { void this.router.navigate(['/store-locator']); }
   navigateToOffers() { void this.router.navigate(['/offers']); }
   navigateToRecipes() { void this.router.navigate(['/recipes']); }

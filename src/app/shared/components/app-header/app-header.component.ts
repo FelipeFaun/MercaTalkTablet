@@ -9,7 +9,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 
 /**
  * Barra superior de la aplicación con soporte para temas corporativos dinámicos,
- * selector de supermercados y selector de idiomas con retorno automático por inactividad.
+ * selector de supermercados y selector de idiomas.
  */
 @Component({
   selector: 'app-header',

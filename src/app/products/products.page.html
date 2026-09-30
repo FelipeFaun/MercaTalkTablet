@@ -1,0 +1,161 @@
+<app-header [title]="'home.allProducts' | translate"></app-header>
+
+<ion-content [fullscreen]="true">
+  <div class="products-container">
+
+    <!-- Hero / Barra superior de búsqueda y filtros -->
+    <header class="products-hero-card">
+      <div class="hero-top-row">
+        <div class="hero-title-group">
+          <div class="brand-pill">
+            <span class="store-name">{{ currentBrand().storeName }}</span>
+            <span class="dot-separator">•</span>
+            <span class="catalog-tag">Catálogo Completo</span>
+          </div>
+          <h1 class="page-heading">Todos los Productos</h1>
+          <p class="page-sub">Consulta precios y agrega directamente a tu compra</p>
+        </div>
+
+        <!-- Indicador de total de productos -->
+        <div class="products-count-badge">
+          <span class="count-num">{{ filteredProducts().length }}</span>
+          <span class="count-label">disponibles</span>
+        </div>
+      </div>
+
+      <!-- Barra de búsqueda en tiempo real -->
+      <div class="search-bar-row">
+        <div class="search-input-box">
+          <ion-icon name="search-outline" class="search-icon"></ion-icon>
+          <input 
+            type="text" 
+            [ngModel]="searchQuery()" 
+            (ngModelChange)="searchQuery.set($event)"
+            placeholder="Buscar por nombre, marca o categoría..." 
+            class="native-search-input" />
+          @if (searchQuery()) {
+            <button type="button" class="clear-input-btn" (click)="clearSearch()" aria-label="Limpiar búsqueda">
+              <ion-icon name="close-circle"></ion-icon>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Chips de categorías -->
+      <div class="categories-scroll-row">
+        @for (category of categories(); track category) {
+          <button 
+            type="button" 
+            class="category-chip" 
+            [class.active]="selectedCategory() === category"
+            (click)="selectCategory(category)">
+            <span>{{ category === 'all' ? 'Todos los Productos' : category }}</span>
+          </button>
+        }
+      </div>
+    </header>
+
+    <!-- Lista vertical de productos -->
+    <main class="products-vertical-list">
+      @for (product of filteredProducts(); track product.id) {
+        <article class="product-row-card">
+          
+          <!-- Imagen y badge de oferta -->
+          <div class="product-thumb-container">
+            <img 
+              [src]="product.image" 
+              [alt]="product.name" 
+              (error)="handleImageError($event)" 
+              class="thumb-img" 
+              loading="lazy" />
+            @if (product.inOffer) {
+              <div class="badge-offer-tag">
+                <ion-icon name="pricetag"></ion-icon>
+                <span>Oferta</span>
+              </div>
+            }
+          </div>
+
+          <!-- Información del producto -->
+          <div class="product-info-col">
+            <div class="tags-row">
+              <span class="brand-tag">{{ product.brand }}</span>
+              <span class="category-tag">{{ product.category }}</span>
+            </div>
+
+            <h2 class="product-title">{{ product.name }}</h2>
+
+            @if (product.supermarketLocation) {
+              <div class="location-pill">
+                <ion-icon name="location-outline"></ion-icon>
+                <span>{{ product.supermarketLocation.aisle }} • {{ product.supermarketLocation.section }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Columna de precios -->
+          <div class="product-price-col">
+            <span class="price-eyebrow">Precio por unidad</span>
+            @if (product.inOffer) {
+              <div class="price-offer-box">
+                <span class="original-price-struck">{{ product.price | clp }}</span>
+                <span class="final-offer-price">{{ product.offerPrice | clp }}</span>
+              </div>
+            } @else {
+              <span class="final-price">{{ product.price | clp }}</span>
+            }
+          </div>
+
+          <!-- Columna de acción: Agregar o Control de Cantidad -->
+          <div class="product-action-col">
+            @if (getCartQty(product.id) === 0) {
+              <button 
+                type="button" 
+                class="btn-add-to-cart" 
+                (click)="addToCart(product)"
+                [attr.aria-label]="'Agregar ' + product.name + ' al carrito'">
+                <ion-icon name="cart-outline"></ion-icon>
+                <span>Agregar</span>
+              </button>
+            } @else {
+              <div class="qty-stepper-control">
+                <button 
+                  type="button" 
+                  class="stepper-btn minus-btn" 
+                  (click)="decrementQty(product.id)"
+                  [attr.aria-label]="'Quitar una unidad de ' + product.name">
+                  <ion-icon name="remove-outline"></ion-icon>
+                </button>
+                <div class="stepper-value-box">
+                  <span class="stepper-qty">{{ getCartQty(product.id) }}</span>
+                  <span class="stepper-label">en compra</span>
+                </div>
+                <button 
+                  type="button" 
+                  class="stepper-btn plus-btn" 
+                  (click)="incrementQty(product.id)"
+                  [attr.aria-label]="'Aumentar cantidad de ' + product.name">
+                  <ion-icon name="add-outline"></ion-icon>
+                </button>
+              </div>
+            }
+          </div>
+
+        </article>
+      } @empty {
+        <div class="empty-results-box">
+          <div class="empty-icon-circle">
+            <ion-icon name="search-outline"></ion-icon>
+          </div>
+          <h3>No se encontraron productos</h3>
+          <p>Prueba buscando con otro nombre, marca o selecciona otra categoría.</p>
+          <button type="button" class="btn-reset-filters" (click)="clearSearch(); selectCategory('all')">
+            <ion-icon name="refresh-outline"></ion-icon>
+            <span>Ver todos los productos</span>
+          </button>
+        </div>
+      }
+    </main>
+
+  </div>
+</ion-content>

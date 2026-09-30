@@ -4,19 +4,53 @@
   <div class="store-locator-viewport">
 
     <!-- ======================================================== -->
-    <!-- COLUMNA IZQUIERDA: PLANO ARQUITECTÓNICO CENITAL CON ZOOM -->
+    <!-- COLUMNA IZQUIERDA: MODELO ARQUITECTÓNICO 3D INTERACTIVO -->
     <!-- ======================================================== -->
-    <section class="supermarket-canvas-card">
+    <section class="supermarket-canvas-card" [class.dark-theme]="currentTheme === 'dark'">
       
-      <!-- Barra superior del plano: Título y Controles de Zoom (+/-) -->
-      <div class="map-controls-bar">
+      <!-- Barra superior técnica: Título, Modos de Vista y Zoom -->
+      <header class="map-controls-bar">
         <div class="map-title-box">
-          <ion-icon name="map" aria-hidden="true"></ion-icon>
-          <h2>{{ 'storeLocator.interactiveMap' | translate }}</h2>
-          <span class="active-store-tag">{{ brandService.currentBrand().storeName }}</span>
+          <ion-icon name="cube-outline" class="title-3d-ic" aria-hidden="true"></ion-icon>
+          <div class="title-texts">
+            <h2>{{ 'storeLocator.interactiveMap' | translate }} 3D</h2>
+            <span class="active-store-tag">{{ brandService.currentBrand().storeName }}</span>
+          </div>
         </div>
 
-        <!-- Controles de Zoom (+) y (-) solicitados por el usuario -->
+        <!-- Selector de Perspectivas de Cámara 3D -->
+        <div class="view-modes-group">
+          <button type="button" 
+                  class="mode-btn" 
+                  [class.active-mode]="currentPerspective === 'isometric'"
+                  (click)="setPerspective('isometric')"
+                  title="Vista 3D Isométrica">
+            <ion-icon name="cube-outline" aria-hidden="true"></ion-icon>
+            <span class="mode-text">3D General</span>
+          </button>
+
+          <button type="button" 
+                  class="mode-btn" 
+                  [class.active-mode]="currentPerspective === 'entrance'"
+                  (click)="setPerspective('entrance')"
+                  title="Vista desde la Entrada">
+            <ion-icon name="locate-outline" aria-hidden="true"></ion-icon>
+            <span class="mode-text">Entrada</span>
+          </button>
+        </div>
+
+        <!-- Selector de Tema Claro / Oscuro -->
+        <div class="theme-toggle-group">
+          <button type="button" 
+                  class="theme-btn" 
+                  (click)="toggleTheme()" 
+                  [title]="currentTheme === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'">
+            <ion-icon [name]="currentTheme === 'light' ? 'moon-outline' : 'sunny-outline'" aria-hidden="true"></ion-icon>
+            <span class="theme-label">{{ currentTheme === 'light' ? 'Oscuro' : 'Claro' }}</span>
+          </button>
+        </div>
+
+        <!-- Controles de Navegación y Zoom (+, reset, -) -->
         <div class="zoom-buttons-group">
           <button type="button" 
                   class="zoom-btn" 
@@ -28,10 +62,10 @@
 
           <button type="button" 
                   class="zoom-btn" 
-                  (click)="resetZoom()" 
+                  (click)="resetView()" 
                   [attr.aria-label]="'storeLocator.zoomReset' | translate"
-                  [title]="'storeLocator.zoomReset' | translate">
-            <span class="zoom-level-text">{{ (zoomLevel * 100) | number:'1.0-0' }}%</span>
+                  title="Restablecer Vista">
+            <ion-icon name="reload" aria-hidden="true"></ion-icon>
           </button>
 
           <button type="button" 
@@ -42,217 +76,39 @@
             <ion-icon name="remove" aria-hidden="true"></ion-icon>
           </button>
         </div>
-      </div>
+      </header>
 
-      <!-- Marco visual del Plano del Supermercado (Idéntico a la imagen de referencia) -->
-      <div class="blueprint-viewport">
-        <div class="blueprint-transform-layer" [style.transform]="'scale(' + zoomLevel + ')'">
-          
-          <svg viewBox="0 0 800 800" class="supermarket-svg-map" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <!-- Marcador de flecha para la ruta -->
-              <marker id="route-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a" />
-              </marker>
-              <!-- Filtro de sombra suave -->
-              <filter id="shelf-shadow" x="-10%" y="-10%" width="120%" height="120%">
-                <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.12"/>
-              </filter>
-            </defs>
+      <!-- Viewport del Escenario 3D WebGL -->
+      <div class="viewport-3d-wrapper">
+        <div #canvasContainer class="canvas-3d-host"></div>
 
-            <!-- Fondo blanco del supermercado -->
-            <rect x="20" y="20" width="760" height="760" fill="#ffffff" rx="12"/>
-
-            <!-- ======================================================== -->
-            <!-- BORDES PERIMETRALES DE COLOR (COMO EN LA IMAGEN)         -->
-            <!-- ======================================================== -->
-            <!-- Superior: Celeste (Pescadería), Coral (Carnes), Amarillo (Lácteos) -->
-            <rect x="35" y="25" width="130" height="24" fill="#38bdf8" rx="4"/>
-            <rect x="175" y="25" width="260" height="24" fill="#f87171" rx="4"/>
-            <rect x="445" y="25" width="320" height="24" fill="#fde047" rx="4"/>
-
-            <!-- Lateral Derecho: Café (Vinos), Naranja (Panadería), Rosa (Cuidado & Fiambrería) -->
-            <rect x="750" y="55" width="25" height="180" fill="#78350f" rx="4"/>
-            <rect x="750" y="245" width="25" height="190" fill="#fb923c" rx="4"/>
-            <rect x="750" y="445" width="25" height="210" fill="#f43f5e" rx="4"/>
-
-            <!-- Lateral Izquierdo: Azul esquinero, Khaki (Granel), Verde (Produce), Morado (Kiosko) -->
-            <rect x="25" y="55" width="25" height="100" fill="#38bdf8" rx="4"/>
-            <rect x="25" y="165" width="25" height="150" fill="#a8a29e" rx="4"/>
-            <rect x="25" y="325" width="25" height="300" fill="#84cc16" rx="4"/>
-            <rect x="25" y="635" width="25" height="120" fill="#a855f7" rx="4"/>
-
-            <!-- Borde Inferior / Suelo -->
-            <rect x="145" y="755" width="630" height="20" fill="#475569" rx="3"/>
-            <rect x="290" y="730" width="80" height="30" fill="#f87171" rx="4"/>
-
-            <!-- ======================================================== -->
-            <!-- SECCIONES PERIMETRALES CON RACKS                         -->
-            <!-- ======================================================== -->
-
-            <!-- SECCIÓN 1 (SUPERIOR DERECHA): LÁCTEOS, HUEVOS Y QUESOS -->
-            <g class="dept-group" [class.active-dept]="selectedAisleId === 1" (click)="selectAisle(1)">
-              <text x="590" y="66" text-anchor="middle" font-size="12" font-weight="900" fill="#1e293b">{{ 'storeLocator.mapDairy' | translate }}</text>
-              <rect x="480" y="78" width="24" height="28" fill="#eab308" rx="3" filter="url(#shelf-shadow)"/>
-              <rect x="540" y="78" width="24" height="28" fill="#eab308" rx="3" filter="url(#shelf-shadow)"/>
-              <rect x="600" y="78" width="24" height="28" fill="#eab308" rx="3" filter="url(#shelf-shadow)"/>
-            </g>
-
-            <!-- SECCIÓN 6 (SUPERIOR CENTRO): CARNICERÍA & POLLO -->
-            <g class="dept-group" [class.active-dept]="selectedAisleId === 6" (click)="selectAisle(6)">
-              <text x="310" y="66" text-anchor="middle" font-size="12" font-weight="900" fill="#1e293b">{{ 'storeLocator.mapMeat' | translate }}</text>
-              <rect x="195" y="78" width="24" height="28" fill="#f87171" rx="3" filter="url(#shelf-shadow)"/>
-              <rect x="255" y="78" width="24" height="28" fill="#f87171" rx="3" filter="url(#shelf-shadow)"/>
-              <rect x="315" y="78" width="24" height="28" fill="#f87171" rx="3" filter="url(#shelf-shadow)"/>
-              <rect x="375" y="78" width="24" height="28" fill="#f87171" rx="3" filter="url(#shelf-shadow)"/>
-              <rect x="435" y="78" width="24" height="28" fill="#f87171" rx="3" filter="url(#shelf-shadow)"/>
-            </g>
-
-            <!-- SEAFOOD / PESCADERÍA (SUPERIOR IZQUIERDA) -->
-            <g class="dept-group" (click)="selectAisle(6)">
-              <text x="120" y="66" text-anchor="middle" font-size="11" font-weight="900" fill="#1e293b">{{ 'storeLocator.mapSeafood' | translate }}</text>
-              <rect x="110" y="80" width="46" height="26" fill="#0284c7" rx="4" filter="url(#shelf-shadow)"/>
-            </g>
-
-            <!-- SECCIÓN 5 (LATERAL IZQUIERDO): PRODUCE / FRUTAS Y VERDURAS -->
-            <g class="dept-group" [class.active-dept]="selectedAisleId === 5" (click)="selectAisle(5)">
-              <text x="50" y="470" transform="rotate(-90 50 470)" text-anchor="middle" font-size="12" font-weight="900" fill="#1e293b" letter-spacing="1">{{ 'storeLocator.mapProduce' | translate }}</text>
-              <!-- Granel / Bulk (beige) -->
-              <rect x="70" y="160" width="34" height="16" fill="#a8a29e" rx="3"/>
-              <rect x="70" y="215" width="34" height="16" fill="#a8a29e" rx="3"/>
-              <rect x="150" y="150" width="24" height="30" fill="#a8a29e" rx="3"/>
-              <rect x="150" y="210" width="24" height="30" fill="#a8a29e" rx="3"/>
-              <!-- Mesas verdes de frutas y verduras (idéntico a la imagen) -->
-              <rect x="70" y="280" width="86" height="20" fill="#84cc16" rx="3"/>
-              <rect x="70" y="340" width="86" height="20" fill="#84cc16" rx="3"/>
-              <rect x="70" y="400" width="26" height="20" fill="#84cc16" rx="3"/>
-              <rect x="130" y="400" width="26" height="20" fill="#84cc16" rx="3"/>
-              <rect x="70" y="460" width="26" height="20" fill="#84cc16" rx="3"/>
-              <rect x="130" y="460" width="26" height="20" fill="#84cc16" rx="3"/>
-              <rect x="70" y="520" width="26" height="20" fill="#84cc16" rx="3"/>
-              <rect x="130" y="520" width="26" height="20" fill="#84cc16" rx="3"/>
-              <rect x="70" y="580" width="34" height="18" fill="#84cc16" rx="3"/>
-              <rect x="130" y="580" width="26" height="18" fill="#84cc16" rx="3"/>
-            </g>
-
-            <!-- SECCIÓN 9 (LATERAL DERECHO ARRIBA): VINOS Y LICORES -->
-            <g class="dept-group" [class.active-dept]="selectedAisleId === 9" (click)="selectAisle(9)">
-              <text x="715" y="170" transform="rotate(90 715 170)" text-anchor="middle" font-size="11" font-weight="900" fill="#1e293b">{{ 'storeLocator.mapWine' | translate }}</text>
-              <rect x="630" y="78" width="70" height="22" fill="#78350f" rx="3" filter="url(#shelf-shadow)"/>
-              <rect x="630" y="122" width="70" height="22" fill="#78350f" rx="3" filter="url(#shelf-shadow)"/>
-              <rect x="630" y="168" width="70" height="22" fill="#78350f" rx="3" filter="url(#shelf-shadow)"/>
-            </g>
-
-            <!-- SECCIÓN 7 (LATERAL DERECHO CENTRO): PANADERÍA Y PASTELERÍA -->
-            <g class="dept-group" [class.active-dept]="selectedAisleId === 7" (click)="selectAisle(7)">
-              <text x="715" y="340" transform="rotate(90 715 340)" text-anchor="middle" font-size="11" font-weight="900" fill="#1e293b">{{ 'storeLocator.mapBakery' | translate }}</text>
-              <rect x="630" y="225" width="22" height="22" fill="#fb923c" rx="3"/>
-              <rect x="680" y="225" width="22" height="22" fill="#fb923c" rx="3"/>
-              <rect x="630" y="270" width="22" height="22" fill="#fb923c" rx="3"/>
-              <rect x="680" y="270" width="22" height="22" fill="#fb923c" rx="3"/>
-              <rect x="630" y="320" width="22" height="22" fill="#fb923c" rx="3"/>
-              <rect x="680" y="320" width="22" height="22" fill="#fb923c" rx="3"/>
-            </g>
-
-            <!-- SECCIÓN 8 (LATERAL DERECHO ABAJO): CUIDADO PERSONAL Y FIAMBRERÍA -->
-            <g class="dept-group" [class.active-dept]="selectedAisleId === 8" (click)="selectAisle(8)">
-              <text x="715" y="520" transform="rotate(90 715 520)" text-anchor="middle" font-size="11" font-weight="900" fill="#1e293b">{{ 'storeLocator.mapPersonalCare' | translate }}</text>
-              <rect x="630" y="390" width="70" height="22" fill="#f43f5e" rx="3" filter="url(#shelf-shadow)"/>
-              <rect x="630" y="440" width="70" height="22" fill="#f43f5e" rx="3" filter="url(#shelf-shadow)"/>
-              <rect x="630" y="490" width="70" height="22" fill="#f43f5e" rx="3" filter="url(#shelf-shadow)"/>
-            </g>
-
-            <!-- ======================================================== -->
-            <!-- GÓNDOLAS VERTICALES CENTRALES (PASILLOS 2, 3, 4)         -->
-            <!-- ======================================================== -->
-            <!-- Pasillo 2: Abarrotes / Despensa -->
-            <g class="dept-group" [class.active-dept]="selectedAisleId === 2" (click)="selectAisle(2)">
-              <!-- Góndola 1A & 1B -->
-              <rect x="200" y="165" width="22" height="175" fill="#64748b" rx="4" filter="url(#shelf-shadow)"/>
-              <rect x="200" y="395" width="22" height="175" fill="#64748b" rx="4" filter="url(#shelf-shadow)"/>
-              <!-- Góndola 2A & 2B -->
-              <rect x="270" y="165" width="22" height="340" fill="#64748b" rx="4" filter="url(#shelf-shadow)"/>
-              <text x="281" y="335" transform="rotate(-90 281 335)" text-anchor="middle" font-size="11" font-weight="900" fill="#ffffff" letter-spacing="1">{{ 'storeLocator.mapGrocery' | translate }}</text>
-            </g>
-
-            <!-- Pasillo 3: Bebidas & Desayuno -->
-            <g class="dept-group" [class.active-dept]="selectedAisleId === 3" (click)="selectAisle(3)">
-              <rect x="330" y="165" width="22" height="340" fill="#475569" rx="4" filter="url(#shelf-shadow)"/>
-              <rect x="390" y="165" width="22" height="340" fill="#475569" rx="4" filter="url(#shelf-shadow)"/>
-              <text x="401" y="335" transform="rotate(-90 401 335)" text-anchor="middle" font-size="11" font-weight="900" fill="#ffffff" letter-spacing="1">{{ 'storeLocator.mapBeverages' | translate }}</text>
-            </g>
-
-            <!-- Pasillo 4: Limpieza & Aseo / Congelados -->
-            <g class="dept-group" [class.active-dept]="selectedAisleId === 4" (click)="selectAisle(4)">
-              <rect x="450" y="165" width="22" height="340" fill="#475569" rx="4" filter="url(#shelf-shadow)"/>
-              <rect x="510" y="165" width="22" height="230" fill="#06b6d4" rx="4" filter="url(#shelf-shadow)"/>
-              <rect x="510" y="395" width="22" height="180" fill="#06b6d4" rx="4" filter="url(#shelf-shadow)"/>
-              <text x="521" y="485" transform="rotate(-90 521 485)" text-anchor="middle" font-size="10" font-weight="900" fill="#ffffff" letter-spacing="1">{{ 'storeLocator.mapCleaning' | translate }}</text>
-              <!-- Góndola final -->
-              <rect x="570" y="165" width="22" height="175" fill="#64748b" rx="4" filter="url(#shelf-shadow)"/>
-              <rect x="570" y="395" width="22" height="175" fill="#f43f5e" rx="4" filter="url(#shelf-shadow)"/>
-            </g>
-
-            <!-- ======================================================== -->
-            <!-- TRAZO DE RUTA DE COMPRAS (COMO EN LA IMAGEN)            -->
-            <!-- ======================================================== -->
-            @if (getActiveRoutePath()) {
-              <path [attr.d]="getActiveRoutePath()"
-                    fill="none"
-                    stroke="#0f172a"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    marker-end="url(#route-arrow)"
-                    class="route-path-animated"/>
-            }
-
-            <!-- ======================================================== -->
-            <!-- CAJAS REGISTRADORAS (LÍNEA INFERIOR DE BARRAS)           -->
-            <!-- ======================================================== -->
-            <g class="cash-registers">
-              <rect x="320" y="630" width="12" height="42" fill="#64748b" rx="3"/>
-              <rect x="360" y="630" width="12" height="42" fill="#64748b" rx="3"/>
-              <rect x="400" y="630" width="12" height="42" fill="#64748b" rx="3"/>
-              <rect x="440" y="630" width="12" height="42" fill="#64748b" rx="3"/>
-              <rect x="480" y="630" width="12" height="42" fill="#64748b" rx="3"/>
-              <rect x="520" y="630" width="12" height="42" fill="#64748b" rx="3"/>
-              <text x="420" y="695" text-anchor="middle" font-size="11" font-weight="800" fill="#64748b">{{ 'storeLocator.registersLine' | translate }}</text>
-            </g>
-
-            <!-- ======================================================== -->
-            <!-- HITO ENTRADA: 'START HERE / TÚ ESTÁS AQUÍ'               -->
-            <!-- ======================================================== -->
-            <g class="start-here-badge" (click)="resetZoom()">
-              <!-- Círculo Verde con animación suave de respiración centrada en su lugar -->
-              <circle cx="160" cy="670" r="33" fill="#65a30d" filter="url(#shelf-shadow)">
-                <animate attributeName="r" values="32;35;32" dur="3s" repeatCount="indefinite" />
-                <animate attributeName="fill-opacity" values="0.9;1;0.9" dur="3s" repeatCount="indefinite" />
-              </circle>
-              <text x="160" y="666" text-anchor="middle" font-size="9.5" font-weight="900" fill="#ffffff" letter-spacing="0.5">{{ 'storeLocator.youAre' | translate }}</text>
-              <text x="160" y="679" text-anchor="middle" font-size="10" font-weight="900" fill="#ffffff" letter-spacing="0.5">{{ 'storeLocator.here' | translate }}</text>
-            </g>
-
-            <!-- CHINCHETA DESTINO ANIMADA CUANDO HAY SELECCIÓN Y RUTA ACTIVA -->
-            @if (currentAisle && isRouteActive) {
-              <g class="destination-beacon" [attr.transform]="'translate(' + currentAisle.mapX + ',' + currentAisle.mapY + ')'">
-                <circle cx="0" cy="0" r="22" [attr.fill]="currentAisle.color" opacity="0.25" class="beacon-pulse"/>
-                <circle cx="0" cy="0" r="14" [attr.fill]="currentAisle.color"/>
-                <text x="0" y="4" text-anchor="middle" font-size="12">{{ currentAisle.icon }}</text>
-              </g>
-            }
-
-          </svg>
+        <!-- Indicador Flotante de Controles Táctiles y Ratón -->
+        <div class="floating-controls-tip">
+          <ion-icon name="hand-right-outline" aria-hidden="true"></ion-icon>
+          <span>Arrastra para orbitar · Rueda para zoom · Toca un pasillo</span>
         </div>
+
+        <!-- Pastilla Flotante de Pasillo Activo en el 3D -->
+        @if (currentAisle) {
+          <div class="floating-active-badge">
+            <div class="badge-left">
+              <ion-icon [name]="currentAisle.icon" aria-hidden="true"></ion-icon>
+              <strong>{{ getAisleLabel(currentAisle) }}: {{ getAisleName(currentAisle) }}</strong>
+            </div>
+            <button type="button" class="btn-clear-badge" (click)="resetToInitialState()" title="Ver Todo">
+              <ion-icon name="close" aria-hidden="true"></ion-icon>
+            </button>
+          </div>
+        }
       </div>
     </section>
 
     <!-- ======================================================== -->
-    <!-- COLUMNA DERECHA: TARJETA FIJA CON SCROLL INTERNO         -->
+    <!-- COLUMNA DERECHA: INSPECTOR ARQUITECTÓNICO MONOCROMÁTICO -->
     <!-- ======================================================== -->
     <aside class="store-inspector-card">
       
-      <!-- Buscador fijo por Teclado de Tablet -->
+      <!-- Buscador Técnico por Teclado -->
       <div class="search-panel-fixed">
         <div class="search-input-field">
           <ion-icon name="search-outline" class="search-ic" aria-hidden="true"></ion-icon>
@@ -273,16 +129,16 @@
         </div>
       </div>
 
-      <!-- Cuerpo Scrolleable de la Tarjeta (overflow-y: auto) -->
+      <!-- Cuerpo con Scroll Interno -->
       <div class="inspector-scroll-body">
         
         <!-- Indicador de Carga -->
         <div class="mini-loading" *ngIf="isLoading">
-          <ion-spinner name="crescent" color="primary"></ion-spinner>
+          <ion-spinner name="crescent" color="dark"></ion-spinner>
           <span>{{ 'storeLocator.searchingAisles' | translate }}</span>
         </div>
 
-        <!-- Resultados de Búsqueda por Teclado -->
+        <!-- Resultados de Búsqueda -->
         <div class="search-results-list" *ngIf="searchQuery && searchResults.length > 0 && !selectedProduct">
           <div class="results-header-tag">
             <ion-icon name="search" aria-hidden="true"></ion-icon>
@@ -309,12 +165,12 @@
 
         <!-- Sin resultados -->
         <div class="no-search-results" *ngIf="searchQuery && searchResults.length === 0 && !isLoading">
-          <ion-icon name="search-outline" class="no-res-ic"></ion-icon>
+          <ion-icon name="search-outline" class="no-res-ic" aria-hidden="true"></ion-icon>
           <h4>{{ 'storeLocator.noResultsFor' | translate:{ query: searchQuery } }}</h4>
           <p>{{ 'storeLocator.tapAisleHint' | translate }}</p>
         </div>
 
-        <!-- Tarjeta de Producto Seleccionado con Ruta Asistida -->
+        <!-- Tarjeta de Producto Seleccionado con Ruta Asistida 3D -->
         <article class="route-guidance-card" *ngIf="selectedProduct">
           <div class="guidance-head">
             <span class="guidance-tag">
@@ -339,7 +195,7 @@
               <h3 class="p-name">{{ selectedProduct.name }}</h3>
               <div class="p-price-row">
                 <strong class="p-price">{{ (selectedProduct.inOffer ? selectedProduct.offerPrice : selectedProduct.price) | clp }}</strong>
-                <ion-badge color="danger" *ngIf="selectedProduct.inOffer">{{ 'storeLocator.offerTag' | translate }}</ion-badge>
+                <ion-badge color="dark" *ngIf="selectedProduct.inOffer">{{ 'storeLocator.offerTag' | translate }}</ion-badge>
               </div>
             </div>
           </div>
@@ -368,12 +224,49 @@
               </div>
             </div>
           </div>
+
+          <!-- Sugerencias Complementarias para el Producto Seleccionado -->
+          <div class="complementary-sugg-section" *ngIf="complementaryProducts.length > 0">
+            <div class="sugg-header">
+              <div class="sugg-title-wrap">
+                <ion-icon name="sparkles-outline" aria-hidden="true"></ion-icon>
+                <strong>También te podría interesar:</strong>
+              </div>
+              <span class="sugg-subtitle">Completa tu compra</span>
+            </div>
+            <div class="sugg-grid">
+              @for (item of complementaryProducts; track item.id) {
+                <div class="sugg-card" (click)="selectProduct(item)">
+                  <div class="sugg-thumb-box">
+                    <img [src]="item.image" [alt]="item.name" loading="lazy">
+                    <span class="sugg-badge-offer" *ngIf="item.inOffer">{{ 'storeLocator.offerTag' | translate }}</span>
+                  </div>
+                  <div class="sugg-info">
+                    <span class="sugg-brand">{{ item.brand }}</span>
+                    <strong class="sugg-name">{{ item.name }}</strong>
+                    <div class="sugg-loc">
+                      <span>{{ getAisleDisplay(item.supermarketLocation?.aisle) }}</span>
+                    </div>
+                    <div class="sugg-action-row">
+                      <strong class="sugg-price">{{ (item.inOffer ? item.offerPrice : item.price) | clp }}</strong>
+                      <button type="button" class="sugg-btn-locate" title="Trazar ruta hacia este producto">
+                        <ion-icon name="navigate" aria-hidden="true"></ion-icon>
+                        <span>Ubicar</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
         </article>
 
         <!-- Detalle de Góndolas del Pasillo Activo -->
         <section class="aisle-inventory-section" *ngIf="currentAisle">
-          <header class="inventory-head" [style.border-left-color]="currentAisle.color">
-            <div class="head-icon-box">{{ currentAisle.icon }}</div>
+          <header class="inventory-head">
+            <div class="head-icon-box">
+              <ion-icon [name]="currentAisle.icon" aria-hidden="true"></ion-icon>
+            </div>
             <div class="head-titles">
               <h3>{{ getAisleLabel(currentAisle) }}: {{ getAisleName(currentAisle) }}</h3>
               <p>{{ getAisleDesc(currentAisle) }}</p>
@@ -416,22 +309,67 @@
             }
           </div>
         </section>
-        <!-- Estado Inicial Limpio / Exploración (cuando no hay pasillo seleccionado ni búsqueda activa) -->
+
+        <!-- Estado Inicial Limpio / Exploración (cuando no hay pasillo seleccionado) -->
         <div class="empty-inspector-state" *ngIf="!currentAisle && !selectedProduct && !searchQuery">
           <div class="empty-state-icon">
-            <ion-icon name="map-outline" aria-hidden="true"></ion-icon>
+            <ion-icon name="cube-outline" aria-hidden="true"></ion-icon>
           </div>
-          <h3>{{ 'storeLocator.exploreTitle' | translate }}</h3>
-          <p>{{ 'storeLocator.exploreDesc' | translate }}</p>
+          <h3>Explora el Supermercado en 3D</h3>
+          <p>Navega e interactúa directamente en el modelo 3D para ubicar góndolas, o selecciona una sección a continuación para trazar la ruta de navegación:</p>
 
           <div class="quick-category-suggestions">
             <span class="suggestions-label">{{ 'storeLocator.popularSearches' | translate }}</span>
             <div class="suggestion-pills">
               @for (aisle of aisles; track aisle.id) {
                 <button type="button" class="aisle-pill-btn" (click)="selectAisle(aisle.id)">
-                  <span class="pill-icon">{{ aisle.icon }}</span>
+                  <ion-icon [name]="aisle.icon" class="pill-icon" aria-hidden="true"></ion-icon>
                   <span class="pill-text">{{ getAisleName(aisle) }}</span>
                 </button>
+              }
+            </div>
+          </div>
+
+          <!-- SECCIÓN: PRODUCTOS QUE TE PUEDEN INTERESAR -->
+          <div class="featured-interests-section">
+            <div class="interests-header">
+              <div class="interests-title-wrap">
+                <ion-icon name="sparkles-outline" class="interests-sparkle-ic" aria-hidden="true"></ion-icon>
+                <div class="interests-titles">
+                  <h4>Productos que te pueden interesar</h4>
+                  <span>Destacados con ubicación inmediata en el plano 3D</span>
+                </div>
+              </div>
+              <span class="interests-badge-count">{{ featuredProducts.length }} sugerencias</span>
+            </div>
+
+            <div class="interests-cards-grid">
+              @for (item of featuredProducts; track item.id) {
+                <div class="interest-product-card" (click)="selectProduct(item)">
+                  <div class="card-thumb">
+                    <img [src]="item.image" [alt]="item.name" loading="lazy">
+                    <span class="card-badge-offer" *ngIf="item.inOffer">{{ 'storeLocator.offerTag' | translate }}</span>
+                    <span class="card-badge-loc">{{ getAisleDisplay(item.supermarketLocation?.aisle) }}</span>
+                  </div>
+                  <div class="card-body">
+                    <span class="card-brand">{{ item.brand }}</span>
+                    <strong class="card-title">{{ item.name }}</strong>
+                    <div class="card-shelf-row">
+                      <ion-icon name="grid-outline" aria-hidden="true"></ion-icon>
+                      <span>{{ getShelfDisplay(item.supermarketLocation?.shelf) }}</span>
+                    </div>
+                    <div class="card-footer">
+                      <div class="price-box">
+                        <strong class="current-price">{{ (item.inOffer ? item.offerPrice : item.price) | clp }}</strong>
+                        <span class="old-price" *ngIf="item.inOffer">{{ item.price | clp }}</span>
+                      </div>
+                      <button type="button" class="btn-locate-card" title="Trazar ruta hacia este producto">
+                        <ion-icon name="navigate" aria-hidden="true"></ion-icon>
+                        <span>Ubicar</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               }
             </div>
           </div>

@@ -45,25 +45,38 @@
           <span class="items-badge">{{ displayItems().length }} ítems</span>
         </div>
 
-        <ul class="qr-items-list">
-          @for (item of displayItems(); track item.name) {
-            <li class="qr-item-row">
-              <div class="item-left">
-                <span class="bullet-dot"></span>
-                <span class="item-name">{{ item.name }}</span>
-              </div>
-              <span class="item-aisle-pill">
-                <ion-icon name="navigate-outline" aria-hidden="true"></ion-icon>
-                {{ item.aisle }}
-              </span>
-            </li>
-          }
-        </ul>
+        @if (displayItems().length > 0) {
+          <ul class="qr-items-list">
+            @for (item of displayItems(); track item.name) {
+              <li class="qr-item-row">
+                <div class="item-left">
+                  <span class="bullet-dot"></span>
+                  <span class="item-name">{{ item.name }}</span>
+                  @if (item.qty) {
+                    <span class="item-qty-tag">({{ item.qty }})</span>
+                  }
+                </div>
+                <span class="item-aisle-pill">
+                  <ion-icon name="navigate-outline" aria-hidden="true"></ion-icon>
+                  {{ item.aisle }}
+                </span>
+              </li>
+            }
+          </ul>
 
-        @if (estimatedTotal() > 0) {
-          <div class="total-bar">
-            <span>Total estimado:</span>
-            <span class="total-val">{{ estimatedTotal() | clp }}</span>
+          @if (estimatedTotal() > 0) {
+            <div class="total-bar">
+              <span>Total estimado:</span>
+              <span class="total-val">{{ estimatedTotal() | clp }}</span>
+            </div>
+          }
+        } @else {
+          <div class="empty-list-box">
+            <div class="empty-icon-wrap">
+              <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
+            </div>
+            <p class="empty-msg-title">No tienes productos en tu canasta</p>
+            <p class="empty-msg-desc">Agrega productos desde "Productos" o escanea artículos para generar tu lista y ruta al teléfono.</p>
           </div>
         }
       </div>

@@ -229,7 +229,7 @@
       "name": "Tomates",
       "brand": "Nacional",
       "price": 1190,
-      "image": "https://images.unsplash.com/photo-1546470427-e212d0d553d4?w=400&h=300&fit=crop",
+      "image": "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&h=300&fit=crop",
       "barcode": "7801234567908",
       "category": "Verduras",
       "supermarketLocation": {
@@ -257,7 +257,7 @@
       "name": "Carne Molida",
       "brand": "Super Vacuno",
       "price": 6290,
-      "image": "https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400&h=300&fit=crop",
+      "image": "https://images.unsplash.com/photo-1588168333986-5078d3ae3976?w=400&h=300&fit=crop",
       "barcode": "7801234567910",
       "category": "Carnes",
       "supermarketLocation": {
@@ -362,6 +362,986 @@
         "aisle": "Pasillo 9",
         "section": "Vinos",
         "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 27,
+      "name": "Leche Natural Entera 1L",
+      "brand": "Soprole",
+      "price": 1190,
+      "image": "https://images.openfoodfacts.org/images/products/780/290/000/1308/front_es.8.400.jpg",
+      "barcode": "7802900001308",
+      "category": "Lácteos",
+      "supermarketLocation": {
+        "aisle": "Pasillo 1",
+        "section": "Refrigerados",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 28,
+      "name": "Crema de Leche Espesa 200 ml",
+      "brand": "Soprole",
+      "price": 1290,
+      "image": "https://images.openfoodfacts.org/images/products/780/290/010/5013/front_es.4.400.jpg",
+      "barcode": "7802900105013",
+      "category": "Lácteos",
+      "supermarketLocation": {
+        "aisle": "Pasillo 1",
+        "section": "Refrigerados",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 29,
+      "name": "Queso Rallado Reggianito 40 g",
+      "brand": "Colun",
+      "price": 990,
+      "image": "https://images.openfoodfacts.org/images/products/780/292/042/3814/front_es.6.400.jpg",
+      "barcode": "7802920423814",
+      "category": "Lácteos",
+      "supermarketLocation": {
+        "aisle": "Pasillo 1",
+        "section": "Refrigerados",
+        "shelf": "Estante 5"
+      }
+    },
+    {
+      "id": 30,
+      "name": "Yoghurt Batido Frutilla 120 g",
+      "brand": "Colun",
+      "price": 420,
+      "image": "https://images.openfoodfacts.org/images/products/780/292/077/7542/front_es.23.400.jpg",
+      "barcode": "7802920005010",
+      "category": "Lácteos",
+      "supermarketLocation": {
+        "aisle": "Pasillo 1",
+        "section": "Refrigerados",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 31,
+      "name": "Manjar Tradicional Pote 400 g",
+      "brand": "Colun",
+      "price": 1890,
+      "image": "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&h=300&fit=crop",
+      "barcode": "7802920015019",
+      "category": "Lácteos",
+      "supermarketLocation": {
+        "aisle": "Pasillo 1",
+        "section": "Refrigerados",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 32,
+      "name": "Queso Chanco Laminado 500 g",
+      "brand": "Colun",
+      "price": 5490,
+      "image": "https://images.unsplash.com/photo-1624806992066-5ffcf7ca186b?w=400&h=300&fit=crop",
+      "barcode": "7802920025018",
+      "category": "Lácteos",
+      "supermarketLocation": {
+        "aisle": "Pasillo 1",
+        "section": "Refrigerados",
+        "shelf": "Estante 5"
+      }
+    },
+    {
+      "id": 33,
+      "name": "Salsa de Tomate Pomarola Italiana 200 g",
+      "brand": "Carozzi",
+      "price": 890,
+      "image": "https://images.unsplash.com/photo-1572449043416-55f4685c9bb7?w=400&h=300&fit=crop",
+      "barcode": "7802575353047",
+      "category": "Abarrotes",
+      "supermarketLocation": {
+        "aisle": "Pasillo 2",
+        "section": "Salsas y Pastas",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 34,
+      "name": "Fideos Spaghetti 5 400 g",
+      "brand": "Carozzi",
+      "price": 1190,
+      "image": "https://images.openfoodfacts.org/images/products/780/257/500/4437/front_es.3.400.jpg",
+      "barcode": "7802575004437",
+      "category": "Abarrotes",
+      "supermarketLocation": {
+        "aisle": "Pasillo 2",
+        "section": "Pastas",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 35,
+      "name": "Fideos Cabellitos 400 g",
+      "brand": "Lucchetti",
+      "price": 1090,
+      "image": "https://images.openfoodfacts.org/images/products/780/250/000/1029/front_es.4.400.jpg",
+      "barcode": "7802500001029",
+      "category": "Abarrotes",
+      "supermarketLocation": {
+        "aisle": "Pasillo 2",
+        "section": "Pastas",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 36,
+      "name": "Endulzante Stevia + Sucralosa Frasco",
+      "brand": "Iansa Cero K",
+      "price": 2490,
+      "image": "https://images.openfoodfacts.org/images/products/780/150/500/0419/front_es.27.400.jpg",
+      "barcode": "7801505000419",
+      "category": "Abarrotes",
+      "supermarketLocation": {
+        "aisle": "Pasillo 2",
+        "section": "Endulzantes",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 37,
+      "name": "Jurel al Natural Lata 425 g",
+      "brand": "San José",
+      "price": 1590,
+      "image": "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=400&h=300&fit=crop",
+      "barcode": "7801980000157",
+      "category": "Conservas",
+      "supermarketLocation": {
+        "aisle": "Pasillo 2",
+        "section": "Conservas",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 38,
+      "name": "Aceite Vegetal Maravilla 1 L",
+      "brand": "Belmont",
+      "price": 2190,
+      "image": "https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=400&h=300&fit=crop",
+      "barcode": "7801640001159",
+      "category": "Abarrotes",
+      "supermarketLocation": {
+        "aisle": "Pasillo 2",
+        "section": "Aceites y Vinagres",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 39,
+      "name": "Lentejas Seleccionadas 6 mm 1 Kg",
+      "brand": "Lucchetti",
+      "price": 2390,
+      "image": "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=300&fit=crop",
+      "barcode": "7802500002156",
+      "category": "Abarrotes",
+      "supermarketLocation": {
+        "aisle": "Pasillo 2",
+        "section": "Granos y Cereales",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 40,
+      "name": "Coca-Cola Zero Azúcar 2 L",
+      "brand": "Coca-Cola",
+      "price": 2090,
+      "image": "https://images.openfoodfacts.org/images/products/780/161/000/1196/front_es.21.400.jpg",
+      "barcode": "7801610350355",
+      "category": "Bebidas",
+      "supermarketLocation": {
+        "aisle": "Pasillo 3",
+        "section": "Bebidas",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 41,
+      "name": "Agua Mineral con Gas 1.6 L",
+      "brand": "Cachantun",
+      "price": 990,
+      "image": "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&h=300&fit=crop",
+      "barcode": "7801620000011",
+      "category": "Bebidas",
+      "supermarketLocation": {
+        "aisle": "Pasillo 3",
+        "section": "Aguas",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 42,
+      "name": "Café Instantáneo Tradición 170 g",
+      "brand": "Nescafé",
+      "price": 4990,
+      "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&h=300&fit=crop",
+      "barcode": "7802950000016",
+      "category": "Bebidas calientes",
+      "supermarketLocation": {
+        "aisle": "Pasillo 3",
+        "section": "Té y Café",
+        "shelf": "Estante 5"
+      }
+    },
+    {
+      "id": 43,
+      "name": "Bebida Sprite Lima Limón 2 L",
+      "brand": "Sprite",
+      "price": 1990,
+      "image": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&h=300&fit=crop",
+      "barcode": "7801610001202",
+      "category": "Bebidas",
+      "supermarketLocation": {
+        "aisle": "Pasillo 3",
+        "section": "Bebidas",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 44,
+      "name": "Bebida Fanta Naranja 2 L",
+      "brand": "Fanta",
+      "price": 1990,
+      "image": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=400&h=300&fit=crop",
+      "barcode": "7801610001301",
+      "category": "Bebidas",
+      "supermarketLocation": {
+        "aisle": "Pasillo 3",
+        "section": "Bebidas",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 45,
+      "name": "Café Dolca Instantáneo Frasco 170 g",
+      "brand": "Nescafé",
+      "price": 4290,
+      "image": "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=400&h=300&fit=crop",
+      "barcode": "7802950000030",
+      "category": "Bebidas calientes",
+      "supermarketLocation": {
+        "aisle": "Pasillo 3",
+        "section": "Té y Café",
+        "shelf": "Estante 5"
+      }
+    },
+    {
+      "id": 46,
+      "name": "Bebida en Polvo Naranja Sobre 13 g",
+      "brand": "Zuko",
+      "price": 350,
+      "image": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=300&fit=crop",
+      "barcode": "7802800579518",
+      "category": "Bebidas",
+      "supermarketLocation": {
+        "aisle": "Pasillo 3",
+        "section": "Jugos",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 47,
+      "name": "Lavaloza Líquido Concentrado Limón 750 ml",
+      "brand": "Quix",
+      "price": 2190,
+      "image": "https://images.unsplash.com/photo-1585421514738-01798e348b17?w=400&h=300&fit=crop",
+      "barcode": "7801123456747",
+      "category": "Limpieza",
+      "supermarketLocation": {
+        "aisle": "Pasillo 4",
+        "section": "Limpieza Cocina",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 48,
+      "name": "Cloro Tradicional Botella 1 L",
+      "brand": "Clorox",
+      "price": 1290,
+      "image": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop",
+      "barcode": "7801123456748",
+      "category": "Limpieza",
+      "supermarketLocation": {
+        "aisle": "Pasillo 4",
+        "section": "Desinfectantes",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 49,
+      "name": "Limpiador Multiuso Lavanda 900 ml",
+      "brand": "Poett",
+      "price": 1490,
+      "image": "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=400&h=300&fit=crop",
+      "barcode": "7801123456749",
+      "category": "Limpieza",
+      "supermarketLocation": {
+        "aisle": "Pasillo 4",
+        "section": "Aromatizantes",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 50,
+      "name": "Detergente Polvo Multiacción 2.7 Kg",
+      "brand": "Omo",
+      "price": 7990,
+      "image": "https://images.unsplash.com/photo-1610557892470-55d9e80c0bce?w=400&h=300&fit=crop",
+      "barcode": "7801123456750",
+      "category": "Limpieza",
+      "supermarketLocation": {
+        "aisle": "Pasillo 4",
+        "section": "Detergentes",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 51,
+      "name": "Papel Higiénico Doble Hoja 8 Rollos",
+      "brand": "Confort",
+      "price": 3890,
+      "image": "https://images.unsplash.com/photo-1584556812952-905ffd0c611a?w=400&h=300&fit=crop",
+      "barcode": "7801123456751",
+      "category": "Limpieza",
+      "supermarketLocation": {
+        "aisle": "Pasillo 4",
+        "section": "Papeles",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 52,
+      "name": "Toalla de Papel Clásica 3 Rollos",
+      "brand": "Nova",
+      "price": 2490,
+      "image": "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?w=400&h=300&fit=crop",
+      "barcode": "7801123456752",
+      "category": "Limpieza",
+      "supermarketLocation": {
+        "aisle": "Pasillo 4",
+        "section": "Papeles",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 53,
+      "name": "Hamburguesas Vacuno Clásicas 4 un 400 g",
+      "brand": "La Crianza",
+      "price": 4390,
+      "image": "https://images.unsplash.com/photo-1550547660-d9450f859349?w=400&h=300&fit=crop",
+      "barcode": "7801123456753",
+      "category": "Congelados",
+      "supermarketLocation": {
+        "aisle": "Pasillo 4",
+        "section": "Congelados",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 54,
+      "name": "Papas Prefritas Tradicionales 1 Kg",
+      "brand": "Minuto Verde",
+      "price": 3290,
+      "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=300&fit=crop",
+      "barcode": "7801123456754",
+      "category": "Congelados",
+      "supermarketLocation": {
+        "aisle": "Pasillo 4",
+        "section": "Congelados",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 55,
+      "name": "Paltas Hass Chilenas Seleccionadas 1 Kg",
+      "brand": "Nacional",
+      "price": 4690,
+      "image": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400&h=300&fit=crop",
+      "barcode": "7801123456755",
+      "category": "Frutas y Verduras",
+      "supermarketLocation": {
+        "aisle": "Pasillo 5",
+        "section": "Frutas",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 56,
+      "name": "Limones Sutil Malla 1 Kg",
+      "brand": "Nacional",
+      "price": 1590,
+      "image": "https://images.unsplash.com/photo-1590502593747-42a996133562?w=400&h=300&fit=crop",
+      "barcode": "7801123456756",
+      "category": "Frutas y Verduras",
+      "supermarketLocation": {
+        "aisle": "Pasillo 5",
+        "section": "Frutas",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 57,
+      "name": "Naranjas Valencia Malla 1.5 Kg",
+      "brand": "Nacional",
+      "price": 1790,
+      "image": "https://images.unsplash.com/photo-1557800636-894a64c1696f?w=400&h=300&fit=crop",
+      "barcode": "7801123456757",
+      "category": "Frutas y Verduras",
+      "supermarketLocation": {
+        "aisle": "Pasillo 5",
+        "section": "Frutas",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 58,
+      "name": "Lechuga Costina Hidropónica Unidad",
+      "brand": "Nacional",
+      "price": 1090,
+      "image": "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=300&fit=crop",
+      "barcode": "7801123456758",
+      "category": "Frutas y Verduras",
+      "supermarketLocation": {
+        "aisle": "Pasillo 5",
+        "section": "Verduras",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 59,
+      "name": "Cebolla Granel 1 Kg",
+      "brand": "Nacional",
+      "price": 990,
+      "image": "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=400&h=300&fit=crop",
+      "barcode": "7801123456759",
+      "category": "Frutas y Verduras",
+      "supermarketLocation": {
+        "aisle": "Pasillo 5",
+        "section": "Verduras",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 60,
+      "name": "Ensalada Mix Primavera Fresca 300 g",
+      "brand": "Fresh Cut",
+      "price": 1690,
+      "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=300&fit=crop",
+      "barcode": "7801123456760",
+      "category": "Frutas y Verduras",
+      "supermarketLocation": {
+        "aisle": "Pasillo 5",
+        "section": "Ensaladas Listas",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 61,
+      "name": "Nueces Peladas Mariposa 250 g",
+      "brand": "Granel",
+      "price": 3490,
+      "image": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&h=300&fit=crop",
+      "barcode": "7801123456761",
+      "category": "Granel",
+      "supermarketLocation": {
+        "aisle": "Pasillo 5",
+        "section": "Frutos Secos",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 62,
+      "name": "Trutro Entero de Pollo Fresco 1 Kg",
+      "brand": "Ariztía",
+      "price": 3690,
+      "image": "https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=400&h=300&fit=crop",
+      "barcode": "7801123456762",
+      "category": "Carnicería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 6",
+        "section": "Aves",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 63,
+      "name": "Lomo Liso Vacuno Nacional al Vacío 1 Kg",
+      "brand": "Super Vacuno",
+      "price": 12990,
+      "image": "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400&h=300&fit=crop",
+      "barcode": "7801123456763",
+      "category": "Carnicería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 6",
+        "section": "Vacuno",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 64,
+      "name": "Pulpa de Cerdo Trozo 800 g",
+      "brand": "Super Cerdo",
+      "price": 4990,
+      "image": "https://images.unsplash.com/photo-1602498456745-e9503b30470b?w=400&h=300&fit=crop",
+      "barcode": "7801123456764",
+      "category": "Carnicería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 6",
+        "section": "Cerdo",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 65,
+      "name": "Jamón Pierna Colonial Laminado 200 g",
+      "brand": "San Jorge",
+      "price": 2490,
+      "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop",
+      "barcode": "7801123456765",
+      "category": "Fiambrería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 6",
+        "section": "Cecinas",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 66,
+      "name": "Salchichas Tradicionales 10 un 450 g",
+      "brand": "PF",
+      "price": 2190,
+      "image": "https://images.unsplash.com/photo-1585325701165-351af916e581?w=400&h=300&fit=crop",
+      "barcode": "7801123456766",
+      "category": "Fiambrería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 6",
+        "section": "Cecinas",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 67,
+      "name": "Salame Italiano Laminado 100 g",
+      "brand": "Llanquihue",
+      "price": 2890,
+      "image": "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400&h=300&fit=crop",
+      "barcode": "7801123456767",
+      "category": "Fiambrería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 6",
+        "section": "Cecinas",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 68,
+      "name": "Filete de Salmón Fresco con Piel 500 g",
+      "brand": "Pesquera Nacional",
+      "price": 8990,
+      "image": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&h=300&fit=crop",
+      "barcode": "7801123456768",
+      "category": "Pescadería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 6",
+        "section": "Pescados y Mariscos",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 69,
+      "name": "Reineta Fresca Fileteada 500 g",
+      "brand": "Pesquera Nacional",
+      "price": 5490,
+      "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=300&fit=crop",
+      "barcode": "7801123456769",
+      "category": "Pescadería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 6",
+        "section": "Pescados y Mariscos",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 70,
+      "name": "Pan Integral Grano Entero 500 g",
+      "brand": "Castaño",
+      "price": 2390,
+      "image": "https://images.openfoodfacts.org/images/products/780/347/300/2662/front_es.34.400.jpg",
+      "barcode": "7803473002662",
+      "category": "Panadería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 7",
+        "section": "Pan de Molde",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 71,
+      "name": "Pan Pita Blanco 300 g",
+      "brand": "Ideal",
+      "price": 1690,
+      "image": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&h=300&fit=crop",
+      "barcode": "7801123456771",
+      "category": "Panadería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 7",
+        "section": "Pan Especial",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 72,
+      "name": "Rapiditas Linaza y Chía 10 un",
+      "brand": "Ideal",
+      "price": 1890,
+      "image": "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?w=400&h=300&fit=crop",
+      "barcode": "7803403003424",
+      "category": "Panadería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 7",
+        "section": "Tortillas y Masas",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 73,
+      "name": "Marraqueta Horneada Tradicional Bolsa 1 Kg",
+      "brand": "Panadería Central",
+      "price": 1890,
+      "image": "https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?w=400&h=300&fit=crop",
+      "barcode": "7801123456773",
+      "category": "Panadería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 7",
+        "section": "Pan Tradicional",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 74,
+      "name": "Hallulla Especial Crujiente Bolsa 1 Kg",
+      "brand": "Panadería Central",
+      "price": 1890,
+      "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=300&fit=crop",
+      "barcode": "7801123456774",
+      "category": "Panadería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 7",
+        "section": "Pan Tradicional",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 75,
+      "name": "Queque Mármol Vainilla Chocolate 400 g",
+      "brand": "Castaño",
+      "price": 2690,
+      "image": "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=400&h=300&fit=crop",
+      "barcode": "7801123456775",
+      "category": "Pastelería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 7",
+        "section": "Queques y Masas",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 76,
+      "name": "Medialunas Dulces Horneadas x6 un",
+      "brand": "Pastelería Central",
+      "price": 2490,
+      "image": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&h=300&fit=crop",
+      "barcode": "7801123456776",
+      "category": "Pastelería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 7",
+        "section": "Bollería",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 77,
+      "name": "Galletas de Vino Tradicionales 150 g",
+      "brand": "McKay",
+      "price": 890,
+      "image": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&h=300&fit=crop",
+      "barcode": "7801123456777",
+      "category": "Galletas",
+      "supermarketLocation": {
+        "aisle": "Pasillo 7",
+        "section": "Galletas",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 78,
+      "name": "Donas Glaseadas Rellenas de Manjar x4 un",
+      "brand": "Pastelería Central",
+      "price": 2990,
+      "image": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=300&fit=crop",
+      "barcode": "7801123456778",
+      "category": "Pastelería",
+      "supermarketLocation": {
+        "aisle": "Pasillo 7",
+        "section": "Bollería",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 79,
+      "name": "Champú Limpieza Renovadora 375 ml",
+      "brand": "Head & Shoulders",
+      "price": 4290,
+      "image": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=400&h=300&fit=crop",
+      "barcode": "7801123456779",
+      "category": "Cuidado Personal",
+      "supermarketLocation": {
+        "aisle": "Pasillo 8",
+        "section": "Cuidado Capilar",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 80,
+      "name": "Champú Restauración Pro-V 400 ml",
+      "brand": "Pantene",
+      "price": 4190,
+      "image": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&h=300&fit=crop",
+      "barcode": "7801123456780",
+      "category": "Cuidado Personal",
+      "supermarketLocation": {
+        "aisle": "Pasillo 8",
+        "section": "Cuidado Capilar",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 81,
+      "name": "Acondicionador Reconstrucción Completa 400 ml",
+      "brand": "Dove",
+      "price": 3990,
+      "image": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=400&h=300&fit=crop",
+      "barcode": "7801123456781",
+      "category": "Cuidado Personal",
+      "supermarketLocation": {
+        "aisle": "Pasillo 8",
+        "section": "Cuidado Capilar",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 82,
+      "name": "Jabón en Barra Belleza Original 3x90 g",
+      "brand": "Dove",
+      "price": 3190,
+      "image": "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?w=400&h=300&fit=crop",
+      "barcode": "7801123456782",
+      "category": "Cuidado Personal",
+      "supermarketLocation": {
+        "aisle": "Pasillo 8",
+        "section": "Jabones y Baño",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 83,
+      "name": "Jabón Líquido Antibacterial Fresh 250 ml",
+      "brand": "Rexona",
+      "price": 1990,
+      "image": "https://images.unsplash.com/photo-1585751119414-ef2636f8aede?w=400&h=300&fit=crop",
+      "barcode": "7801123456783",
+      "category": "Cuidado Personal",
+      "supermarketLocation": {
+        "aisle": "Pasillo 8",
+        "section": "Jabones y Baño",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 84,
+      "name": "Pasta Dental Total 12 Clean Mint 75 ml",
+      "brand": "Colgate",
+      "price": 2390,
+      "image": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=400&h=300&fit=crop",
+      "barcode": "7801123456784",
+      "category": "Cuidado Bucal",
+      "supermarketLocation": {
+        "aisle": "Pasillo 8",
+        "section": "Cuidado Bucal",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 85,
+      "name": "Cepillo Dental 360 Medio Pack x2 un",
+      "brand": "Colgate",
+      "price": 3490,
+      "image": "https://images.unsplash.com/photo-1559656914-a30970c1affd?w=400&h=300&fit=crop",
+      "barcode": "7801123456785",
+      "category": "Cuidado Bucal",
+      "supermarketLocation": {
+        "aisle": "Pasillo 8",
+        "section": "Cuidado Bucal",
+        "shelf": "Estante 4"
+      }
+    },
+    {
+      "id": 86,
+      "name": "Máquinas de Afeitar Prestobarba 3 Pack x4 un",
+      "brand": "Gillette",
+      "price": 4790,
+      "image": "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=400&h=300&fit=crop",
+      "barcode": "7801123456786",
+      "category": "Cuidado Personal",
+      "supermarketLocation": {
+        "aisle": "Pasillo 8",
+        "section": "Afeitado",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 87,
+      "name": "Crema Corporal Milk Nutritiva Piel Seca 400 ml",
+      "brand": "Nivea",
+      "price": 4690,
+      "image": "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400&h=300&fit=crop",
+      "barcode": "7801123456787",
+      "category": "Cuidado Personal",
+      "supermarketLocation": {
+        "aisle": "Pasillo 8",
+        "section": "Cuidado Corporal",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 88,
+      "name": "Vino Tinto Cabernet Sauvignon 750 ml",
+      "brand": "Casillero del Diablo",
+      "price": 5990,
+      "image": "https://images.openfoodfacts.org/images/products/780/432/056/8300/front_es.6.400.jpg",
+      "barcode": "7804320568300",
+      "category": "Vinos y Licores",
+      "supermarketLocation": {
+        "aisle": "Pasillo 9",
+        "section": "Vinos Tintos",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 89,
+      "name": "Vino Tinto Carmenere Reserva Especial 750 ml",
+      "brand": "Santa Rita 120",
+      "price": 4290,
+      "image": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=300&fit=crop",
+      "barcode": "7804300000021",
+      "category": "Vinos y Licores",
+      "supermarketLocation": {
+        "aisle": "Pasillo 9",
+        "section": "Vinos Tintos",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 90,
+      "name": "Vino Blanco Sauvignon Blanc Reserva 750 ml",
+      "brand": "Castillo de Molina",
+      "price": 6490,
+      "image": "https://images.unsplash.com/photo-1569919659476-f0852f6834b7?w=400&h=300&fit=crop",
+      "barcode": "7804300000022",
+      "category": "Vinos y Licores",
+      "supermarketLocation": {
+        "aisle": "Pasillo 9",
+        "section": "Vinos Blancos",
+        "shelf": "Estante 1"
+      }
+    },
+    {
+      "id": 91,
+      "name": "Cerveza Lager Lata 473 ml Pack x6 un",
+      "brand": "Cristal",
+      "price": 5290,
+      "image": "https://images.unsplash.com/photo-1618886614638-80e3c103d31a?w=400&h=300&fit=crop",
+      "barcode": "7801123456791",
+      "category": "Cervezas",
+      "supermarketLocation": {
+        "aisle": "Pasillo 9",
+        "section": "Cervezas Nacionales",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 92,
+      "name": "Cerveza Silver Lager Lata 473 ml Pack x6 un",
+      "brand": "Escudo",
+      "price": 5490,
+      "image": "https://images.unsplash.com/photo-1575037614876-c38a4d44f5b8?w=400&h=300&fit=crop",
+      "barcode": "7801123456792",
+      "category": "Cervezas",
+      "supermarketLocation": {
+        "aisle": "Pasillo 9",
+        "section": "Cervezas Nacionales",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 93,
+      "name": "Cerveza Torobayo Botella 330 ml",
+      "brand": "Kunstmann",
+      "price": 1890,
+      "image": "https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?w=400&h=300&fit=crop",
+      "barcode": "7801123456793",
+      "category": "Cervezas",
+      "supermarketLocation": {
+        "aisle": "Pasillo 9",
+        "section": "Cervezas Artesanales",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 94,
+      "name": "Cerveza Extra Botella 355 ml Pack x6 un",
+      "brand": "Corona",
+      "price": 6990,
+      "image": "https://images.unsplash.com/photo-1584225064785-c62a8b43d148?w=400&h=300&fit=crop",
+      "barcode": "7801123456794",
+      "category": "Cervezas",
+      "supermarketLocation": {
+        "aisle": "Pasillo 9",
+        "section": "Cervezas Importadas",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 95,
+      "name": "Pisco Especial 35° Botella 750 ml",
+      "brand": "Mistral",
+      "price": 7490,
+      "image": "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?w=400&h=300&fit=crop",
+      "barcode": "7801123456795",
+      "category": "Licores y Destilados",
+      "supermarketLocation": {
+        "aisle": "Pasillo 9",
+        "section": "Piscos",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 96,
+      "name": "Pisco Reservado 40° Botella 750 ml",
+      "brand": "Alto del Carmen",
+      "price": 8990,
+      "image": "https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=400&h=300&fit=crop",
+      "barcode": "7801123456796",
+      "category": "Licores y Destilados",
+      "supermarketLocation": {
+        "aisle": "Pasillo 9",
+        "section": "Piscos",
+        "shelf": "Estante 3"
       }
     }
   ],
@@ -473,142 +1453,407 @@
       "productId": 5,
       "offerPrice": 1490,
       "validUntil": "2026-09-30"
+    },
+    {
+      "id": 19,
+      "productId": 32,
+      "offerPrice": 4790,
+      "validUntil": "2026-10-31"
+    },
+    {
+      "id": 20,
+      "productId": 33,
+      "offerPrice": 690,
+      "validUntil": "2026-10-15"
+    },
+    {
+      "id": 21,
+      "productId": 40,
+      "offerPrice": 1790,
+      "validUntil": "2026-10-31"
+    },
+    {
+      "id": 22,
+      "productId": 42,
+      "offerPrice": 3990,
+      "validUntil": "2026-09-30"
+    },
+    {
+      "id": 23,
+      "productId": 47,
+      "offerPrice": 1790,
+      "validUntil": "2026-10-31"
+    },
+    {
+      "id": 24,
+      "productId": 50,
+      "offerPrice": 6490,
+      "validUntil": "2026-10-15"
+    },
+    {
+      "id": 25,
+      "productId": 55,
+      "offerPrice": 3890,
+      "validUntil": "2026-09-30"
+    },
+    {
+      "id": 26,
+      "productId": 62,
+      "offerPrice": 2990,
+      "validUntil": "2026-10-31"
+    },
+    {
+      "id": 27,
+      "productId": 63,
+      "offerPrice": 10990,
+      "validUntil": "2026-10-15"
+    },
+    {
+      "id": 28,
+      "productId": 70,
+      "offerPrice": 1990,
+      "validUntil": "2026-10-31"
+    },
+    {
+      "id": 29,
+      "productId": 76,
+      "offerPrice": 1990,
+      "validUntil": "2026-09-30"
+    },
+    {
+      "id": 30,
+      "productId": 79,
+      "offerPrice": 3490,
+      "validUntil": "2026-10-31"
+    },
+    {
+      "id": 31,
+      "productId": 84,
+      "offerPrice": 1890,
+      "validUntil": "2026-10-15"
+    },
+    {
+      "id": 32,
+      "productId": 88,
+      "offerPrice": 4890,
+      "validUntil": "2026-10-31"
+    },
+    {
+      "id": 33,
+      "productId": 91,
+      "offerPrice": 4490,
+      "validUntil": "2026-09-30"
+    },
+    {
+      "id": 34,
+      "productId": 95,
+      "offerPrice": 6290,
+      "validUntil": "2026-10-31"
     }
   ],
   "recipes": [
     {
       "id": 1,
-      "name": "Quesadillas Express de Queso Mantecoso",
-      "description": "Quesadillas crujientes con queso derretido, ideal para una comida rápida",
-      "mainIngredient": "Queso Mantecoso Trozo, 450 g",
+      "name": "Quesadillas Rápidas con Queso Mantecoso",
+      "description": "Crujientes tortillas rellenas de abundante queso derretido y vegetales salteados.",
+      "mainIngredient": "Queso Mantecoso Trozo Soprole",
       "category": "Comida Rápida",
       "difficulty": "Fácil",
       "time": "15 min",
       "ingredients": [
-        "200g de Queso Mantecoso rallado",
-        "4 tortillas de harina",
-        "1 pimiento rojo en tiras",
-        "½ cebolla picada",
-        "1 cucharada de aceite",
-        "Sal y pimienta al gusto"
+        "200g de Queso Mantecoso Soprole",
+        "4 Rapiditas Linaza y Chía",
+        "1 Tomate picado en cubitos",
+        "1 cucharada de Aceite Belmont",
+        "Sal y orégano a gusto"
       ],
       "steps": [
-        "Rallar el queso mantecoso",
-        "Calentar el aceite en un sartén",
-        "Colocar una tortilla, añadir queso y vegetales",
-        "Tapar con otra tortilla y dorar por ambos lados",
-        "Cortar en triángulos y servir caliente"
+        "Rallar o laminar el queso mantecoso",
+        "Calentar unas gotas de aceite en un sartén amplio a fuego medio",
+        "Poner una tortilla, rellenar con queso y trocitos de tomate",
+        "Doblar o tapar con otra tortilla, dorar 2 minutos por lado hasta fundir",
+        "Cortar en triángulos y servir de inmediato bien caliente"
       ],
-      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Quesadilla_2.jpg/1200px-Quesadilla_2.jpg",
+      "image": "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=800&auto=format&fit=crop&q=80",
       "productIds": [
-        24
+        24,
+        72,
+        17,
+        38
       ]
     },
     {
       "id": 2,
       "name": "Ensalada de Atún Mediterránea",
-      "description": "Ensalada fresca y saludable con atún en agua",
-      "mainIngredient": "Atún Lomitos en Agua Lata, 160 g",
+      "description": "Plato fresco, nutritivo y rápido de armar con atún en lomitos y vegetales crujientes.",
+      "mainIngredient": "Atún Lomitos en Agua Robinson Crusoe",
       "category": "Ensaladas",
       "difficulty": "Fácil",
       "time": "10 min",
       "ingredients": [
-        "1 lata de Atún en agua escurrido",
-        "1 lechuga fresca lavada",
-        "1 tomate picado",
-        "½ cebolla morada en plumas",
-        "Aceite de oliva",
-        "Limón y sal al gusto"
+        "1 lata de Atún Lomitos en Agua",
+        "1 Lechuga Costina hidropónica lavada",
+        "2 Tomates frescos picados",
+        "1 Cebolla pequeña en pluma fina",
+        "Jugo de limón sutil, aceite y sal al gusto"
       ],
       "steps": [
-        "Lavar y picar la lechuga",
-        "Mezclar con tomate y cebolla",
-        "Añadir el atún desmenuzado",
-        "Aliñar con aceite, limón y sal",
-        "Mezclar suavemente y servir"
+        "Lavar y trozar la lechuga costina con las manos",
+        "Cortar los tomates en gajos finos y la cebolla en pluma",
+        "Escurrir los lomitos de atún y desmenuzar suavemente en un bowl",
+        "Mezclar los ingredientes y aliñar con aceite, limón sutil y sal",
+        "Servir fresca como almuerzo o acompañamiento liviano"
       ],
-      "image": "https://www.cocinadelirante.com/sites/default/files/images/2025/03/receta-de-ensalada-de-atun-con-yogur.jpg",
+      "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=80",
       "productIds": [
         25,
-        17
+        17,
+        58,
+        59,
+        56,
+        38
       ]
     },
     {
       "id": 3,
-      "name": "Marinada para Carnes con Vino Carmenere",
-      "description": "Marinada especial para realzar el sabor de carnes",
-      "mainIngredient": "Vino Tinto Casa Real Carmenere, 750 ml",
-      "category": "Marinadas",
+      "name": "Marinada Especial para Carnes al Carmenere",
+      "description": "Marinada aromática para tiernizar cortes vacunos y lograr un dorado jugoso inigualable.",
+      "mainIngredient": "Vino Tinto Carmenere Casa Real",
+      "category": "Carnes",
       "difficulty": "Fácil",
-      "time": "5 min + reposo",
+      "time": "20 min",
       "ingredients": [
-        "½ taza de vino Carmenere",
-        "2 dientes de ajo picados",
-        "1 cucharada de romero fresco",
-        "Sal y pimienta al gusto",
-        "¼ taza de aceite de oliva"
+        "1 Kg de Lomo Liso Vacuno al Vacío",
+        "1 copa de Vino Tinto Carmenere",
+        "3 cucharadas de Aceite Belmont",
+        "Ajo picado, sal de mar y pimienta a gusto",
+        "Hierbas aromáticas (romero u orégano)"
       ],
       "steps": [
-        "Mezclar todos los ingredientes en un bowl",
-        "Colocar la carne en la marinada",
-        "Dejar reposar mínimo 2 horas en refrigerador",
-        "Asar la carne a la parrilla o sartén"
+        "En un recipiente hondo mezclar el vino carmenere, aceite, ajo y condimentos",
+        "Disponer el corte de lomo liso y cubrir bien con la marinada",
+        "Dejar reposar al menos 30 minutos (o 2 horas en refrigerador) para impregnar sabor",
+        "Cocinar a la plancha, sartén o parrilla a fuego fuerte 5 minutos por lado",
+        "Dejar reposar la carne 3 minutos antes de cortar y servir"
       ],
-      "image": "https://www.infobae.com/new-resizer/SjpVmGQZZienl6zrGmfT9tiC5JU=/arc-anglerfish-arc2-prod-infobae/public/VJTXNU3LTBDARFM5CHRR7YWFRM.jpg",
+      "image": "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80",
       "productIds": [
-        26
+        26,
+        63,
+        38
       ]
     },
     {
       "id": 4,
-      "name": "Pan con Mantequilla y Hierbas",
-      "description": "Clásico pan tostado con mantequilla saborizada",
-      "mainIngredient": "Mantequilla Con Sal, 250 g",
+      "name": "Tostadas de Mantequilla y Hierbas Aromáticas",
+      "description": "Clásico tentempié con crujiente marraqueta horneada y mantequilla saborizada.",
+      "mainIngredient": "Mantequilla Soprole con Sal",
       "category": "Aperitivos",
       "difficulty": "Muy Fácil",
-      "time": "5 min",
+      "time": "8 min",
       "ingredients": [
-        "4 rebanadas de pan",
-        "50g de mantequilla con sal",
-        "1 cucharadita de perejil picado",
+        "1 Marraqueta horneada tradicional",
+        "3 cucharadas de Mantequilla con Sal Soprole",
+        "1 pizca de orégano o perejil fresco",
         "1 diente de ajo machacado (opcional)"
       ],
       "steps": [
-        "Tostar el pan al gusto",
-        "Mezclar la mantequilla con perejil y ajo",
-        "Untar generosamente el pan tostado",
-        "Servir inmediatamente"
+        "Dejar la mantequilla a temperatura ambiente para que esté untable",
+        "Mezclar la mantequilla con las hierbas y el ajo machacado",
+        "Cortar la marraqueta en rodajas o mitades y tostar ligeramente",
+        "Untar generosamente con la mezcla de mantequilla aromática",
+        "Gratinar 2 minutos al horno o servir tibia de inmediato"
       ],
-      "image": "https://www.hola.com/horizon/landscape/72668ed70cfe-pan-mantequilla-adobe-t.jpg",
+      "image": "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=800&auto=format&fit=crop&q=80",
       "productIds": [
         4,
+        73,
         20
       ]
     },
     {
       "id": 5,
-      "name": "Arroz Blanco Perfecto",
-      "description": "La técnica infalible para un arroz esponjoso",
-      "mainIngredient": "Arroz Grado 1 Grano Largo, 1 Kg",
+      "name": "Arroz Blanco Graneado Perfecto",
+      "description": "La técnica infalible para preparar un arroz suelto, brillante y lleno de sabor.",
+      "mainIngredient": "Arroz Grado 1 Grano Largo Tucapel",
       "category": "Acompañamientos",
       "difficulty": "Fácil",
       "time": "20 min",
       "ingredients": [
-        "1 taza de arroz",
-        "2 tazas de agua",
-        "1 cucharadita de sal",
-        "1 cucharada de aceite"
+        "1 taza de Arroz Grado 1 Tucapel",
+        "2 tazas de agua hirviendo",
+        "1 cucharadita de sal fina",
+        "2 cucharadas de Aceite Belmont",
+        "1 trozo pequeño de cebolla para aromatizar"
       ],
       "steps": [
-        "Lavar el arroz hasta que el agua salga clara",
-        "En una olla, sofreír el arroz con aceite 2 min",
-        "Añadir agua caliente y sal",
-        "Cocinar a fuego bajo por 18 min tapado",
-        "Dejar reposar 5 min antes de servir"
+        "En una olla calentar el aceite y sofreír el arroz con la cebolla 2 minutos hasta nacarar",
+        "Agregar el agua hirviendo cuidadosamente junto con la sal",
+        "Revolver una sola vez y tapar bien la olla",
+        "Bajar el fuego al mínimo (sobre tostador) y cocinar 18 a 20 minutos sin destapar",
+        "Apagar el fuego, dejar reposar 5 minutos tapado y soltar con un tenedor antes de servir"
       ],
-      "image": "https://megustacomersano.com/wp-content/uploads/2022/01/20200318_141326-01-1.jpeg",
+      "image": "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=800&auto=format&fit=crop&q=80",
       "productIds": [
-        5
+        5,
+        38,
+        59
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Spaghetti a la Boloñesa Tradicional",
+      "description": "Pastas con rica salsa boloñesa casera de carne molida, salsa pomarola y queso rallado.",
+      "mainIngredient": "Carne Molida Vacuno y Salsa Pomarola Carozzi",
+      "category": "Pastas",
+      "difficulty": "Fácil",
+      "time": "25 min",
+      "ingredients": [
+        "400g de Spaghetti Carozzi",
+        "500g de Carne Molida Super Vacuno",
+        "1 sachet de Salsa Pomarola Italiana Carozzi",
+        "1 sobre de Queso Rallado Reggianito Colun",
+        "2 cucharadas de Aceite Belmont",
+        "Sal, pimienta y orégano a gusto"
+      ],
+      "steps": [
+        "Poner a hervir abundante agua con sal y cocinar los spaghetti 8 a 10 minutos al dente",
+        "En un sartén amplio calentar el aceite y dorar la carne molida sazonada con sal y pimienta",
+        "Incorporar la salsa pomarola, reducir a fuego lento y cocinar tapado durante 10 minutos",
+        "Escurrir los fideos y mezclar con la salsa boloñesa bien caliente",
+        "Servir con abundante queso reggianito rallado por encima"
+      ],
+      "image": "https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=800&auto=format&fit=crop&q=80",
+      "productIds": [
+        6,
+        19,
+        33,
+        29,
+        38
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Pollo Dorado al Horno con Arroz Primavera",
+      "description": "Jugosos trutros de pollo dorados a la perfección acompañados de arroz con verduras frescas.",
+      "mainIngredient": "Trutro Entero de Pollo Ariztía",
+      "category": "Platos de Fondo",
+      "difficulty": "Intermedio",
+      "time": "40 min",
+      "ingredients": [
+        "1 Kg de Trutro Entero de Pollo Ariztía",
+        "2 tazas de Arroz Grado 1 Tucapel",
+        "1 bolsa de Ensalada Mix Primavera Fresh Cut",
+        "3 cucharadas de Aceite Belmont",
+        "Sal, ajo y condimentos a gusto"
+      ],
+      "steps": [
+        "Precalentar el horno a 200°C",
+        "Sazonar los trutros de pollo con sal, ajo, una pizca de orégano y un chorrito de aceite",
+        "Disponer el pollo en una fuente y hornear 35-40 minutos hasta lograr piel dorada y crocante",
+        "En una olla aparte saltear el arroz con la ensalada mix primavera y aceite por 2 minutos",
+        "Añadir agua hirviendo y cocinar a fuego bajo 18 minutos tapado",
+        "Servir una presa de pollo dorada acompañada del arroz primavera bien caliente"
+      ],
+      "image": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800&auto=format&fit=crop&q=80",
+      "productIds": [
+        62,
+        5,
+        60,
+        38
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Guiso Casero de Lentejas Campestres",
+      "description": "Reconfortante plato tradicional de lentejas con sofrito de cebolla, tomate y caldo sabroso.",
+      "mainIngredient": "Lentejas Seleccionadas Lucchetti",
+      "category": "Legumbres",
+      "difficulty": "Fácil",
+      "time": "35 min",
+      "ingredients": [
+        "500g de Lentejas Seleccionadas Lucchetti",
+        "1 Cebolla picada en cubos",
+        "2 Tomates frescos picados",
+        "1 sobre de Sopa Maggi",
+        "2 cucharadas de Aceite Belmont",
+        "Sal y comino a gusto"
+      ],
+      "steps": [
+        "Lavar las lentejas y dejarlas en remojo con agua tibia durante 20 minutos",
+        "En una olla calentar el aceite y sofreír la cebolla picada con el tomate hasta dorar",
+        "Agregar las lentejas escurridas, disolver el caldo Maggi y cubrir con 4 tazas de agua caliente",
+        "Cocinar a fuego medio-bajo por 25 a 30 minutos hasta que las lentejas estén suaves y cremosas",
+        "Rectificar condimentos, dejar reposar 5 minutos y servir caliente en platos hondos"
+      ],
+      "image": "https://images.unsplash.com/photo-1547592180-85f173990554?w=800&auto=format&fit=crop&q=80",
+      "productIds": [
+        39,
+        59,
+        17,
+        21,
+        38
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Tostadas con Palta Hass, Tomate y Queso Chanco",
+      "description": "La combinación preferida para el desayuno o la once: pan crujiente, palta cremosa y queso fundido.",
+      "mainIngredient": "Paltas Hass Seleccionadas y Queso Chanco Colun",
+      "category": "Desayunos y Once",
+      "difficulty": "Muy Fácil",
+      "time": "10 min",
+      "ingredients": [
+        "1 Marraqueta fresca horneada o Pan Molde Ideal",
+        "2 Paltas Hass Chilenas maduras",
+        "1 Tomate maduro en rodajas",
+        "4 láminas de Queso Chanco Colun",
+        "Sal y unas gotas de aceite al gusto"
+      ],
+      "steps": [
+        "Abrir el pan y tostarlo en tostador o sartén hasta que quede crujiente",
+        "Moler las paltas hass en un plato hondo con un toque de sal y unas gotas de aceite",
+        "Colocar de inmediato las láminas de queso chanco sobre el pan tostado caliente para que entibie",
+        "Cubrir generosamente con la palta molida y coronar con las rodajas de tomate fresco",
+        "Servir inmediatamente acompañado de té, café o jugo natural"
+      ],
+      "image": "https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?w=800&auto=format&fit=crop&q=80",
+      "productIds": [
+        55,
+        32,
+        17,
+        73,
+        20
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Copa Dulce de Frutilla, Crema y Manjar",
+      "description": "Exquisito postre en capas con crocante galleta de vino, manjar artesanal y crema batida.",
+      "mainIngredient": "Manjar Tradicional Colun y Crema de Leche",
+      "category": "Postres y Dulces",
+      "difficulty": "Muy Fácil",
+      "time": "15 min",
+      "ingredients": [
+        "1 pote de Manjar Tradicional Colun",
+        "1 caja de Crema de Leche Espesa Soprole",
+        "1 paquete de Galletas de Vino McKay",
+        "2 potes de Yoghurt Batido Frutilla Colun"
+      ],
+      "steps": [
+        "Moler las galletas de vino en trozos medianos con ayuda de una bolsa o mortero",
+        "Batir la crema de leche fría durante 2 a 3 minutos hasta que tome textura espesa",
+        "En copas individuales colocar una base de galletas de vino molidas",
+        "Agregar una capa generosa de manjar colun, luego una capa de yogurt de frutilla",
+        "Finalizar con la crema batida por encima y espolvorear con migas crocantes de galleta",
+        "Refrigerar 15 minutos antes de degustar bien frío"
+      ],
+      "image": "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=800&auto=format&fit=crop&q=80",
+      "productIds": [
+        31,
+        28,
+        77,
+        30
       ]
     }
   ]

@@ -10,25 +10,25 @@ ion-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 36px 40px;
+  padding: clamp(14px, 1.8vh, 20px) clamp(20px, 2.5vw, 36px);
   box-sizing: border-box;
 }
 
 /* ======================================================== */
-/* 🌟 ENVOLTORIO DE JERARQUÍA VISUAL (MENÚ PRINCIPAL)       */
+/* ENVOLTORIO DE JERARQUÍA VISUAL (MENÚ PRINCIPAL)          */
 /* ======================================================== */
 .home-hierarchy-wrapper {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1360px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 22px;
   animation: fadeIn 0.3s ease-out;
 }
 
 /* ======================================================== */
-/* 🌟 1. EL PROTAGONISTA (CENTRO-SUPERIOR)                  */
+/* 1. EL PROTAGONISTA (CENTRO-SUPERIOR)                     */
 /* ======================================================== */
 .protagonist-section {
   width: 100%;
@@ -37,11 +37,11 @@ ion-content {
     background: #ffffff;
     border: 1.5px solid #e2e8f0;
     border-radius: 28px;
-    padding: 28px 36px;
-    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.05);
+    padding: 24px 34px;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.04);
     display: flex;
     align-items: center;
-    gap: 36px;
+    gap: 30px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -62,13 +62,13 @@ ion-content {
     flex-shrink: 0;
 
     .avatar-ring {
-      width: 168px;
-      height: 168px;
+      width: 134px;
+      height: 134px;
       border-radius: 50%;
-      padding: 6px;
+      padding: 5px;
       background: #ffffff;
-      border: 4.5px solid var(--brand-primary, #0071ce);
-      box-shadow: 0 12px 32px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.25);
+      border: 4px solid var(--brand-primary, #0071ce);
+      box-shadow: 0 8px 24px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.22);
       box-sizing: border-box;
 
       .avatar-img {
@@ -83,14 +83,14 @@ ion-content {
 
     .online-indicator {
       position: absolute;
-      bottom: 8px;
-      right: 12px;
-      width: 18px;
-      height: 18px;
+      bottom: 6px;
+      right: 10px;
+      width: 17px;
+      height: 17px;
       border-radius: 50%;
       background: #10b981;
-      border: 3px solid #ffffff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     }
   }
 
@@ -99,7 +99,7 @@ ion-content {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 
     .assistant-tagline-badge {
       display: flex;
@@ -108,58 +108,58 @@ ion-content {
       flex-wrap: wrap;
 
       .assistant-name {
-        font-size: 32px;
+        font-size: 28px;
         font-weight: 900;
         color: var(--brand-primary, #0071ce);
         letter-spacing: -0.3px;
       }
 
       .assistant-role {
-        font-size: 14.5px;
+        font-size: 13.5px;
         font-weight: 700;
         color: #475569;
         background: #f1f5f9;
-        padding: 5px 16px;
-        border-radius: 20px;
+        padding: 4px 16px;
+        border-radius: 16px;
         border: 1px solid #e2e8f0;
       }
     }
 
     .protagonist-speech {
       margin: 0;
-      font-size: 16.5px;
-      line-height: 1.48;
+      font-size: 15px;
+      line-height: 1.45;
       color: #334155;
       font-weight: 500;
-      max-width: 820px;
+      max-width: 860px;
     }
 
     /* Botón Heroico: Comenzar a conversar */
     .hero-start-chat-btn {
-      margin-top: 6px;
+      margin-top: 4px;
       width: 100%;
-      height: 66px;
+      height: 58px;
       background: var(--brand-gradient, linear-gradient(135deg, #0071ce 0%, #005a9e 100%));
       border: none;
-      border-radius: 20px;
-      padding: 0 28px;
+      border-radius: 18px;
+      padding: 0 26px;
       color: #ffffff;
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 16px;
       cursor: pointer;
-      box-shadow: 0 8px 26px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.35);
+      box-shadow: 0 6px 20px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.3);
       transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 
       .chat-btn-pulse {
-        width: 44px;
-        height: 44px;
-        border-radius: 14px;
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
         background: rgba(255, 255, 255, 0.22);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 26px;
+        font-size: 21px;
         flex-shrink: 0;
       }
 
@@ -171,26 +171,26 @@ ion-content {
         gap: 2px;
 
         .chat-btn-title {
-          font-size: 18.5px;
+          font-size: 17px;
           font-weight: 800;
           letter-spacing: 0.01em;
         }
 
         .chat-btn-sub {
-          font-size: 13.5px;
+          font-size: 12.5px;
           font-weight: 500;
           opacity: 0.92;
         }
       }
 
       .chat-btn-arrow {
-        font-size: 24px;
+        font-size: 22px;
         transition: transform 0.2s ease;
       }
 
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 32px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.45);
+        box-shadow: 0 10px 28px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.4);
 
         .chat-btn-arrow {
           transform: translateX(4px);
@@ -205,14 +205,15 @@ ion-content {
 }
 
 /* ======================================================== */
-/* ⚡ 2. CUADRÍCULA DE ATAJOS RÁPIDOS (2x2)                 */
+/* 2. CUADRÍCULA DE ATAJOS RÁPIDOS (2x2)                    */
 /* ======================================================== */
 .shortcuts-section {
   width: 100%;
 
+  .shortcuts-grid,
   .shortcuts-grid-2x2 {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
 
@@ -223,26 +224,27 @@ ion-content {
     padding: 24px 28px;
     background: #ffffff;
     border: 1.5px solid #e2e8f0;
-    border-radius: 24px;
+    border-radius: 26px;
     cursor: pointer;
     text-align: left;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-    min-height: 106px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+    min-height: 126px;
+    box-sizing: border-box;
 
     .shortcut-icon-box {
-      width: 64px;
-      height: 64px;
+      width: 70px;
+      height: 70px;
       border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
+      font-size: 34px;
       flex-shrink: 0;
       transition: transform 0.2s ease;
 
       ion-icon {
-        font-size: 32px;
+        font-size: 34px;
       }
     }
 
@@ -251,7 +253,12 @@ ion-content {
       color: #0284c7;
     }
 
-    &.locator-shortcut .shortcut-icon-box {
+    &.products-shortcut .shortcut-icon-box {
+      background: var(--brand-light, #ebf4fc);
+      color: var(--brand-primary, #0071ce);
+    }
+
+    &.cart-shortcut .shortcut-icon-box {
       background: #dcfce7;
       color: #16a34a;
     }
@@ -259,6 +266,11 @@ ion-content {
     &.offers-shortcut .shortcut-icon-box {
       background: #fee2e2;
       color: #dc2626;
+    }
+
+    &.locator-shortcut .shortcut-icon-box {
+      background: #f1f5f9;
+      color: #475569;
     }
 
     &.recipes-shortcut .shortcut-icon-box {
@@ -274,14 +286,15 @@ ion-content {
         font-size: 18.5px;
         font-weight: 800;
         color: #0f172a;
-        margin: 0 0 4px;
+        margin: 0 0 5px;
+        letter-spacing: -0.2px;
       }
 
       .shortcut-desc {
-        font-size: 14.5px;
+        font-size: 13.5px;
         color: #64748b;
         margin: 0;
-        line-height: 1.35;
+        line-height: 1.4;
       }
     }
 
@@ -289,6 +302,7 @@ ion-content {
       font-size: 24px;
       color: #94a3b8;
       transition: transform 0.2s ease, color 0.2s ease;
+      flex-shrink: 0;
     }
 
     &:hover {
@@ -313,13 +327,13 @@ ion-content {
 }
 
 /* ======================================================== */
-/* 💎 3. MÓDULOS DE VALOR AÑADIDO (HERRAMIENTAS ESPECIALES) */
+/* 3. MÓDULOS DE VALOR AÑADIDO (HERRAMIENTAS ESPECIALES)    */
 /* ======================================================== */
 .special-tools-section {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 
   .section-title-bar {
     display: flex;
@@ -327,12 +341,12 @@ ion-content {
     gap: 12px;
 
     .title-icon {
-      font-size: 20px;
+      font-size: 18px;
       color: var(--brand-primary, #0071ce);
     }
 
     .section-heading {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
       color: #334155;
       text-transform: uppercase;
@@ -351,38 +365,40 @@ ion-content {
   .tools-grid-4 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
+    gap: 20px;
   }
 
   .tool-btn {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding: 22px 20px;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
     background: #ffffff;
     border: 1.5px solid #e2e8f0;
-    border-radius: 22px;
+    border-radius: 24px;
     cursor: pointer;
-    text-align: left;
+    text-align: center;
     transition: all 0.2s ease;
-    gap: 14px;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+    gap: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
     position: relative;
-    min-height: 200px;
+    min-height: 175px;
+    box-sizing: border-box;
 
     .tool-icon-wrapper {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 32px;
       flex-shrink: 0;
       transition: transform 0.2s ease;
 
       ion-icon {
-        font-size: 28px;
+        font-size: 32px;
       }
     }
 
@@ -409,46 +425,37 @@ ion-content {
     .tool-text {
       display: flex;
       flex-direction: column;
+      align-items: center;
+      text-align: center;
       gap: 4px;
       min-width: 0;
+      width: 100%;
 
       .tool-name {
-        font-size: 16.5px;
+        font-size: 15.5px;
         font-weight: 800;
         color: #0f172a;
         line-height: 1.25;
       }
 
       .tool-hint {
-        font-size: 13.5px;
+        font-size: 12.5px;
         color: #64748b;
-        line-height: 1.4;
+        line-height: 1.35;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
-    }
-
-    .tool-action-tag {
-      font-size: 12.5px;
-      font-weight: 700;
-      color: var(--brand-primary, #0071ce);
-      background: var(--brand-light, #ebf4fc);
-      padding: 5px 14px;
-      border-radius: 12px;
-      margin-top: auto;
-      transition: all 0.2s ease;
     }
 
     &:hover {
       border-color: var(--brand-primary, #0071ce);
-      transform: translateY(-3px);
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 
       .tool-icon-wrapper {
-        transform: scale(1.08);
-      }
-
-      .tool-action-tag {
-        background: var(--brand-primary, #0071ce);
-        color: #ffffff;
+        transform: scale(1.06);
       }
     }
 
@@ -459,7 +466,7 @@ ion-content {
 }
 
 /* ======================================================== */
-/* 💬 MODO CONVERSACIÓN (HISTORIAL Y ENTRADA DE VOZ/TEXTO)    */
+/* MODO CONVERSACIÓN (HISTORIAL Y ENTRADA DE VOZ/TEXTO)     */
 /* ======================================================== */
 .chat-response-section {
   width: 100%;
@@ -503,16 +510,16 @@ ion-content {
     gap: 16px;
     flex: 1;
     overflow-y: auto;
-    max-height: 480px;
+    max-height: 380px;
 
     .message {
       display: flex;
-      gap: 12px;
+      gap: 14px;
       max-width: 80%;
 
       .bubble-avatar {
-        width: 38px;
-        height: 38px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         object-fit: cover;
         flex-shrink: 0;
@@ -520,9 +527,9 @@ ion-content {
       }
 
       .bubble {
-        padding: 14px 20px;
-        border-radius: 18px;
-        font-size: 15.5px;
+        padding: 16px 22px;
+        border-radius: 20px;
+        font-size: 16px;
         line-height: 1.5;
 
         .chat-text {
@@ -542,9 +549,9 @@ ion-content {
         &.typing-indicator .bubble {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 12px;
           color: #64748b;
-          font-size: 14px;
+          font-size: 14.5px;
         }
       }
 
@@ -556,7 +563,7 @@ ion-content {
           background: var(--brand-gradient, linear-gradient(135deg, #0071ce 0%, #005a9e 100%));
           color: #ffffff;
           border-bottom-right-radius: 4px;
-          box-shadow: 0 4px 14px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.25);
+          box-shadow: 0 4px 16px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.28);
         }
       }
     }
@@ -565,7 +572,7 @@ ion-content {
 
 .chat-footer {
   background: #ffffff;
-  padding: 16px 24px;
+  padding: 18px 24px;
   border-top: 1.5px solid #e2e8f0;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
 
@@ -587,14 +594,15 @@ ion-content {
       font-size: 15.5px;
     }
 
-    .voice-btn, .send-btn {
-      height: 44px;
-      width: 44px;
+    .voice-btn,
+    .send-btn {
+      height: 48px;
+      width: 48px;
       --border-radius: 14px;
       margin: 0;
 
       ion-icon {
-        font-size: 20px;
+        font-size: 22px;
       }
     }
   }
@@ -604,26 +612,33 @@ ion-content {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    font-size: 13.5px;
+    font-size: 14px;
     color: #ef4444;
     font-weight: 700;
-    margin-top: 8px;
+    margin-top: 10px;
   }
 
   .browser-support-message {
     text-align: center;
-    font-size: 12.5px;
+    font-size: 13px;
     color: #64748b;
     margin: 8px 0 0;
   }
 }
 
 /* ======================================================== */
-/* 📱 RESPONSIVE                                            */
+/* RESPONSIVE                                               */
 /* ======================================================== */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 960px) {

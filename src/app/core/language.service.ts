@@ -10,7 +10,7 @@ import {
 } from './i18n/translations';
 import { VoiceService } from './voice.service';
 
-export const INACTIVITY_TIMEOUT_SECONDS = 3000;
+export const INACTIVITY_TIMEOUT_SECONDS = 30;
 const ACTIVITY_EVENTS: readonly (keyof WindowEventMap)[] = [
   'pointerdown',
   'touchstart',

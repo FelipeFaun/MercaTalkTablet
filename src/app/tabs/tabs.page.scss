@@ -1,51 +1,10 @@
-// Barra inferior optimizada para Tablet / Kiosko
-.main-tab-bar {
-  --background: #ffffff;
-  --border: 1px solid #e2e8f0;
-  --color: #64748b;
-  --color-selected: var(--brand-primary, #0071ce);
-  height: 72px;
-  padding-bottom: env(safe-area-inset-bottom);
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.07);
-  display: flex;
-  justify-content: center;
+:host {
+  display: block;
+  height: 100%;
+}
 
-  ion-tab-button {
-    --padding-top: 8px;
-    --padding-bottom: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    max-width: 220px;
-    transition: all 0.2s ease;
-    border-radius: 14px;
-    margin: 4px 6px;
-
-    ion-icon {
-      font-size: 26px;
-      margin-bottom: 3px;
-      transition: transform 0.2s ease;
-    }
-
-    &.tab-selected {
-      color: var(--brand-primary, #0071ce);
-      background: var(--brand-light, #ebf4fc);
-
-      ion-icon {
-        transform: scale(1.1);
-      }
-    }
-
-    &:hover:not(.tab-selected) {
-      background: #f8fafc;
-    }
-  }
-
-  ion-badge {
-    --padding-start: 7px;
-    --padding-end: 7px;
-    font-size: 11px;
-    font-weight: 800;
-    top: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  }
+ion-router-outlet {
+  display: block;
+  height: 100%;
+  position: relative;
 }

@@ -1,6 +1,12 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+  // Ruta de inicio por defecto: redirige a la pantalla de bienvenida / Kiosko
+  {
+    path: '',
+    redirectTo: 'welcome',
+    pathMatch: 'full',
+  },
   // Pantalla de Reposo / Inicio Kiosko con 3 idiomas centrados
   {
     path: 'welcome',
@@ -18,6 +24,10 @@ export const routes: Routes = [
       {
         path: 'price-check',
         loadComponent: () => import('./price-check/price-check.page').then((m) => m.PriceCheckerPage),
+      },
+      {
+        path: 'products',
+        loadComponent: () => import('./products/products.page').then((m) => m.ProductsPage),
       },
       {
         path: 'cart',

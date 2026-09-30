@@ -1,367 +1,921 @@
-:root {
-  --color-blue: #3498db;
-  --color-red: #e74c3c;
-  --color-green: #2ecc71;
-  --color-orange: #f39c12;
-}
-
-// Navbar igual que ofertas
-.blue-toolbar {
-  --background: var(--brand-header-bg, #0071ce);
-  --min-height: 70px;
-  --border-width: 0;
-  
-  .header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    height: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    
-    .logo-section .logo-button {
-      --padding-start: 0;
-      --padding-end: 0;
-      --background: transparent;
-      margin: 0;
-      height: auto;
-      
-      .logo {
-        height: 40px;
-        width: auto;
-        max-width: 150px;
-      }
-    }
-    
-    .title-section .page-title {
-      color: white;
-      font-size: 24px;
-      font-weight: 600;
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    .empty-space {
-      width: 150px;
-    }
-  }
-}
-
 ion-content {
-  --background: #f5f5f5;
+  --background: #f8fafc;
 }
 
 .container {
   max-width: var(--tablet-content-max-width, 1360px);
   margin: 0 auto;
-  padding: 28px 36px;
+  padding: 24px 32px 60px;
   box-sizing: border-box;
 }
 
-.recipe-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-top: 24px;
-}
-
-.recipe-card {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  }
-}
-
-.recipe-image {
-  height: 200px;
-  width: 100%;
-  background-size: cover;
-  background-position: center;
-}
-
-.recipe-content {
-  padding: 20px;
-}
-
-.recipe-category {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #7f8c8d;
-  margin-bottom: 5px;
-}
-
-.recipe-title {
-  font-size: 1.4rem;
-  margin-bottom: 15px;
-  color: #2c3e50;
-  line-height: 1.3;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.recipe-meta {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  font-size: 0.9rem;
-  color: #7f8c8d;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.recipe-ingredient {
-  font-size: 0.9rem;
-  margin-bottom: 15px;
-  padding: 10px;
-  background-color: #0376e9;
-  border-radius: 6px;
-  border-left: 4px solid #e74c3c;
-}
-
-.recipe-description {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
-
-.view-recipe-btn {
-  display: inline-block;
-  background-color: #e74c3c; /* Rojo fijo */
-  color: #ffffff; /* Texto blanco fijo */
-  padding: 10px 20px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-
-
-
-
-
-// Responsive
-@media (max-width: 768px) {
-  .container {
-    padding: 15px;
-  }
-  
-  .recipe-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-  }
-  
-  .recipe-content {
-    padding: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .recipe-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .recipe-meta {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .recipe-title {
-    font-size: 1.2rem;
-  }
-}// ... (mantén todo el CSS anterior y añade esto al final)
-
-.info-banner {
-  background: white;
-  border-radius: 12px;
-  padding: 0;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e0e0e0;
-  overflow: hidden;
-}
-
-.banner-content {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 0;
-  
-  .banner-image {
-    width: 200px;
-    height: auto;
-    object-fit: contain;
-    flex-shrink: 0;
-  }
-  
-  .banner-text {
-    padding: 25px 25px 25px 0;
-    flex: 1;
-    
-    h2 {
-      color: #2c3e50;
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    p {
-      color: #555;
-      font-size: 1rem;
-      line-height: 1.5;
-      margin: 0;
-    }
-  }
-}
-
-// Responsive para el banner
-@media (max-width: 768px) {
-  .banner-content {
-    flex-direction: column;
-    text-align: center;
-    gap: 0;
-    
-    .banner-image {
-      width: 100%;
-      max-width: 300px;
-      margin: 0 auto;
-    }
-    
-    .banner-text {
-      padding: 20px;
-      
-      h2 {
-        font-size: 1.5rem;
-      }
-      
-      p {
-        font-size: 0.9rem;
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .info-banner {
-    margin-bottom: 20px;
-  }
-  
-  .banner-text {
-    h2 {
-      font-size: 1.3rem !important;
-    }
-    
-    p {
-      font-size: 0.85rem !important;
-    }
-  }
-}
+// Banner explicativo superior
 .explanation-banner {
   background: var(--brand-gradient, linear-gradient(135deg, #0071ce 0%, #005a9e 100%));
-  border-radius: 12px;
-  padding: 20px 25px;
-  margin-bottom: 30px;
+  border-radius: 16px;
+  padding: 20px 28px;
+  margin-bottom: 28px;
   display: flex;
   align-items: center;
   gap: 20px;
   color: white;
-  box-shadow: 0 4px 20px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.3);
-  
+  box-shadow: 0 8px 24px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.22);
+
   .banner-icon {
-    font-size: 3rem;
+    font-size: 2.8rem;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 14px;
+    backdrop-filter: blur(4px);
   }
-  
+
   .banner-message {
     flex: 1;
-    
+
     h2 {
-      font-size: 1.5rem;
+      font-size: 1.45rem;
       font-weight: 700;
-      margin: 0 0 8px 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.3px;
+      color: #ffffff;
     }
-    
+
     p {
-      font-size: 1rem;
+      font-size: 0.95rem;
       margin: 0;
-      opacity: 0.9;
-      line-height: 1.4;
+      opacity: 0.92;
+      line-height: 1.45;
     }
   }
-  
-  .banner-arrow {
-    font-size: 2rem;
+
+  .banner-badge {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 8px 16px;
+    border-radius: 24px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    backdrop-filter: blur(4px);
+  }
+}
+
+// Grid de tarjetas de recetas
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+}
+
+.recipe-card {
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.07);
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  outline: none;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+    border-color: rgba(var(--brand-primary-rgb, 0, 113, 206), 0.4);
+  }
+
+  &:active {
+    transform: scale(0.985);
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.35);
+  }
+}
+
+.recipe-image {
+  height: 210px;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px;
+  box-sizing: border-box;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 40%, rgba(0, 0, 0, 0.2) 100%);
+    pointer-events: none;
+  }
+}
+
+.recipe-pill-time,
+.recipe-pill-difficulty {
+  position: relative;
+  z-index: 2;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  ion-icon {
+    font-size: 0.95rem;
+  }
+}
+
+.recipe-pill-difficulty {
+  background: rgba(var(--brand-primary-rgb, 0, 113, 206), 0.85);
+}
+
+.recipe-content {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.recipe-category-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--brand-primary, #0071ce);
+  margin-bottom: 6px;
+}
+
+.recipe-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #1e293b;
+  line-height: 1.35;
+}
+
+.recipe-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  font-size: 0.82rem;
+  color: #64748b;
+  gap: 8px;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    ion-icon {
+      font-size: 0.95rem;
+    }
+  }
+
+  .offers-count-badge {
+    background: #ecfdf5;
+    color: #059669;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    border: 1px solid #a7f3d0;
+  }
+}
+
+.recipe-ingredient {
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background-color: #f1f5f9;
+  border-radius: 10px;
+  border-left: 4px solid var(--brand-primary, #0071ce);
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  strong {
+    color: #0f172a;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  span {
+    color: #475569;
+    font-weight: 500;
+  }
+}
+
+.recipe-description {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0 0 20px 0;
+  line-height: 1.45;
+  flex: 1;
+}
+
+.view-recipe-btn {
+  width: 100%;
+  background: var(--brand-gradient, linear-gradient(135deg, #0071ce 0%, #005a9e 100%));
+  color: #ffffff;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.25);
+  transition: transform 0.15s ease, filter 0.15s ease;
+
+  ion-icon {
+    font-size: 1.2rem;
+  }
+
+  &:hover {
+    filter: brightness(1.08);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// -------------------------------------------------------------
+// MODAL DE DETALLE Y COMPRA DE LA RECETA
+// -------------------------------------------------------------
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  animation: fadeIn 0.22s ease-out;
+}
+
+.recipe-modal {
+  background: #ffffff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 1120px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35);
+  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.modal-header {
+  padding: 20px 28px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  background: #ffffff;
+
+  .modal-header-info {
+    flex: 1;
+
+    .modal-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+
+      .modal-tag {
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+
+        &.category {
+          background: rgba(var(--brand-primary-rgb, 0, 113, 206), 0.1);
+          color: var(--brand-primary, #0071ce);
+        }
+
+        &.time {
+          background: #f1f5f9;
+          color: #475569;
+        }
+
+        &.difficulty {
+          background: #fef3c7;
+          color: #d97706;
+        }
+      }
+    }
+
+    .modal-title {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 6px 0;
+      line-height: 1.25;
+    }
+
+    .modal-description {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.45;
+    }
+  }
+
+  .modal-close-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.6rem;
+    transition: background 0.15s ease, color 0.15s ease;
     flex-shrink: 0;
-    animation: bounce 2s infinite;
+
+    &:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    &:active {
+      transform: scale(0.94);
+    }
   }
 }
 
-// Animación para la flecha
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateX(0);
+.modal-body-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 24px;
+  padding: 24px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+// Columna 1: Preparación e Ingredientes caseros
+.instructions-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .recipe-hero-image-wrap {
+    width: 100%;
+    height: 220px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+    .recipe-hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
-  40% {
-    transform: translateX(5px);
+
+  .instructions-section {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 18px 20px;
+    border: 1px solid #e2e8f0;
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 14px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      ion-icon {
+        color: var(--brand-primary, #0071ce);
+        font-size: 1.25rem;
+      }
+    }
   }
-  60% {
-    transform: translateX(3px);
+
+  .recipe-ingredients-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.92rem;
+      color: #334155;
+      line-height: 1.4;
+
+      .check-icon {
+        color: #10b981;
+        font-size: 1.15rem;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+    }
+  }
+
+  .recipe-steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.92rem;
+      color: #334155;
+      line-height: 1.45;
+
+      .step-num {
+        background: var(--brand-primary, #0071ce);
+        color: white;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+      }
+
+      .step-text {
+        flex: 1;
+      }
+    }
   }
 }
 
-// Responsive para el banner
-@media (max-width: 768px) {
+// Columna 2: Lo necesario para comprar en el supermercado
+.shopping-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .shopping-header-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+    border: 1px solid #cbd5e1;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+
+    .shopping-header-titles {
+      margin-bottom: 14px;
+
+      .shopping-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 4px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        ion-icon {
+          color: var(--brand-primary, #0071ce);
+          font-size: 1.4rem;
+        }
+      }
+
+      .shopping-subtitle {
+        font-size: 0.88rem;
+        color: #64748b;
+        margin: 0;
+      }
+    }
+
+    .shopping-pricing-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 14px;
+
+      .pricing-labels {
+        display: flex;
+        flex-direction: column;
+
+        .pricing-label {
+          font-size: 0.78rem;
+          color: #64748b;
+          text-transform: uppercase;
+          font-weight: 600;
+          letter-spacing: 0.3px;
+        }
+
+        .pricing-total {
+          font-size: 1.5rem;
+          font-weight: 800;
+          color: #0f172a;
+        }
+      }
+
+      .savings-tag {
+        background: #ecfdf5;
+        color: #059669;
+        font-weight: 700;
+        font-size: 0.88rem;
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid #a7f3d0;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        ion-icon {
+          font-size: 1rem;
+        }
+      }
+    }
+
+    .btn-add-all-primary {
+      width: 100%;
+      height: 52px;
+      background: var(--brand-gradient, linear-gradient(135deg, #0071ce 0%, #005a9e 100%));
+      color: #ffffff;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.3);
+      transition: transform 0.15s ease, filter 0.15s ease;
+
+      ion-icon {
+        font-size: 1.4rem;
+      }
+
+      &:hover {
+        filter: brightness(1.08);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  // Lista de productos del supermercado
+  .products-list-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 480px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .supermarket-product-row {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    }
+
+    &.product-in-cart {
+      border-color: #a7f3d0;
+      background: #f0fdf4;
+    }
+
+    .product-thumb-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+      overflow: hidden;
+
+      .product-thumb-img {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+      }
+
+      .offer-pill {
+        position: absolute;
+        bottom: 3px;
+        left: 3px;
+        background: #ef4444;
+        color: white;
+        font-size: 0.65rem;
+        font-weight: 800;
+        padding: 2px 5px;
+        border-radius: 4px;
+        line-height: 1;
+      }
+    }
+
+    .product-details {
+      flex: 1;
+      min-width: 0;
+
+      .product-brand-line {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #64748b;
+        letter-spacing: 0.4px;
+      }
+
+      .product-title-line {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #0f172a;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 4px;
+      }
+
+      .product-aisle-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #e0f2fe;
+        color: #0369a1;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 6px;
+        margin-bottom: 4px;
+
+        ion-icon {
+          font-size: 0.85rem;
+        }
+      }
+
+      .product-price-line {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+
+        .price-val {
+          font-size: 1.05rem;
+          font-weight: 800;
+          color: #0f172a;
+
+          &.current-offer {
+            color: #dc2626;
+          }
+
+          &.original-cut {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            text-decoration: line-through;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+
+    .product-action {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+
+      .cart-status-pill {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #059669;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+
+        ion-icon {
+          font-size: 0.85rem;
+        }
+      }
+
+      .btn-add-single {
+        height: 42px;
+        padding: 0 16px;
+        background: #ffffff;
+        color: var(--brand-primary, #0071ce);
+        border: 2px solid var(--brand-primary, #0071ce);
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.88rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.15s ease;
+
+        ion-icon {
+          font-size: 1.15rem;
+        }
+
+        &:hover {
+          background: var(--brand-primary, #0071ce);
+          color: #ffffff;
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
+    }
+  }
+}
+
+// Modal Footer
+.modal-footer {
+  padding: 16px 28px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  .btn-modal-close {
+    height: 46px;
+    padding: 0 22px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+  }
+
+  .btn-modal-add-all {
+    height: 48px;
+    padding: 0 24px;
+    background: var(--brand-gradient, linear-gradient(135deg, #0071ce 0%, #005a9e 100%));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.98rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.25);
+    transition: transform 0.15s ease, filter 0.15s ease;
+
+    ion-icon {
+      font-size: 1.25rem;
+    }
+
+    &:hover {
+      filter: brightness(1.08);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+
+// Animaciones
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// Media Queries Tablet / Mobile
+@media (max-width: 900px) {
+  .modal-body-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 18px 20px;
+  }
+
+  .recipe-modal {
+    max-height: 94vh;
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+
+    .modal-header-info .modal-title {
+      font-size: 1.3rem;
+    }
+  }
+
+  .modal-footer {
+    padding: 14px 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 16px;
+  }
+
+  .recipe-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
   .explanation-banner {
     flex-direction: column;
     text-align: center;
-    gap: 15px;
-    padding: 25px 20px;
-    
-    .banner-icon {
-      font-size: 2.5rem;
-    }
-    
-    .banner-message {
-      h2 {
-        font-size: 1.3rem;
-      }
-      
-      p {
-        font-size: 0.9rem;
-      }
-    }
-    
-    .banner-arrow {
-      font-size: 1.5rem;
+    gap: 14px;
+    padding: 20px 16px;
+
+    .banner-badge {
+      align-self: center;
     }
   }
-}
 
-@media (max-width: 480px) {
-  .explanation-banner {
-    margin-bottom: 20px;
-    padding: 20px 15px;
-    
-    .banner-message {
-      h2 {
-        font-size: 1.2rem;
-      }
-      
-      p {
-        font-size: 0.85rem;
-      }
-    }
+  .modal-backdrop {
+    padding: 12px;
+  }
+
+  .recipe-modal {
+    border-radius: 18px;
   }
 }

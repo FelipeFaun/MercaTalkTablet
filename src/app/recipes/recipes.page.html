@@ -11,38 +11,227 @@
         <h2>{{ 'recipes.bannerTitle' | translate }}</h2>
         <p>{{ 'recipes.bannerDesc' | translate }}</p>
       </div>
-      <div class="banner-arrow"></div>
+      <div class="banner-badge">
+        <span>{{ recipes.length }} Recetas</span>
+      </div>
     </div>
 
-    <!-- Grid de recetas -->
+    <!-- Grid de 10 recetas -->
     <div class="recipe-grid">
       @for (recipe of recipes; track recipe.id; let i = $index) {
-        <div class="recipe-card" [class]="'recipe-color-' + (i % 4)">
-          <div class="recipe-image" [style.background-image]="'url(' + recipe.image + ')'"></div>
+        <div class="recipe-card" [class]="'recipe-color-' + (i % 4)" (click)="viewRecipe(recipe)" role="button" tabindex="0">
+          <div class="recipe-image" [style.background-image]="'url(' + recipe.image + ')'">
+            <span class="recipe-pill-time">
+              <ion-icon name="time-outline"></ion-icon>
+              {{ recipe.time }}
+            </span>
+            <span class="recipe-pill-difficulty">
+              {{ recipe.difficulty }}
+            </span>
+          </div>
           
           <div class="recipe-content">
-            <div class="recipe-category">{{ 'recipes.cardBadge' | translate }}</div>
+            <div class="recipe-category-tag">{{ recipe.category }}</div>
             <h2 class="recipe-title">{{ recipe.name }}</h2>
             
             <div class="recipe-meta">
-              <span>{{ recipe.time }}</span>
-              <span>{{ 'recipes.ingredientsCount' | translate:{ count: recipe.ingredients.length } }}</span>
+              <span>
+                <ion-icon name="restaurant-outline"></ion-icon>
+                {{ 'recipes.ingredientsCount' | translate:{ count: recipe.ingredients.length } }}
+              </span>
+              <span class="offers-count-badge">
+                <ion-icon name="pricetag-outline"></ion-icon>
+                {{ recipe.productIds.length }} en tienda
+              </span>
             </div>
             
             <div class="recipe-ingredient">
-              <strong>{{ 'recipes.mainIngredient' | translate }}</strong> {{ recipe.mainIngredient }}
+              <strong>{{ 'recipes.mainIngredient' | translate }}</strong>
+              <span>{{ recipe.mainIngredient }}</span>
             </div>
             
             <p class="recipe-description">
               {{ recipe.description }}
             </p>
             
-            <button class="view-recipe-btn" (click)="viewRecipe(recipe)">
-              {{ 'recipes.viewRecipe' | translate }}
+            <button class="view-recipe-btn" (click)="$event.stopPropagation(); viewRecipe(recipe)">
+              <ion-icon name="basket-outline"></ion-icon>
+              {{ 'recipes.viewRecipe' | translate }} &amp; Comprar
             </button>
           </div>
         </div>
       }
     </div>
   </div>
+
+  <!-- MODAL: DETALLE DE LA RECETA Y LO NECESARIO PARA COMPRAR -->
+  @if (selectedRecipe(); as currentRecipe) {
+    <div class="modal-backdrop" (click)="closeRecipe()">
+      <div class="recipe-modal" (click)="$event.stopPropagation()">
+        
+        <!-- HEADER DEL MODAL -->
+        <div class="modal-header">
+          <div class="modal-header-info">
+            <div class="modal-tags-row">
+              <span class="modal-tag category">{{ currentRecipe.category }}</span>
+              <span class="modal-tag time">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ currentRecipe.time }}
+              </span>
+              <span class="modal-tag difficulty">
+                <ion-icon name="flame-outline"></ion-icon>
+                {{ currentRecipe.difficulty }}
+              </span>
+            </div>
+            <h2 class="modal-title">{{ currentRecipe.name }}</h2>
+            <p class="modal-description">{{ currentRecipe.description }}</p>
+          </div>
+          <button class="modal-close-btn" (click)="closeRecipe()" aria-label="Cerrar">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+
+        <!-- CUERPO DEL MODAL (2 COLUMNAS EN TABLET / PANTALLA AMPLIA) -->
+        <div class="modal-body-grid">
+          
+          <!-- COLUMNA 1: PREPARACIÓN E INGREDIENTES -->
+          <div class="modal-col instructions-col">
+            <div class="recipe-hero-image-wrap">
+              <img [src]="currentRecipe.image" [alt]="currentRecipe.name" class="recipe-hero-img" />
+            </div>
+
+            <!-- INGREDIENTES CASEROS -->
+            <div class="instructions-section">
+              <h3 class="section-title">
+                <ion-icon name="restaurant-outline"></ion-icon>
+                {{ 'recipes.ingredientsTitle' | translate }}
+              </h3>
+              <ul class="recipe-ingredients-list">
+                @for (item of currentRecipe.ingredients; track $index) {
+                  <li>
+                    <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+                    <span>{{ item }}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+
+            <!-- PASO A PASO -->
+            <div class="instructions-section">
+              <h3 class="section-title">
+                <ion-icon name="list-circle"></ion-icon>
+                {{ 'recipes.stepsTitle' | translate }}
+              </h3>
+              <ol class="recipe-steps-list">
+                @for (step of currentRecipe.steps; track $index) {
+                  <li>
+                    <span class="step-num">{{ $index + 1 }}</span>
+                    <span class="step-text">{{ step }}</span>
+                  </li>
+                }
+              </ol>
+            </div>
+          </div>
+
+          <!-- COLUMNA 2: LO NECESARIO PARA COMPRAR EN EL SUPERMERCADO -->
+          <div class="modal-col shopping-col">
+            <div class="shopping-header-card">
+              <div class="shopping-header-titles">
+                <h3 class="shopping-title">
+                  <ion-icon name="cart"></ion-icon>
+                  {{ 'recipes.toBuyTitle' | translate }}
+                </h3>
+                <p class="shopping-subtitle">
+                  {{ 'recipes.toBuyDesc' | translate }}
+                </p>
+              </div>
+
+              <!-- RESUMEN DE PRECIOS Y AHORROS -->
+              <div class="shopping-pricing-box">
+                <div class="pricing-labels">
+                  <span class="pricing-label">{{ 'recipes.totalCost' | translate }}</span>
+                  <span class="pricing-total">{{ selectedRecipeTotal() | clp }}</span>
+                </div>
+                @if (selectedRecipeSavings() > 0) {
+                  <div class="savings-tag">
+                    <ion-icon name="pricetag"></ion-icon>
+                    {{ 'recipes.savings' | translate }} {{ selectedRecipeSavings() | clp }}
+                  </div>
+                }
+              </div>
+
+              <!-- BOTÓN PRINCIPAL: AGREGAR TODOS -->
+              <button class="btn-add-all-primary" (click)="addAllProducts()">
+                <ion-icon name="basket-outline"></ion-icon>
+                <span>{{ 'recipes.addAllToCart' | translate }}</span>
+              </button>
+            </div>
+
+            <!-- LISTA DE PRODUCTOS DEL SUPERMERCADO DISPONIBLES EN SALA -->
+            <div class="products-list-wrap">
+              @for (product of selectedRecipeProducts(); track product.id) {
+                <div class="supermarket-product-row" [class.product-in-cart]="getProductQty(product.id) > 0">
+                  <div class="product-thumb-wrap">
+                    <img [src]="product.image" [alt]="product.name" class="product-thumb-img" />
+                    @if (product.inOffer) {
+                      <span class="offer-pill">¡Oferta!</span>
+                    }
+                  </div>
+
+                  <div class="product-details">
+                    <div class="product-brand-line">{{ product.brand }}</div>
+                    <div class="product-title-line">{{ product.name }}</div>
+
+                    <!-- UBICACIÓN EN EL SUPERMERCADO -->
+                    @if (product.supermarketLocation; as loc) {
+                      <div class="product-aisle-badge">
+                        <ion-icon name="location-outline"></ion-icon>
+                        <span>{{ loc.aisle }} · {{ loc.section }} ({{ loc.shelf }})</span>
+                      </div>
+                    }
+
+                    <div class="product-price-line">
+                      @if (product.inOffer && product.offerPrice) {
+                        <span class="price-val current-offer">{{ product.offerPrice | clp }}</span>
+                        <span class="price-val original-cut">{{ product.price | clp }}</span>
+                      } @else {
+                        <span class="price-val">{{ product.price | clp }}</span>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="product-action">
+                    @if (getProductQty(product.id) > 0) {
+                      <span class="cart-status-pill">
+                        <ion-icon name="checkmark-circle"></ion-icon>
+                        {{ getProductQty(product.id) }} en canasta
+                      </span>
+                    }
+                    <button class="btn-add-single" (click)="addProduct(product)" aria-label="Agregar">
+                      <ion-icon name="add-outline"></ion-icon>
+                      <span>{{ 'recipes.addToCart' | translate }}</span>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+        </div>
+
+        <!-- MODAL FOOTER -->
+        <div class="modal-footer">
+          <button class="btn-modal-close" (click)="closeRecipe()">
+            {{ 'recipes.close' | translate }}
+          </button>
+          <button class="btn-modal-add-all" (click)="addAllProducts()">
+            <ion-icon name="basket-outline"></ion-icon>
+            {{ 'recipes.addAllToCart' | translate }} ({{ selectedRecipeProducts().length }} productos)
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
 </ion-content>
+
