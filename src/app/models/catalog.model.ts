@@ -8,6 +8,8 @@ export interface ProductLocation {
   shelf: string;
 }
 
+export type StockStatus = 'available' | 'low' | 'out_of_stock';
+
 export interface Product {
   id: number;
   name: string;
@@ -20,6 +22,12 @@ export interface Product {
   /** Derivados por CatalogService desde las ofertas vigentes; no vienen en el JSON. */
   inOffer?: boolean;
   offerPrice?: number;
+  /** Campos para consultor de precio evolucionado y comparador */
+  netContent?: string;
+  unitType?: 'L' | 'kg' | 'un' | 'g' | 'ml';
+  unitValue?: number;
+  stockStatus?: StockStatus;
+  stockCount?: number;
 }
 
 export interface Offer {

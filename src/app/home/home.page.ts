@@ -1,4 +1,5 @@
 import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -8,9 +9,15 @@ import {
 import { BrandService } from '../core/brand.service';
 import { VoiceService } from '../core/voice.service';
 import { ChatService } from '../services/chat.service';
+import { CartFeedbackService } from '../core/cart-feedback.service';
+import { CompareService } from '../services/compare.service';
 import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
 import { TranslatePipe } from '../shared/pipes/translate.pipe';
+import { ClpPipe } from '../shared/pipes/clp.pipe';
 
+import { Product, OfferView } from '../models/catalog.model';
+import { CheaperAlternativeItem } from '../core/product-helper';
+import { ProductCompareModalComponent } from '../shared/components/product-compare-modal/product-compare-modal.component';
 import { EventCalculatorModalComponent } from '../shared/components/event-calculator-modal/event-calculator-modal.component';
 import { StockAlertModalComponent } from '../shared/components/stock-alert-modal/stock-alert-modal.component';
 import { IncidentReportModalComponent } from '../shared/components/incident-report-modal/incident-report-modal.component';
@@ -19,9 +26,11 @@ import { ExpressListQrModalComponent, QrModalPayload } from '../shared/component
 export type HomeActiveModal = 'eventCalculator' | 'stockAlert' | 'incidentReport' | 'expressQr' | null;
 
 /**
- * Inicio: Jerarquía UX/UI con el Protagonista al centro-superior,
- * Cuadrícula 2x2 de Atajos Rápidos y Módulos de Valor Añadido (Herramientas Especiales).
- * Al conversar, despliega el historial interactivo y controles de voz/texto.
+ * Inicio Kiosk-First:
+ * 1. Botón Principal Gigante: 🔍 Consultar Precio
+ * 2. Trío de Acciones de 1er Nivel: 📍 Mapa 3D | 🏷️ Ofertas | 🤖 Preguntar a Liderín
+ * 3. Más Herramientas: Catálogo, Mi cálculo, Recetas, Calculadora, Stock, Avisos
+ * 4. Conversación con Liderín: Ejecución de acciones de tablet (mapa, precio, ofertas, ahorro, comparar).
  */
 @Component({
   selector: 'app-home',
@@ -29,11 +38,14 @@ export type HomeActiveModal = 'eventCalculator' | 'stockAlert' | 'incidentReport
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [
+    CommonModule,
     AppHeaderComponent,
     IonContent, IonFooter, IonIcon,
     IonButton, IonTextarea, IonSpinner,
     FormsModule,
     TranslatePipe,
+    ClpPipe,
+    ProductCompareModalComponent,
     EventCalculatorModalComponent,
     StockAlertModalComponent,
     IncidentReportModalComponent,
@@ -43,6 +55,8 @@ export type HomeActiveModal = 'eventCalculator' | 'stockAlert' | 'incidentReport
 export class HomePage {
   private router = inject(Router);
   private brandService = inject(BrandService);
+  private cartFeedback = inject(CartFeedbackService);
+  readonly compareService = inject(CompareService);
 
   readonly chat = inject(ChatService);
   readonly voice = inject(VoiceService);
@@ -95,7 +109,7 @@ export class HomePage {
     this.activeModal.set(null);
   }
 
-  // ---------- Conversación ----------
+  // ---------- Conversación y Control de Tablet ----------
 
   startConversation() {
     this.isInConversation.set(true);
@@ -114,20 +128,53 @@ export class HomePage {
     this.chat.reset();
   }
 
-  async sendMessage() {
-    const text = this.userMessage.trim();
+  async sendMessage(customText?: string) {
+    const text = (customText ?? this.userMessage).trim();
     if (!text || this.chat.isLoading()) return;
     this.userMessage = '';
     const reply = await this.chat.send(text);
     void this.voice.speak(reply.text);
   }
 
-  // Enter envía; Shift+Enter inserta salto de línea (B6)
   onEnter(event: Event) {
     const keyboard = event as KeyboardEvent;
     if (keyboard.shiftKey) return;
     event.preventDefault();
     void this.sendMessage();
+  }
+
+  // Acciones que Liderín ejecuta en la tablet desde los widgets
+  navigateToMapForProduct(product: Product) {
+    void this.router.navigate(['/store-locator'], {
+      queryParams: { productId: product.id }
+    });
+  }
+
+  navigateToPriceForProduct(product: Product) {
+    void this.router.navigate(['/price-check'], {
+      queryParams: { barcode: product.barcode, productId: product.id }
+    });
+  }
+
+  addToCartFromChat(product: Product) {
+    void this.cartFeedback.addWithToast(product);
+  }
+
+  compareFromChat(productA: Product, productB?: Product) {
+    this.compareService.clear();
+    this.compareService.addProduct(productA);
+    if (productB) {
+      this.compareService.addProduct(productB);
+    }
+    this.compareService.openModal();
+  }
+
+  askCheaperForProduct(product: Product) {
+    void this.sendMessage(`¿Hay una opción más barata que ${product.name}?`);
+  }
+
+  handleImageError(event: any) {
+    event.target.src = 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=300&fit=crop';
   }
 
   // ---------- Voz ----------

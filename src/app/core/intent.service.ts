@@ -28,6 +28,12 @@ export class IntentService {
     const intent: Intent = { type, normalized, products: [], offers: [], recipes: [] };
 
     switch (type) {
+      case 'mas_barato':
+        intent.products = products.slice(0, 4);
+        break;
+      case 'comparar':
+        intent.products = products.slice(0, 3);
+        break;
       case 'precio':
       case 'ubicacion':
         intent.products = products.slice(0, 5);
@@ -92,6 +98,8 @@ export class IntentService {
   }
 
   private detectType(normalized: string): IntentType {
+    if (hasAny(normalized, CHEAPER_WORDS)) return 'mas_barato';
+    if (hasAny(normalized, COMPARE_WORDS)) return 'comparar';
     if (hasAny(normalized, OFFER_WORDS)) return 'ofertas';
     if (hasAny(normalized, RECIPE_WORDS)) return 'receta';
     if (hasAny(normalized, PRICE_WORDS)) return 'precio';
@@ -236,6 +244,9 @@ const STOPWORDS = new Set([
   'receta', 'recetas', 'cocinar', 'preparar', 'hacer', 'cocina', 'plato', 'comida',
   ...Object.keys(NUMBER_WORDS),
 ]);
+
+const CHEAPER_WORDS = new Set(['mas barata', 'mas barato', 'mas baratas', 'mas baratos', 'mas economica', 'mas economico', 'mas economicas', 'mas economicos', 'hay una mas barata', 'hay uno mas barato', 'algo mas barato', 'algo mas barata', 'opcion mas barata', 'opciones mas baratas', 'alternativa mas barata', 'ahorro', 'ahorrar', 'menos cara', 'menos caro']);
+const COMPARE_WORDS = new Set(['compara', 'comparar', 'comparame', 'comparativa', 'vs', 'versus', 'diferencia entre']);
 
 const PRICE_WORDS = new Set(['precio', 'precios', 'cuanto', 'cuanta', 'cuantos', 'cuesta', 'cuestan', 'vale', 'valen', 'valor', 'caro', 'cara']);
 const LOCATION_WORDS = new Set(['donde', 'ubicacion', 'ubicado', 'ubicada', 'pasillo', 'estante', 'seccion', 'encuentro', 'queda', 'quedan']);

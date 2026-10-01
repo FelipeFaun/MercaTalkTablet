@@ -3,111 +3,392 @@
 <ion-content [fullscreen]="true" class="search-mode">
   <div class="container">
     
-    <!-- Banner de Encabezado Moderno con Identidad de Marca Dinámica -->
-    <header class="price-check-hero">
-      <div class="hero-brand-badge">
-        <div class="assistant-avatar-ring">
-          <img [src]="currentBrand().avatar" [alt]="currentBrand().assistantName" class="avatar-img">
-        </div>
-        <div class="hero-brand-text">
-          <div class="store-pill">
-            <span class="store-name">{{ currentBrand().storeName }}</span>
-            <span class="pill-dot"></span>
-            <span class="assistant-tag">Asistente {{ currentBrand().assistantName }}</span>
+    <!-- Header Kiosk Compacto con Liderín: Jerarquía clara a 50-100 cm -->
+    <header class="kiosk-price-hub-header" *ngIf="!selectedHeroProduct && (searchResults.length <= 1 || !hasSearched)">
+      <div class="kiosk-header-center">
+        <!-- Assistant pill (Liderín) -->
+        <div class="assistant-speech-pill">
+          <div class="assistant-mini-thumb">
+            <img [src]="currentBrand().avatar" [alt]="currentBrand().assistantName" class="avatar-img">
           </div>
-          <h2 class="hero-title">{{ 'priceCheck.searchTitle' | translate }} & {{ 'priceCheck.scanTitle' | translate }}</h2>
-          <p class="hero-desc">{{ 'home.checkPriceDesc' | translate }}</p>
+          <span class="assistant-name-tag">{{ currentBrand().assistantName }}:</span>
+          <span class="assistant-message">{{ 'priceCheck.assistantBubble' | translate }}</span>
         </div>
+
+        <h1 class="kiosk-main-title">{{ 'priceCheck.mainTitle' | translate }}</h1>
+        <p class="kiosk-main-subtitle">{{ 'priceCheck.mainSubtitle' | translate }}</p>
       </div>
     </header>
 
-    <!-- Panel superior en Tablet: Búsqueda y Escáner en Paralelo -->
-    <div class="tablet-search-scan-grid">
+    <!-- Barra de Estado: Modo Comparador Activo -->
+    <div class="compare-active-banner" *ngIf="compareService.isAwaitingSecondProduct()">
+      <div class="banner-left">
+        <ion-icon name="scale-outline" class="banner-icon pulse"></ion-icon>
+        <div class="banner-text">
+          <strong>Modo Comparación Activo</strong>
+          <span>Escanea o selecciona un segundo producto para comparar cara a cara</span>
+        </div>
+      </div>
+      <div class="banner-actions">
+        <button type="button" class="btn-banner-view" (click)="compareService.openModal()">
+          <ion-icon name="eye-outline"></ion-icon>
+          <span>Ver Comparador ({{ compareService.count() }}/3)</span>
+        </button>
+        <button type="button" class="btn-banner-cancel" (click)="compareService.clear()">
+          <ion-icon name="close-circle-outline"></ion-icon>
+          <span>Cancelar</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast Flotante Kiosk Feedback -->
+    <div class="kiosk-toast" *ngIf="kioskToastMessage">
+      <ion-icon name="information-circle"></ion-icon>
+      <span>{{ kioskToastMessage }}</span>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- CASO 1: FICHA DE CONSULTA EVOLUCIONADA (KIOSK PRICE HERO)      -->
+    <!-- Función #1 de la Tablet: Producto Escaneado / Seleccionado     -->
+    <!-- ============================================================= -->
+    <section class="kiosk-hero-container" *ngIf="selectedHeroProduct && heroMetrics">
       
-      <!-- Panel 1: Búsqueda por Nombre -->
-      <div class="search-section card-box">
-        <div class="card-box-header">
-          <div class="box-icon-wrapper search-theme-icon">
-            <ion-icon name="search-outline"></ion-icon>
+      <!-- Barra superior de navegación rápida del resultado -->
+      <div class="kiosk-hero-topbar">
+        <button type="button" class="btn-hero-back" (click)="clearSearch()">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+          <span>Volver al buscador</span>
+        </button>
+
+        <div class="hero-status-tag">
+          <ion-icon name="checkmark-done-circle"></ion-icon>
+          <span>Precio Verificado en Caja</span>
+        </div>
+
+        <button type="button" class="btn-hero-new-scan" (click)="scanAnother()">
+          <ion-icon name="camera-outline"></ion-icon>
+          <span>Escanear otro producto</span>
+        </button>
+      </div>
+
+      <!-- Tarjeta Principal del Producto Escaneado -->
+      <article class="kiosk-hero-card">
+        
+        <div class="hero-card-left">
+          <div class="hero-img-box">
+            <img 
+              [src]="selectedHeroProduct.image" 
+              [alt]="selectedHeroProduct.name" 
+              (error)="handleImageError($event)" 
+              class="hero-product-img" />
+            
+            <div class="hero-offer-badge" *ngIf="heroMetrics.hasDiscount">
+              <ion-icon name="pricetag"></ion-icon>
+              <span>-{{ heroMetrics.discountPercentage }}% DCTO</span>
+            </div>
           </div>
-          <div class="box-title-group">
-            <h3>{{ 'priceCheck.searchTitle' | translate }}</h3>
-            <p>Escribe el nombre o marca para consultar el precio</p>
+
+          <!-- Sellos rápidos debajo de imagen -->
+          <div class="hero-micro-badges">
+            <span class="micro-badge category">{{ selectedHeroProduct.category }}</span>
+            <span class="micro-badge brand">{{ selectedHeroProduct.brand }}</span>
+            <span class="micro-badge content" *ngIf="heroMetrics.netContent">
+              <ion-icon name="cube-outline"></ion-icon> {{ heroMetrics.netContent }}
+            </span>
           </div>
         </div>
-        
-        <div class="search-input-container">
-          <ion-item class="tablet-input-item" lines="none">
-            <ion-icon name="search-outline" class="input-inline-icon" slot="start"></ion-icon>
-            <ion-input 
+
+        <div class="hero-card-right">
+          
+          <!-- Título y Marca -->
+          <div class="hero-header-row">
+            <span class="hero-brand-name">{{ selectedHeroProduct.brand }}</span>
+            <h1 class="hero-product-title">{{ selectedHeroProduct.name }}</h1>
+          </div>
+
+          <!-- Bloque de Precio de Alto Impacto Visual -->
+          <div class="hero-pricing-box">
+            <div class="pricing-main-row">
+              <span class="hero-current-price">{{ heroMetrics.effectivePrice | clp }}</span>
+              
+              <div class="hero-original-price-wrap" *ngIf="heroMetrics.hasDiscount">
+                <span class="hero-original-price">{{ heroMetrics.originalPrice | clp }}</span>
+                <span class="hero-savings-pill">Ahorras {{ heroMetrics.savingsAmount | clp }}</span>
+              </div>
+            </div>
+
+            <!-- Precio por Unidad (PUM) Destacado -->
+            <div class="hero-pum-badge">
+              <ion-icon name="pricetags-outline"></ion-icon>
+              <span>Precio por litro o kilo: <strong>{{ heroMetrics.pumText }}</strong></span>
+            </div>
+          </div>
+
+          <!-- Metadatos Clave en Tablet: Stock y Ubicación Física -->
+          <div class="hero-attributes-grid">
+            
+            <!-- Disponibilidad / Stock -->
+            <div class="attribute-card stock-card" [attr.data-status]="heroMetrics.stockStatus">
+              <div class="attr-icon-circle">
+                <span class="status-indicator-dot"></span>
+              </div>
+              <div class="attr-info">
+                <span class="attr-title">Disponibilidad en Sala</span>
+                <strong class="attr-value">{{ heroMetrics.stockLabel }}</strong>
+              </div>
+            </div>
+
+            <!-- Ubicación en Pasillo y Góndola -->
+            <div class="attribute-card location-card">
+              <div class="attr-icon-circle location-circle">
+                <ion-icon name="location-outline"></ion-icon>
+              </div>
+              <div class="attr-info">
+                <span class="attr-title">Ubicación en Sala</span>
+                <strong class="attr-value">{{ heroMetrics.locationText }}</strong>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ========================================================= -->
+          <!-- 💰 MEJORA 3: BANNER DE OPCIONES MÁS ECONÓMICAS             -->
+          <!-- ========================================================= -->
+          <div class="cheaper-cta-banner" *ngIf="cheaperAlternatives.length > 0">
+            <div class="cheaper-cta-info">
+              <span class="cheaper-fire-badge">💰 AHORRO DISPONIBLE</span>
+              <p>Hay <strong>{{ cheaperAlternatives.length }} opciones más económicas</strong> en esta categoría. Puedes ahorrar hasta <strong>{{ cheaperAlternatives[0].savings | clp }}</strong>.</p>
+            </div>
+            <button type="button" class="btn-show-cheaper" (click)="openCheaperAlternatives(selectedHeroProduct)">
+              <ion-icon name="trending-down-outline"></ion-icon>
+              <span>Mostrar opciones más económicas</span>
+            </button>
+          </div>
+
+          <!-- ========================================================= -->
+          <!-- 4 BOTONES DE ACCIÓN TÁCTILES GRANDES (EXPERIENCIA KIOSKO) -->
+          <!-- ========================================================= -->
+          <div class="kiosk-action-buttons-grid">
+            
+            <!-- Botón 1: 📍 Ver ubicación (Lleva al mapa 3D) -->
+            <button 
+              type="button" 
+              class="kiosk-btn btn-view-location" 
+              (click)="viewLocation(selectedHeroProduct)">
+              <div class="kiosk-btn-icon">
+                <ion-icon name="map"></ion-icon>
+              </div>
+              <div class="kiosk-btn-text">
+                <span class="btn-main-label">Ver ubicación</span>
+                <span class="btn-sub-label">Abrir mapa 3D interactivo</span>
+              </div>
+            </button>
+
+            <!-- Botón 2: ⚖️ Comparar -->
+            <button 
+              type="button" 
+              class="kiosk-btn btn-compare" 
+              (click)="compareProduct(selectedHeroProduct)">
+              <div class="kiosk-btn-icon">
+                <ion-icon name="scale"></ion-icon>
+              </div>
+              <div class="kiosk-btn-text">
+                <span class="btn-main-label">Comparar</span>
+                <span class="btn-sub-label">Contrastar precios y PUM</span>
+              </div>
+            </button>
+
+            <!-- Botón 3: 💰 Ver alternativas -->
+            <button 
+              type="button" 
+              class="kiosk-btn btn-alternatives" 
+              (click)="openAlternatives(selectedHeroProduct)">
+              <div class="kiosk-btn-icon">
+                <ion-icon name="swap-horizontal"></ion-icon>
+              </div>
+              <div class="kiosk-btn-text">
+                <span class="btn-main-label">Ver alternativas</span>
+                <span class="btn-sub-label">Marcas y opciones similares</span>
+              </div>
+            </button>
+
+            <!-- Botón 4: ➕ Agregar a mi cálculo (Mi Compra) -->
+            <button 
+              type="button" 
+              class="kiosk-btn btn-add-calculation" 
+              (click)="addToCart(selectedHeroProduct)">
+              <div class="kiosk-btn-icon">
+                <ion-icon name="cart"></ion-icon>
+              </div>
+              <div class="kiosk-btn-text">
+                <span class="btn-main-label">Agregar a mi cálculo</span>
+                <span class="btn-sub-label">Sumar al total de compra</span>
+              </div>
+            </button>
+
+          </div>
+
+          <!-- Aporte Nutricional Desplegable Adicional -->
+          <div class="hero-nutrition-wrapper">
+            <button type="button" class="btn-nutrition-toggle" (click)="toggleNutrition(selectedHeroProduct)">
+              <ion-icon name="nutrition-outline"></ion-icon>
+              <span>{{ (expandedNutritionBarcode === selectedHeroProduct.barcode ? 'Ocultar información nutricional' : 'Ver sellos y aporte nutricional (Open Food Facts)') }}</span>
+              <ion-icon [name]="expandedNutritionBarcode === selectedHeroProduct.barcode ? 'chevron-up' : 'chevron-down'"></ion-icon>
+            </button>
+
+            <app-nutrition-card
+              *ngIf="expandedNutritionBarcode === selectedHeroProduct.barcode"
+              [loading]="nutritionLoading"
+              [result]="nutritionResult(selectedHeroProduct.barcode)">
+            </app-nutrition-card>
+          </div>
+
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- DOS GRANDES ZONAS TÁCTILES: BUSCAR (50%) & ESCANEAR (50%)    -->
+    <!-- Dominan visualmente la pantalla con escala y botones grandes  -->
+    <!-- ============================================================= -->
+    <div class="kiosk-two-zones-grid" *ngIf="!selectedHeroProduct && (searchResults.length <= 1 || !hasSearched)">
+      
+      <!-- ========================================== -->
+      <!-- ZONA IZQUIERDA — BUSCAR PRODUCTO           -->
+      <!-- ========================================== -->
+      <section class="kiosk-zone-card search-zone">
+        <div class="zone-top-header">
+          <div class="zone-icon-circle search-icon-circle">
+            <ion-icon name="search-outline"></ion-icon>
+          </div>
+          <div class="zone-title-block">
+            <h2 class="zone-title">{{ 'priceCheck.searchTitle' | translate }}</h2>
+            <p class="zone-desc">{{ 'priceCheck.searchDesc' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="zone-body-content">
+          <!-- Input Táctil Gigante (64-72px de altura, 18-22px texto) -->
+          <div class="kiosk-large-input-wrapper">
+            <ion-icon name="search-outline" class="input-magnifier-icon" aria-hidden="true"></ion-icon>
+            <input 
+              type="text" 
+              class="kiosk-touch-input"
               [(ngModel)]="searchQuery"
               [placeholder]="'priceCheck.placeholder' | translate"
               (keyup.enter)="searchProducts()"
-              clearInput>
-            </ion-input>
-          </ion-item>
-        </div>
-        
-        <div class="search-actions-row">
+              aria-label="Buscar producto por nombre o marca" />
+            
+            <button 
+              type="button" 
+              class="kiosk-clear-input-btn" 
+              *ngIf="searchQuery"
+              (click)="searchQuery = ''"
+              aria-label="Limpiar texto">
+              <ion-icon name="close-circle"></ion-icon>
+            </button>
+          </div>
+
+          <!-- Botón Gigante: [ BUSCAR PRODUCTO ] (60-68px) -->
           <button 
             type="button" 
-            class="kiosk-action-btn primary-brand-btn"
+            class="kiosk-large-action-btn btn-search-execute"
             (click)="searchProducts()"
             [disabled]="!searchQuery.trim()">
             <ion-icon name="search-outline"></ion-icon>
             <span>{{ 'priceCheck.searchBtn' | translate }}</span>
           </button>
 
+          <!-- Búsquedas Rápidas Táctiles (Chips a 1 toque) -->
+          <div class="quick-chips-wrapper">
+            <span class="quick-chips-label">{{ 'priceCheck.quickSearchTitle' | translate }}</span>
+            <div class="quick-chips-list">
+              <button type="button" class="quick-search-chip" (click)="quickSearch('Leche')">
+                <span class="chip-icon">🥛</span>
+                <span class="chip-text">Leche</span>
+              </button>
+              <button type="button" class="quick-search-chip" (click)="quickSearch('Arroz')">
+                <span class="chip-icon">🌾</span>
+                <span class="chip-text">Arroz</span>
+              </button>
+              <button type="button" class="quick-search-chip" (click)="quickSearch('Pan')">
+                <span class="chip-icon">🥖</span>
+                <span class="chip-text">Pan</span>
+              </button>
+              <button type="button" class="quick-search-chip" (click)="quickSearch('Bebidas')">
+                <span class="chip-icon">🥤</span>
+                <span class="chip-text">Bebidas</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- ZONA DERECHA — ESCANEAR CÓDIGO             -->
+      <!-- ========================================== -->
+      <section class="kiosk-zone-card scan-zone">
+        <div class="zone-top-header">
+          <div class="zone-icon-circle scan-icon-circle">
+            <ion-icon name="barcode-outline"></ion-icon>
+          </div>
+          <div class="zone-title-block">
+            <h2 class="zone-title">{{ 'priceCheck.scanTitle' | translate }}</h2>
+            <p class="zone-desc">{{ 'priceCheck.scanDesc' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="zone-body-content">
+          <!-- Botón Gigante Estrella: [ 📷 INICIAR ESCÁNER ] (64-72px) -->
           <button 
             type="button" 
-            class="kiosk-action-btn outline-brand-btn"
-            (click)="clearSearch()"
-            *ngIf="searchQuery || hasSearched">
-            <ion-icon name="close-outline"></ion-icon>
-            <span>{{ 'priceCheck.clearBtn' | translate }}</span>
+            class="kiosk-large-action-btn btn-start-scanner"
+            (click)="startBarcodeScan()"
+            [disabled]="isScanning">
+            <div class="camera-icon-badge">
+              <ion-icon name="camera-outline"></ion-icon>
+            </div>
+            <div class="camera-btn-text">
+              <span class="btn-main-label">{{ (isScanning ? 'priceCheck.scanning' : 'priceCheck.startScan') | translate }}</span>
+              <span class="btn-sub-label">Apunta el código de barras frente a la cámara</span>
+            </div>
+            <ion-icon name="arrow-forward-outline" class="btn-arrow-icon" aria-hidden="true"></ion-icon>
           </button>
-        </div>
-      </div>
 
-      <!-- Panel 2: Escaneo Táctil -->
-      <div class="scan-section card-box">
-        <div class="card-box-header">
-          <div class="box-icon-wrapper scan-theme-icon">
-            <ion-icon name="barcode-outline"></ion-icon>
-          </div>
-          <div class="box-title-group">
-            <h3>{{ 'priceCheck.scanTitle' | translate }}</h3>
-            <p>Apunta el código de barras a la cámara del módulo</p>
-          </div>
-        </div>
-        
-        <button 
-          type="button" 
-          class="kiosk-action-btn scan-hero-btn"
-          (click)="startBarcodeScan()"
-          [disabled]="isScanning">
-          <div class="scan-btn-pulse">
-            <ion-icon name="camera-outline"></ion-icon>
-          </div>
-          <div class="scan-btn-text">
-            <span class="scan-btn-title">{{ (isScanning ? 'priceCheck.scanning' : 'priceCheck.startScan') | translate }}</span>
-            <span class="scan-btn-sub">Lectura instantánea de código de barras</span>
-          </div>
-          <ion-icon name="arrow-forward" class="scan-btn-arrow"></ion-icon>
-        </button>
+          <!-- Consejos Visuales en Píldoras Táctiles Secundarias -->
+          <div class="kiosk-scan-tips-grid">
+            <div class="scan-tip-pill">
+              <div class="tip-icon-round">
+                <ion-icon name="scan-outline"></ion-icon>
+              </div>
+              <div class="tip-info">
+                <strong>{{ 'priceCheck.helpFocus' | translate }}</strong>
+                <span>Mantén el código a 15–25 cm de distancia</span>
+              </div>
+            </div>
 
-        <!-- Ayuda para escaneo -->
-        <div class="scan-help-row">
-          <div class="help-pill">
-            <ion-icon name="barcode-outline"></ion-icon>
-            <span>{{ 'priceCheck.helpFocus' | translate }}</span>
+            <div class="scan-tip-pill">
+              <div class="tip-icon-round">
+                <ion-icon name="sunny-outline"></ion-icon>
+              </div>
+              <div class="tip-info">
+                <strong>{{ 'priceCheck.helpLight' | translate }}</strong>
+                <span>Evita sombras y reflejos sobre el envase</span>
+              </div>
+            </div>
           </div>
-          <div class="help-pill">
-            <ion-icon name="sunny-outline"></ion-icon>
-            <span>{{ 'priceCheck.helpLight' | translate }}</span>
+
+          <!-- Atajo para demo rápida de escaneo -->
+          <div class="demo-scan-pill-row">
+            <button type="button" class="btn-demo-kiosk-scan" (click)="simulateDemoScan('7801234567890')">
+              <ion-icon name="flash-outline"></ion-icon>
+              <span>Escanear producto de prueba (Leche Colun)</span>
+            </button>
           </div>
         </div>
-      </div>
+      </section>
+
     </div>
 
     <!-- Mensaje de aviso/error -->
@@ -132,17 +413,20 @@
       </div>
     </div>
 
-    <!-- Resultados de búsqueda -->
-    <div class="results-section" *ngIf="!isLoading && searchResults.length > 0">
+    <!-- ============================================================= -->
+    <!-- CASO 3: MÚLTIPLES RESULTADOS DE BÚSQUEDA POR TEXTO            -->
+    <!-- Visible cuando la búsqueda arrojó más de 1 producto          -->
+    <!-- ============================================================= -->
+    <div class="results-section" *ngIf="!isLoading && searchResults.length > 1 && !selectedHeroProduct">
       <div class="results-header">
         <div class="results-info">
           <div class="results-icon-badge">
-            <ion-icon name="checkmark-circle"></ion-icon>
+            <ion-icon name="list-outline"></ion-icon>
           </div>
           <div class="results-text">
-            <h3>{{ 'priceCheck.resultsTitle' | translate }}</h3>
+            <h3>Resultados de Búsqueda</h3>
             <div class="scan-info">
-              <span>{{ 'priceCheck.resultsCount' | translate:{ count: searchResults.length } }}</span>
+              <span>Se encontraron {{ searchResults.length }} productos. Toca uno para ver el detalle y precio.</span>
             </div>
           </div>
         </div>
@@ -154,9 +438,11 @@
       </div>
 
       <div class="products-grid">
-        <div class="modern-product-card" *ngFor="let product of searchResults">
+        <div 
+          class="modern-product-card" 
+          *ngFor="let product of searchResults"
+          (click)="selectHeroProduct(product)">
           
-          <!-- Imagen del producto con insignia de oferta -->
           <div class="product-image-container">
             <img 
               [src]="product.image" 
@@ -170,7 +456,6 @@
           </div>
 
           <div class="product-card-body">
-            <!-- Título y Marca -->
             <div class="product-title-row">
               <div class="badges-row">
                 <span class="brand-tag">{{ product.brand }}</span>
@@ -179,7 +464,6 @@
               <h3 class="product-title">{{ product.name }}</h3>
             </div>
 
-            <!-- Bloque de Precio -->
             <div class="price-hero-block">
               <span class="price-eyebrow">Precio en caja</span>
               <div class="price-row">
@@ -193,53 +477,12 @@
               </div>
             </div>
 
-            <!-- Metadatos: Código de Barras y Ubicación -->
-            <div class="product-meta-grid">
-              <div class="meta-box">
-                <ion-icon name="barcode-outline" class="meta-icon"></ion-icon>
-                <div class="meta-info">
-                  <span class="meta-title">Código</span>
-                  <span class="meta-value barcode-font">{{ product.barcode }}</span>
-                </div>
-              </div>
-
-              <div class="meta-box location-box" *ngIf="product.supermarketLocation">
-                <ion-icon name="location-outline" class="meta-icon location-icon"></ion-icon>
-                <div class="meta-info">
-                  <span class="meta-title">{{ 'priceCheck.location' | translate }}</span>
-                  <span class="meta-value">{{ product.supermarketLocation.aisle }}, {{ product.supermarketLocation.section }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Botones de Acción -->
-            <div class="product-card-actions">
-              <button type="button" class="btn-add-cart" (click)="addToCart(product)">
-                <ion-icon name="cart-outline"></ion-icon>
-                <span>{{ 'priceCheck.addToCart' | translate }}</span>
-              </button>
-
-              <button type="button" class="btn-toggle-nutrition" (click)="toggleNutrition(product)">
-                <ion-icon name="nutrition-outline"></ion-icon>
-                <span>{{ (expandedNutritionBarcode === product.barcode ? 'priceCheck.hideNutrition' : 'priceCheck.viewNutrition') | translate }}</span>
-              </button>
-            </div>
-
-            <app-nutrition-card
-              *ngIf="expandedNutritionBarcode === product.barcode"
-              [loading]="nutritionLoading"
-              [result]="nutritionResult(product.barcode)">
-            </app-nutrition-card>
+            <button type="button" class="btn-select-product">
+              <ion-icon name="scan-circle-outline"></ion-icon>
+              <span>Consultar este producto</span>
+            </button>
           </div>
         </div>
-      </div>
-
-      <!-- Botón para nueva búsqueda -->
-      <div class="new-search-footer">
-        <button type="button" class="kiosk-action-btn outline-brand-btn" (click)="clearSearch()">
-          <ion-icon name="search-outline"></ion-icon>
-          <span>{{ 'priceCheck.newSearch' | translate }}</span>
-        </button>
       </div>
     </div>
 
@@ -262,13 +505,169 @@
   </div>
 </ion-content>
 
-<!-- Modal de Escáner Táctil Moderno Fullscreen Centrado -->
+<!-- ============================================================= -->
+<!-- DRAWER TÁCTIL: 💰 VER ALTERNATIVAS DE LA MISMA CATEGORÍA       -->
+<!-- ============================================================= -->
+<div class="alternatives-drawer-backdrop" *ngIf="showAlternativesDrawer" (click)="closeAlternatives()">
+  <div class="alternatives-drawer-panel" (click)="$event.stopPropagation()">
+    
+    <header class="drawer-header">
+      <div class="drawer-header-left">
+        <div class="drawer-icon-wrap">
+          <ion-icon name="swap-horizontal"></ion-icon>
+        </div>
+        <div>
+          <h3>Alternativas y Marcas Similares</h3>
+          <p>Opciones en la categoría <strong>{{ selectedHeroProduct?.category }}</strong></p>
+        </div>
+      </div>
+
+      <button type="button" class="btn-drawer-close" (click)="closeAlternatives()">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </header>
+
+    <main class="drawer-body">
+      <div class="alternatives-grid" *ngIf="alternativesList.length > 0; else noAlts">
+        
+        <article class="alt-product-card" *ngFor="let alt of alternativesList">
+          <div class="alt-card-img-wrap">
+            <img [src]="alt.image" [alt]="alt.name" (error)="handleImageError($event)" />
+            <span class="alt-offer-badge" *ngIf="alt.inOffer">OFERTA</span>
+          </div>
+
+          <div class="alt-card-info">
+            <span class="alt-brand">{{ alt.brand }}</span>
+            <h4 class="alt-title">{{ alt.name }}</h4>
+            
+            <div class="alt-price-wrap">
+              <span class="alt-price">{{ (alt.inOffer && alt.offerPrice ? alt.offerPrice : alt.price) | clp }}</span>
+              <span class="alt-original" *ngIf="alt.inOffer">{{ alt.price | clp }}</span>
+            </div>
+          </div>
+
+          <div class="alt-actions">
+            <!-- Comparar contra el producto actual -->
+            <button 
+              type="button" 
+              class="btn-alt-compare" 
+              *ngIf="selectedHeroProduct"
+              (click)="compareWithAlternative(selectedHeroProduct, alt)">
+              <ion-icon name="scale-outline"></ion-icon>
+              <span>Comparar con este</span>
+            </button>
+
+            <!-- Consultar este producto -->
+            <button 
+              type="button" 
+              class="btn-alt-view" 
+              (click)="selectHeroProduct(alt); closeAlternatives()">
+              <ion-icon name="eye-outline"></ion-icon>
+              <span>Ver precio</span>
+            </button>
+          </div>
+        </article>
+
+      </div>
+
+      <ng-template #noAlts>
+        <div class="no-alts-box">
+          <p>No hay más alternativas registradas en esta categoría actualmente.</p>
+        </div>
+      </ng-template>
+    </main>
+
+  </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- DRAWER TÁCTIL: 💰 OPCIONES MÁS ECONÓMICAS (MEJORA 3)           -->
+<!-- ============================================================= -->
+<div class="alternatives-drawer-backdrop" *ngIf="showCheaperDrawer" (click)="closeCheaperAlternatives()">
+  <div class="alternatives-drawer-panel cheaper-drawer-panel" (click)="$event.stopPropagation()">
+    
+    <header class="drawer-header cheaper-header">
+      <div class="drawer-header-left">
+        <div class="drawer-icon-wrap cheaper-icon-wrap">
+          <ion-icon name="trending-down"></ion-icon>
+        </div>
+        <div>
+          <h3>Opciones Más Económicas</h3>
+          <p>Alternativas de menor precio frente a <strong>{{ selectedHeroProduct?.name }}</strong> ({{ heroMetrics?.effectivePrice | clp }})</p>
+        </div>
+      </div>
+
+      <button type="button" class="btn-drawer-close" (click)="closeCheaperAlternatives()">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </header>
+
+    <main class="drawer-body">
+      <div class="cheaper-grid" *ngIf="cheaperAlternatives.length > 0; else noCheaper">
+        <article class="cheaper-product-card" *ngFor="let item of cheaperAlternatives">
+          
+          <div class="cheaper-card-badge">
+            <ion-icon name="sparkles"></ion-icon>
+            <span>Ahorras {{ item.savings | clp }} (-{{ item.savingsPercent }}%)</span>
+          </div>
+
+          <div class="cheaper-card-img-wrap">
+            <img [src]="item.product.image" [alt]="item.product.name" (error)="handleImageError($event)" />
+          </div>
+
+          <div class="cheaper-card-info">
+            <span class="cheaper-brand">{{ item.product.brand }}</span>
+            <h4 class="cheaper-title">{{ item.product.name }}</h4>
+            <div class="cheaper-prices">
+              <span class="cheaper-price">{{ item.alternativePrice | clp }}</span>
+              <span class="cheaper-target-price">vs {{ item.targetPrice | clp }}</span>
+            </div>
+            <span class="cheaper-pum">{{ item.pumText }}</span>
+          </div>
+
+          <div class="cheaper-actions">
+            <button type="button" class="btn-cheaper-compare" (click)="compareWithCheaper(selectedHeroProduct!, item)">
+              <ion-icon name="scale-outline"></ion-icon>
+              <span>Comparar</span>
+            </button>
+            <button type="button" class="btn-cheaper-cart" (click)="addToCart(item.product)">
+              <ion-icon name="cart-outline"></ion-icon>
+              <span>Agregar</span>
+            </button>
+            <button type="button" class="btn-cheaper-map" (click)="viewLocation(item.product)" title="Ver en mapa">
+              <ion-icon name="map-outline"></ion-icon>
+            </button>
+          </div>
+
+        </article>
+      </div>
+
+      <ng-template #noCheaper>
+        <div class="no-alts-box">
+          <p>Actualmente este producto ya tiene el precio más bajo en su categoría.</p>
+        </div>
+      </ng-template>
+    </main>
+
+  </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- MODAL DE COMPARADOR DE PRODUCTOS (HASTA 3 PRODUCTOS)          -->
+<!-- ============================================================= -->
+<app-product-compare-modal 
+  *ngIf="compareService.isModalOpen()"
+  (requestScan)="startBarcodeScan()">
+</app-product-compare-modal>
+
+<!-- ============================================================= -->
+<!-- MODAL DE ESCÁNER TÁCTIL (CÁMARA REAL CON ZXING)               -->
+<!-- ============================================================= -->
 <div class="camera-mode" *ngIf="isScanning" role="dialog" aria-modal="true" aria-label="Escáner táctil de código de barras">
   <div class="scanner-backdrop" (click)="cancelScan()"></div>
 
   <div class="scanner-container">
     
-    <!-- Barra superior del escáner -->
     <header class="scanner-header">
       <div class="scanner-brand-pill">
         <div class="live-dot" title="Cámara activa"></div>
@@ -281,34 +680,24 @@
       </button>
     </header>
 
-    <!-- Visor de la cámara y retículo de enfoque centrado -->
     <main class="scanner-viewport-wrapper">
       <div class="camera-viewport">
-        <!-- Elemento de video de la cámara -->
         <video #videoElement class="camera-view" autoplay playsinline muted></video>
         <canvas #canvasElement class="hidden-canvas"></canvas>
-
-        <!-- Sombra viñeta alrededor del retículo -->
         <div class="viewport-vignette"></div>
 
-        <!-- Marco / Retículo de escaneo moderno -->
         <div class="scanner-reticle">
           <div class="reticle-corner top-left"></div>
           <div class="reticle-corner top-right"></div>
           <div class="reticle-corner bottom-left"></div>
           <div class="reticle-corner bottom-right"></div>
-          
-          <!-- Láser de barrido animado -->
           <div class="scanning-laser-line"></div>
-
-          <!-- Guía visual central -->
           <div class="reticle-watermark">
             <ion-icon name="barcode-outline"></ion-icon>
           </div>
         </div>
       </div>
 
-      <!-- Tarjeta flotante de instrucciones -->
       <div class="scanner-guidance-card">
         <div class="guidance-main">
           <ion-icon name="scan-outline" class="guidance-icon"></ion-icon>
@@ -331,14 +720,12 @@
       </div>
     </main>
 
-    <!-- Barra de acciones inferiores del escáner -->
     <footer class="scanner-footer">
       <button type="button" class="kiosk-cancel-scan-btn" (click)="cancelScan()">
         <ion-icon name="close-circle-outline"></ion-icon>
         <span>Cancelar y Volver</span>
       </button>
 
-      <!-- Botón de prueba rápida para demostración en kiosko/browser -->
       <button type="button" class="kiosk-demo-scan-btn" (click)="simulateDemoScan('7801234567890')">
         <ion-icon name="flash-outline"></ion-icon>
         <span>Probar con producto demo (Leche Soprole)</span>

@@ -1,10 +1,29 @@
 import { OfferView, Product, Recipe } from './catalog.model';
+import { CheaperAlternativeItem } from '../core/product-helper';
+
+export interface ChatActionWidget {
+  type: 
+    | 'product_location'        // Para "¿Dónde está el arroz?" (mapa 3D, precio, carrito)
+    | 'product_price'           // Para "¿Cuánto cuesta...?"
+    | 'offers_list'             // Para "¿Qué detergentes están en oferta?"
+    | 'cheaper_alternatives'    // Para "¿Hay una más barata?"
+    | 'compare_ready';          // Para comparar productos
+  
+  title?: string;
+  product?: Product;
+  products?: Product[];
+  offers?: OfferView[];
+  referenceProduct?: Product;
+  cheaperAlternatives?: CheaperAlternativeItem[];
+}
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
   text: string;
   /** Marca de tiempo (Date.now()). */
   at: number;
+  /** Widget interactivo de control de tablet opcional */
+  widget?: ChatActionWidget;
 }
 
 export type IntentType =
@@ -14,6 +33,8 @@ export type IntentType =
   | 'receta'
   | 'categoria'
   | 'carrito'
+  | 'mas_barato'
+  | 'comparar'
   | 'general';
 
 export type CartCommand = 'add' | 'remove' | 'total' | 'clear' | 'setBudget' | 'clearBudget';

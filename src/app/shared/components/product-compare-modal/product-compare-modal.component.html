@@ -1,0 +1,191 @@
+<div class="compare-modal-backdrop" (click)="close()">
+  <div class="compare-modal-sheet" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    
+    <!-- Encabezado del Comparador Táctil -->
+    <header class="compare-header">
+      <div class="header-left">
+        <div class="compare-badge-icon">
+          <ion-icon name="scale-outline"></ion-icon>
+        </div>
+        <div class="header-titles">
+          <h2>Comparador de Productos</h2>
+          <p>Compara hasta 3 opciones cara a cara para elegir la más conveniente</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="inactivity-pill" title="Reseteo automático de seguridad">
+          <span class="live-dot"></span>
+          <span>Tablet pública · Auto-reseteo</span>
+        </div>
+
+        <button type="button" class="btn-clear-all" (click)="clearAll()" *ngIf="comparedItems().length > 0">
+          <ion-icon name="trash-outline"></ion-icon>
+          <span>Limpiar</span>
+        </button>
+
+        <button type="button" class="btn-close-modal" (click)="close()" aria-label="Cerrar comparador">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+    </header>
+
+    <!-- Contenido Principal: Matriz Comparativa -->
+    <main class="compare-body">
+      <div class="comparison-grid" [attr.data-count]="comparedItems().length">
+        
+        <!-- Columnas con Productos Cargados -->
+        <article class="compare-column active-product" *ngFor="let item of comparedItems(); let i = index">
+          
+          <!-- Encabezado de la columna con imagen y botón quitar -->
+          <div class="col-product-card">
+            <div class="product-slot-label">
+              <span>Opción {{ i === 0 ? 'A' : (i === 1 ? 'B' : 'C') }}</span>
+              <button type="button" class="btn-remove-slot" (click)="removeProduct(item.product.id)" title="Quitar de comparación">
+                <ion-icon name="close-circle"></ion-icon>
+              </button>
+            </div>
+
+            <div class="col-img-wrapper">
+              <img [src]="item.product.image" [alt]="item.product.name" (error)="handleImageError($event)" />
+              <span class="col-offer-tag" *ngIf="item.metrics.hasDiscount">
+                -{{ item.metrics.discountPercentage }}% DCTO
+              </span>
+            </div>
+
+            <div class="col-title-block">
+              <span class="col-brand">{{ item.product.brand }}</span>
+              <h3 class="col-name">{{ item.product.name }}</h3>
+            </div>
+          </div>
+
+          <!-- Filas de Comparación Cara a Cara -->
+          <div class="compare-metrics-list">
+            
+            <!-- Fila 1: Precio Actual -->
+            <div class="metric-row highlight-row" [class.is-winner]="item.isBestPrice">
+              <span class="metric-label">Precio a pagar</span>
+              <div class="metric-value-box">
+                <span class="main-price">{{ item.metrics.effectivePrice | clp }}</span>
+                <span class="winner-badge" *ngIf="item.isBestPrice">
+                  <ion-icon name="trophy"></ion-icon> Mejor Precio
+                </span>
+              </div>
+            </div>
+
+            <!-- Fila 2: Precio Normal / Oferta -->
+            <div class="metric-row">
+              <span class="metric-label">Precio normal</span>
+              <div class="metric-value-box">
+                <span class="normal-price" [class.struck]="item.metrics.hasDiscount">
+                  {{ item.metrics.originalPrice | clp }}
+                </span>
+                <span class="offer-status-pill" [class.on-offer]="item.metrics.hasDiscount">
+                  {{ item.metrics.hasDiscount ? 'En oferta' : 'Precio regular' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Fila 3: Contenido Neto -->
+            <div class="metric-row">
+              <span class="metric-label">Contenido neto</span>
+              <span class="metric-text content-text">{{ item.metrics.netContent }}</span>
+            </div>
+
+            <!-- Fila 4: PUM (Precio por Unidad) -->
+            <div class="metric-row pum-row" [class.is-winner]="item.isBestPum">
+              <span class="metric-label">Precio por unidad</span>
+              <div class="metric-value-box">
+                <strong class="pum-highlight">{{ item.metrics.pumText }}</strong>
+                <span class="winner-pum-badge" *ngIf="item.isBestPum">
+                  <ion-icon name="sparkles"></ion-icon> Rinde más
+                </span>
+              </div>
+            </div>
+
+            <!-- Fila 5: Stock en Sala -->
+            <div class="metric-row">
+              <span class="metric-label">Stock en sala</span>
+              <div class="stock-pill" [attr.data-status]="item.metrics.stockStatus">
+                <span class="stock-dot"></span>
+                <span>{{ item.metrics.stockLabel }}</span>
+              </div>
+            </div>
+
+            <!-- Fila 6: Ubicación Física -->
+            <div class="metric-row">
+              <span class="metric-label">Ubicación</span>
+              <span class="location-text">
+                <ion-icon name="location-outline"></ion-icon>
+                {{ item.metrics.locationText }}
+              </span>
+            </div>
+
+          </div>
+
+          <!-- Acciones Rápidas del Producto -->
+          <footer class="col-actions">
+            <button type="button" class="btn-col-action map-action" (click)="viewLocation(item.product)">
+              <ion-icon name="map-outline"></ion-icon>
+              <span>Ver en mapa</span>
+            </button>
+            <button type="button" class="btn-col-action cart-action" (click)="addToCart(item.product)">
+              <ion-icon name="cart-outline"></ion-icon>
+              <span>Agregar</span>
+            </button>
+          </footer>
+
+        </article>
+
+        <!-- Columnas Vacías (Slots Disponibles para Agregar) -->
+        <article class="compare-column empty-slot" *ngFor="let slot of getEmptySlots(); let sIndex = index">
+          <div class="empty-slot-content">
+            <div class="empty-icon-circle">
+              <ion-icon name="add-outline"></ion-icon>
+            </div>
+            <h4>Comparar otro producto</h4>
+            <p>Escanea el código de barras con la cámara o selecciona una alternativa</p>
+
+            <button type="button" class="btn-empty-scan" (click)="startScanning()">
+              <ion-icon name="camera-outline"></ion-icon>
+              <span>Escanear con cámara</span>
+            </button>
+
+            <!-- Sugerencias Rápidas de la misma categoría -->
+            <div class="quick-suggest-section" *ngIf="getQuickSuggestions().length > 0">
+              <span class="suggest-title">Sugerencias recomendadas:</span>
+              <div class="suggest-list">
+                <button 
+                  type="button" 
+                  class="suggest-item-btn" 
+                  *ngFor="let sug of getQuickSuggestions()" 
+                  (click)="addProduct(sug)">
+                  <img [src]="sug.image" [alt]="sug.name" (error)="handleImageError($event)" />
+                  <div class="suggest-details">
+                    <span class="sug-name">{{ sug.name }}</span>
+                    <span class="sug-price">{{ (sug.inOffer && sug.offerPrice ? sug.offerPrice : sug.price) | clp }}</span>
+                  </div>
+                  <ion-icon name="add-circle" class="sug-add-icon"></ion-icon>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </article>
+
+      </div>
+    </main>
+
+    <!-- Pie del Modal Táctil -->
+    <footer class="compare-footer">
+      <div class="footer-tip">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <span>Tip: El indicador <strong>Rinde más</strong> te muestra cuál producto cuesta menos por cada litro o kilo.</span>
+      </div>
+      <button type="button" class="btn-footer-close" (click)="close()">
+        <span>Cerrar Comparación</span>
+      </button>
+    </footer>
+
+  </div>
+</div>

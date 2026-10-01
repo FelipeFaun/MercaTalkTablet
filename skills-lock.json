@@ -7,6 +7,12 @@
       "skillPath": "skills/accessibility/SKILL.md",
       "computedHash": "88c64dead9bb55925c7b983f5fd95cfecf30bd8c076fd384cdb17019d1becd87"
     },
+    "ai-image-generation": {
+      "source": "magentosh/superpowers",
+      "sourceType": "github",
+      "skillPath": "tools/image/ai-image-generation/SKILL.md",
+      "computedHash": "0cb296ffe8d9277dff2e4fbd9888fa943a4f6acee4ad218559e60e45c8a06526"
+    },
     "angular-developer": {
       "source": "angular/angular",
       "sourceType": "github",
@@ -31,6 +37,18 @@
       "skillPath": "skills/core-web-vitals/SKILL.md",
       "computedHash": "ceaa3e9c9dfa6209ffe923714c0a093b950d0922213d0cf375c27f3d602cc857"
     },
+    "design-lab": {
+      "source": "0xdesign/design-plugin",
+      "sourceType": "github",
+      "skillPath": "design-and-refine/skills/design-lab/SKILL.md",
+      "computedHash": "8879d318fcedccbae872a06b3d9a4ed3c5e75340a96d9c6baf765a4b19593c25"
+    },
+    "figma-use": {
+      "source": "dannote/figma-use",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "aa104b5e64e4b00087a22016a5efa41fc8e03e9e02e6a03876c36531cfa7612a"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
@@ -42,6 +60,30 @@
       "sourceType": "github",
       "skillPath": "skills/frontend-ui-engineering/SKILL.md",
       "computedHash": "cb4e981ecb5f701b451fc4e937a38049b49fd4523f213e06cffbd00b007060dc"
+    },
+    "improve": {
+      "source": "shadcn/improve",
+      "sourceType": "github",
+      "skillPath": "skills/improve/SKILL.md",
+      "computedHash": "553713a1b9af40ec50c4018f75b8974bf728fe5abc8e125b748e2d718d5c31ea"
+    },
+    "improve-animations": {
+      "source": "emilkowalski/skills",
+      "sourceType": "github",
+      "skillPath": "skills/improve-animations/SKILL.md",
+      "computedHash": "b913ec7ef2b1aa900060eb6e5dbdccc94b6ea631059ec3474c4b61e2ffefeeb4"
+    },
+    "improve-ui": {
+      "source": "ibelick/ui-skills",
+      "sourceType": "github",
+      "skillPath": "skills/improve-ui/SKILL.md",
+      "computedHash": "31c09b79a1c196adccb1637a225cef54f537da87430fda0ba309ef83e78f10e5"
+    },
+    "interaction-design": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/ui-design/skills/interaction-design/SKILL.md",
+      "computedHash": "d2e2127b91c76b2ed6706ce78bfc7eddcb6b340333f94d3d53d9f65e3253dea2"
     },
     "ionic-angular": {
       "source": "capawesome-team/skills",
@@ -84,6 +126,24 @@
       "sourceType": "github",
       "skillPath": "skills/seo/SKILL.md",
       "computedHash": "aa081d7ee9f44d1b09ac521051630adac2fca0e595e3d0d0ec881d0b2644676f"
+    },
+    "theme-factory": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/theme-factory/SKILL.md",
+      "computedHash": "e9ec1fe85faa729e9f3d1731cd7e4e485f98c099ccc7c1c0d198f473aa4b654a"
+    },
+    "ui-skills-root": {
+      "source": "ibelick/ui-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ui-skills-root/SKILL.md",
+      "computedHash": "76a520772c9532b141562d2b2e659f4e6636cf04d2f2c9b9cf5828702f0ad048"
+    },
+    "web-artifacts-builder": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-artifacts-builder/SKILL.md",
+      "computedHash": "fdddbe9bb720ea1aea9292ee513ec10b2a8f4912e2c343bdc246ab3febd7c9b3"
     },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",

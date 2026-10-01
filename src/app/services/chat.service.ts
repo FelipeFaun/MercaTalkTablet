@@ -7,7 +7,8 @@ import { CatalogService } from '../core/catalog.service';
 import { IntentService } from '../core/intent.service';
 import { PromptBuilderService } from '../core/prompt-builder.service';
 import { Product } from '../models/catalog.model';
-import { CartIntent, ChatMessage, Intent } from '../models/chat.model';
+import { CartIntent, ChatMessage, Intent, ChatActionWidget } from '../models/chat.model';
+import { ProductHelper } from '../core/product-helper';
 import { formatClp } from '../shared/pipes/clp.pipe';
 
 export interface ApiResponse {
@@ -50,6 +51,8 @@ export class ChatService {
   private intents = inject(IntentService);
   private prompts = inject(PromptBuilderService);
 
+  private lastReferencedProduct: Product | null = null;
+
   private readonly _messages = signal<ChatMessage[]>([]);
   private readonly _isLoading = signal(false);
 
@@ -88,7 +91,7 @@ export class ChatService {
     this._messages.set([{ role: 'assistant', text: this.welcomeText, at: Date.now() }]);
   }
 
-  // ENVIAR UN MENSAJE Y OBTENER LA RESPUESTA (queda en el historial)
+  // ENVIAR UN MENSAJE Y OBTENER LA RESPUESTA (queda en el historial con widgets)
   async send(text: string): Promise<ChatMessage> {
     const userText = text.trim();
     if (!userText) throw new ApiError('Escribe algo para enviar');
@@ -100,10 +103,78 @@ export class ChatService {
 
     try {
       const intent = this.intents.analyze(userText);
-      const reply = intent.cart
-        ? this.handleCart(intent.cart)
-        : await this.askModel(userText, intent, history);
-      return this.push('assistant', reply);
+      let reply = '';
+      let widget: ChatActionWidget | undefined;
+
+      if (intent.products.length > 0) {
+        this.lastReferencedProduct = intent.products[0];
+      }
+
+      if (intent.cart) {
+        reply = this.handleCart(intent.cart);
+      } else if (intent.type === 'ubicacion' && intent.products.length > 0) {
+        const prod = intent.products[0];
+        const aisle = prod.supermarketLocation?.aisle || 'Pasillo 1';
+        const shelf = prod.supermarketLocation?.shelf || 'Estante 1';
+        reply = `Encontré ${prod.name} ${prod.brand}. Está en el ${aisle}, ${shelf}.`;
+        widget = {
+          type: 'product_location',
+          product: prod,
+          title: `${prod.name} ${prod.brand}`
+        };
+      } else if (intent.type === 'ofertas' && intent.offers.length > 0) {
+        reply = `Encontré ${intent.offers.length} promociones disponibles:`;
+        widget = {
+          type: 'offers_list',
+          title: `Ofertas destacadas`,
+          offers: intent.offers
+        };
+      } else if (intent.type === 'mas_barato') {
+        const target = (intent.products.length > 0 ? intent.products[0] : this.lastReferencedProduct)
+          || this.catalog.getProducts().find(p => p.id === 2);
+
+        if (target) {
+          const alts = ProductHelper.findCheaperAlternatives(target, this.catalog.getProducts());
+          if (alts.length > 0) {
+            reply = `Encontré ${alts.length} opciones más económicas frente a ${target.name} (${formatClp(target.price)}). Puedes ahorrar hasta ${formatClp(alts[0].savings)}:`;
+            widget = {
+              type: 'cheaper_alternatives',
+              referenceProduct: target,
+              cheaperAlternatives: alts
+            };
+          } else {
+            reply = `${target.name} ya es la opción con el mejor precio disponible en su categoría.`;
+          }
+        } else {
+          reply = `Dime qué producto necesitas y te buscaré las alternativas más baratas.`;
+        }
+      } else if (intent.type === 'comparar' && intent.products.length >= 2) {
+        reply = `Listo, aquí tienes la comparación directa entre ${intent.products[0].name} y ${intent.products[1].name}:`;
+        widget = {
+          type: 'compare_ready',
+          products: intent.products.slice(0, 3)
+        };
+      } else if (intent.type === 'precio' && intent.products.length > 0) {
+        const prod = intent.products[0];
+        const price = prod.inOffer && prod.offerPrice ? prod.offerPrice : prod.price;
+        reply = `${prod.name} de ${prod.brand} cuesta ${formatClp(price)}${prod.inOffer ? ' (en oferta)' : ''}.`;
+        widget = {
+          type: 'product_price',
+          product: prod,
+          title: `${prod.name} ${prod.brand}`
+        };
+      } else {
+        reply = await this.askModel(userText, intent, history);
+        if (intent.products.length > 0) {
+          widget = {
+            type: 'product_location',
+            product: intent.products[0],
+            title: `${intent.products[0].name} ${intent.products[0].brand}`
+          };
+        }
+      }
+
+      return this.push('assistant', reply, widget);
     } catch (error) {
       const defaultErr = this.langService.t('home.cannotAnswer');
       const message = error instanceof ApiError
@@ -284,8 +355,8 @@ export class ChatService {
     }
   }
 
-  private push(role: ChatMessage['role'], text: string): ChatMessage {
-    const message: ChatMessage = { role, text, at: Date.now() };
+  private push(role: ChatMessage['role'], text: string, widget?: ChatActionWidget): ChatMessage {
+    const message: ChatMessage = { role, text, at: Date.now(), widget };
     this._messages.update(messages => [...messages, message]);
     return message;
   }

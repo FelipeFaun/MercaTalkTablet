@@ -5,180 +5,180 @@
 
     @if (!isInConversation()) {
       <!-- ======================================================== -->
-      <!-- VISTA PRINCIPAL: JERARQUÍA VISUAL CLARA PARA KIOSKO      -->
+      <!-- VISTA PRINCIPAL: JERARQUÍA VISUAL KIOSK-FIRST             -->
+      <!-- Entendible en 2-3 segundos por cualquier cliente          -->
       <!-- ======================================================== -->
       <div class="home-hierarchy-wrapper">
 
-        <!-- 1. EL PROTAGONISTA (CENTRO-SUPERIOR) -->
-        <section class="protagonist-section">
-          <div class="protagonist-card">
-            
-            <div class="protagonist-avatar-box">
-              <div class="avatar-ring">
-                <img [src]="currentAvatar()" [alt]="currentBrand().assistantName" class="avatar-img">
-              </div>
-              <div class="online-indicator" title="Asistente activo"></div>
+        <!-- Banner de Bienvenida y Asistente en Kiosko -->
+        <header class="home-hero-header">
+          <div class="assistant-kiosk-chip">
+            <div class="chip-avatar-ring">
+              <img [src]="currentAvatar()" [alt]="currentBrand().assistantName" class="chip-avatar">
             </div>
+            <div class="chip-info">
+              <div class="store-badge">
+                <span class="live-dot"></span>
+                <span>{{ currentBrand().storeName }} · Tablet Autoservicio</span>
+              </div>
+              <h2 class="hero-greeting">{{ 'home.welcome' | translate:{ name: currentBrand().assistantName } }}</h2>
+            </div>
+          </div>
+        </header>
 
-            <div class="protagonist-content">
-              <div class="assistant-tagline-badge">
-                <span class="assistant-name">{{ currentBrand().assistantName }}</span>
-                <span class="assistant-role">{{ 'home.officialAssistant' | translate:{ store: currentBrand().storeName } }}</span>
+        <!-- SECCIÓN 1: ¿QUÉ NECESITAS HOY? -->
+        <section class="main-intent-section">
+          <div class="section-title-tag">
+            <span>¿QUÉ NECESITAS HOY?</span>
+          </div>
+
+          <!-- BOTÓN PRINCIPAL Y MÁS GRANDE: 🔍 CONSULTAR PRECIO (HERO CALL TO ACTION) -->
+          <button 
+            type="button" 
+            class="kiosk-hero-cta-btn" 
+            (click)="navigateToPriceCheck()"
+            aria-label="Consultar precio y escanear producto">
+            
+            <div class="hero-cta-left">
+              <div class="hero-cta-pulse-icon">
+                <ion-icon name="barcode-outline" class="barcode-main-icon"></ion-icon>
+                <div class="pulse-ring"></div>
               </div>
               
-              <p class="protagonist-speech">
-                {{ 'home.welcome' | translate:{ name: currentBrand().assistantName } }}
-              </p>
-
-              <!-- Botón Principal Destacado: Comenzar a conversar -->
-              <button type="button"
-                      class="hero-start-chat-btn"
-                      (click)="startConversation()"
-                      [attr.aria-label]="'home.startChat' | translate">
-                <div class="chat-btn-pulse">
-                  <ion-icon name="chatbubbles" aria-hidden="true"></ion-icon>
+              <div class="hero-cta-text-block">
+                <div class="hero-cta-badge">
+                  <ion-icon name="flash"></ion-icon>
+                  <span>FUNCIÓN PRINCIPAL</span>
                 </div>
-                <div class="chat-btn-text">
-                  <span class="chat-btn-title">{{ 'home.startChat' | translate }}</span>
-                  <span class="chat-btn-sub">{{ 'home.startChatDesc' | translate }}</span>
-                </div>
-                <ion-icon name="arrow-forward" class="chat-btn-arrow" aria-hidden="true"></ion-icon>
-              </button>
+                <h2 class="hero-cta-title">{{ 'home.checkPrice' | translate }}</h2>
+                <p class="hero-cta-desc">Apunta el código de barras a la cámara o escribe el nombre para ver precio, PUM y stock en sala</p>
+              </div>
             </div>
 
-          </div>
-        </section>
+            <div class="hero-cta-right">
+              <div class="scan-now-pill">
+                <ion-icon name="camera-outline"></ion-icon>
+                <span>CONSULTAR AHORA</span>
+                <ion-icon name="arrow-forward" class="cta-arrow"></ion-icon>
+              </div>
+            </div>
+          </button>
 
-        <!-- 2. CUADRÍCULA DE ATAJOS RÁPIDOS (TODAS LAS OPCIONES INCLUIDAS) -->
-        <section class="shortcuts-section">
-          <div class="shortcuts-grid">
+          <!-- TRÍO DE ACCIONES DE 1ER NIVEL -->
+          <div class="primary-trio-grid">
             
-            <!-- Atajo 1: Consultar Precio -->
-            <button type="button" class="shortcut-card price-shortcut" (click)="navigateToPriceCheck()">
-              <div class="shortcut-icon-box">
-                <ion-icon name="barcode-outline" aria-hidden="true"></ion-icon>
+            <!-- 1. Encontrar un producto (Mapa 3D) -->
+            <button type="button" class="trio-card locator-card" (click)="navigateToStoreLocator()">
+              <div class="trio-icon-box">
+                <ion-icon name="map-outline"></ion-icon>
               </div>
-              <div class="shortcut-info">
-                <h3 class="shortcut-title">{{ 'home.checkPrice' | translate }}</h3>
-                <p class="shortcut-desc">{{ 'home.checkPriceDesc' | translate }}</p>
+              <div class="trio-content">
+                <h3 class="trio-title">{{ 'home.whereToFind' | translate }}</h3>
+                <p class="trio-desc">Mapa 3D interactivo con pasillos, estantes y rutas</p>
               </div>
-              <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
+              <ion-icon name="chevron-forward" class="trio-chevron"></ion-icon>
             </button>
 
-            <!-- Atajo 2: Productos -->
-            <button type="button" class="shortcut-card products-shortcut" (click)="navigateToProducts()">
-              <div class="shortcut-icon-box">
-                <ion-icon name="basket-outline" aria-hidden="true"></ion-icon>
+            <!-- 2. Ver ofertas del día -->
+            <button type="button" class="trio-card offers-card" (click)="navigateToOffers()">
+              <div class="trio-icon-box">
+                <ion-icon name="pricetags-outline"></ion-icon>
               </div>
-              <div class="shortcut-info">
-                <h3 class="shortcut-title">{{ 'home.allProducts' | translate }}</h3>
-                <p class="shortcut-desc">{{ 'home.allProductsDesc' | translate }}</p>
+              <div class="trio-content">
+                <h3 class="trio-title">{{ 'home.featuredOffers' | translate }}</h3>
+                <p class="trio-desc">Promociones vigentes y mayores descuentos</p>
               </div>
-              <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
+              <ion-icon name="chevron-forward" class="trio-chevron"></ion-icon>
             </button>
 
-            <!-- Atajo 3: Mi Compra -->
-            <button type="button" class="shortcut-card cart-shortcut" (click)="navigateToCart()">
-              <div class="shortcut-icon-box">
-                <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
+            <!-- 3. Preguntar a Liderín -->
+            <button type="button" class="trio-card assistant-card" (click)="startConversation()">
+              <div class="trio-icon-box">
+                <ion-icon name="chatbubbles-outline"></ion-icon>
               </div>
-              <div class="shortcut-info">
-                <h3 class="shortcut-title">{{ 'home.myCart' | translate }}</h3>
-                <p class="shortcut-desc">{{ 'home.myCartDesc' | translate }}</p>
+              <div class="trio-content">
+                <h3 class="trio-title">Preguntar a {{ currentBrand().assistantName }}</h3>
+                <p class="trio-desc">Asistente por voz o chat que controla la tablet</p>
               </div>
-              <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
-            </button>
-
-            <!-- Atajo 4: Ofertas Destacadas -->
-            <button type="button" class="shortcut-card offers-shortcut" (click)="navigateToOffers()">
-              <div class="shortcut-icon-box">
-                <ion-icon name="pricetags-outline" aria-hidden="true"></ion-icon>
-              </div>
-              <div class="shortcut-info">
-                <h3 class="shortcut-title">{{ 'home.featuredOffers' | translate }}</h3>
-                <p class="shortcut-desc">{{ 'home.featuredOffersDesc' | translate }}</p>
-              </div>
-              <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
-            </button>
-
-            <!-- Atajo 5: Dónde Encontrar -->
-            <button type="button" class="shortcut-card locator-shortcut" (click)="navigateToStoreLocator()">
-              <div class="shortcut-icon-box">
-                <ion-icon name="map-outline" aria-hidden="true"></ion-icon>
-              </div>
-              <div class="shortcut-info">
-                <h3 class="shortcut-title">{{ 'home.whereToFind' | translate }}</h3>
-                <p class="shortcut-desc">{{ 'home.whereToFindDesc' | translate }}</p>
-              </div>
-              <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
-            </button>
-
-            <!-- Atajo 6: Recetas con Ofertas -->
-            <button type="button" class="shortcut-card recipes-shortcut" (click)="navigateToRecipes()">
-              <div class="shortcut-icon-box">
-                <ion-icon name="restaurant-outline" aria-hidden="true"></ion-icon>
-              </div>
-              <div class="shortcut-info">
-                <h3 class="shortcut-title">{{ 'home.recipesWithOffers' | translate }}</h3>
-                <p class="shortcut-desc">{{ 'home.recipesWithOffersDesc' | translate }}</p>
-              </div>
-              <ion-icon name="chevron-forward" class="shortcut-chevron" aria-hidden="true"></ion-icon>
+              <ion-icon name="chevron-forward" class="trio-chevron"></ion-icon>
             </button>
 
           </div>
         </section>
 
-        <!-- 3. MÓDULOS DE VALOR AÑADIDO (HERRAMIENTAS ESPECIALES) -->
-        <section class="special-tools-section">
-          <div class="section-title-bar">
-            <ion-icon name="apps-outline" class="title-icon" aria-hidden="true"></ion-icon>
-            <h3 class="section-heading">{{ 'home.specialTools' | translate }}</h3>
-            <span class="section-line"></span>
+        <!-- SECCIÓN 2: MÁS HERRAMIENTAS (SEGUNDO NIVEL ORDENADO) -->
+        <section class="secondary-tools-section">
+          <div class="section-divider">
+            <span class="divider-line"></span>
+            <span class="divider-title">MÁS HERRAMIENTAS</span>
+            <span class="divider-line"></span>
           </div>
 
-          <div class="tools-grid-4">
+          <div class="tools-grid-clean">
             
-            <!-- Herramienta 1: Calculadora de Eventos -->
-            <button type="button" class="tool-btn event-tool" (click)="openEventCalculator()">
-              <div class="tool-icon-wrapper">
-                <ion-icon name="calculator-outline" aria-hidden="true"></ion-icon>
+            <!-- Herramienta 1: Catálogo de Productos -->
+            <button type="button" class="clean-tool-btn" (click)="navigateToProducts()">
+              <div class="clean-icon-wrap bg-blue">
+                <ion-icon name="basket-outline"></ion-icon>
               </div>
-              <div class="tool-text">
-                <span class="tool-name">{{ 'home.eventCalculator' | translate }}</span>
-                <span class="tool-hint">{{ 'home.eventCalculatorDesc' | translate }}</span>
-              </div>
-            </button>
-
-            <!-- Herramienta 2: Lista Express / QR -->
-            <button type="button" class="tool-btn qr-tool" (click)="openExpressQr()">
-              <div class="tool-icon-wrapper">
-                <ion-icon name="qr-code-outline" aria-hidden="true"></ion-icon>
-              </div>
-              <div class="tool-text">
-                <span class="tool-name">{{ 'home.expressList' | translate }}</span>
-                <span class="tool-hint">{{ 'home.expressListDesc' | translate }}</span>
+              <div class="clean-tool-info">
+                <span class="clean-tool-name">{{ 'home.allProducts' | translate }}</span>
+                <span class="clean-tool-sub">Explorar catálogo</span>
               </div>
             </button>
 
-            <!-- Herramienta 3: Reporte de Stock Cruzado -->
-            <button type="button" class="tool-btn stock-tool" (click)="openStockAlert()">
-              <div class="tool-icon-wrapper">
-                <ion-icon name="cube-outline" aria-hidden="true"></ion-icon>
+            <!-- Herramienta 2: Mi Cálculo / Carrito -->
+            <button type="button" class="clean-tool-btn" (click)="navigateToCart()">
+              <div class="clean-icon-wrap bg-green">
+                <ion-icon name="cart-outline"></ion-icon>
               </div>
-              <div class="tool-text">
-                <span class="tool-name">{{ 'home.stockCrossCheck' | translate }}</span>
-                <span class="tool-hint">{{ 'home.stockCrossCheckDesc' | translate }}</span>
+              <div class="clean-tool-info">
+                <span class="clean-tool-name">{{ 'home.myCart' | translate }}</span>
+                <span class="clean-tool-sub">Presupuesto y total</span>
               </div>
             </button>
 
-            <!-- Herramienta 4: Sugerencias y Avisos Operativos -->
-            <button type="button" class="tool-btn incident-tool" (click)="openIncidentReport()">
-              <div class="tool-icon-wrapper">
-                <ion-icon name="megaphone-outline" aria-hidden="true"></ion-icon>
+            <!-- Herramienta 3: Recetas -->
+            <button type="button" class="clean-tool-btn" (click)="navigateToRecipes()">
+              <div class="clean-icon-wrap bg-amber">
+                <ion-icon name="restaurant-outline"></ion-icon>
               </div>
-              <div class="tool-text">
-                <span class="tool-name">{{ 'home.incidentReport' | translate }}</span>
-                <span class="tool-hint">{{ 'home.incidentReportDesc' | translate }}</span>
+              <div class="clean-tool-info">
+                <span class="clean-tool-name">{{ 'home.recipesWithOffers' | translate }}</span>
+                <span class="clean-tool-sub">Ideas de cocina</span>
+              </div>
+            </button>
+
+            <!-- Herramienta 4: Calculadora de Eventos -->
+            <button type="button" class="clean-tool-btn" (click)="openEventCalculator()">
+              <div class="clean-icon-wrap bg-purple">
+                <ion-icon name="calculator-outline"></ion-icon>
+              </div>
+              <div class="clean-tool-info">
+                <span class="clean-tool-name">{{ 'home.eventCalculator' | translate }}</span>
+                <span class="clean-tool-sub">Asados y fiestas</span>
+              </div>
+            </button>
+
+            <!-- Herramienta 5: Stock en Sala -->
+            <button type="button" class="clean-tool-btn" (click)="openStockAlert()">
+              <div class="clean-icon-wrap bg-teal">
+                <ion-icon name="cube-outline"></ion-icon>
+              </div>
+              <div class="clean-tool-info">
+                <span class="clean-tool-name">{{ 'home.stockCrossCheck' | translate }}</span>
+                <span class="clean-tool-sub">Consultar pasillos</span>
+              </div>
+            </button>
+
+            <!-- Herramienta 6: Sugerencias y Avisos -->
+            <button type="button" class="clean-tool-btn" (click)="openIncidentReport()">
+              <div class="clean-icon-wrap bg-rose">
+                <ion-icon name="megaphone-outline"></ion-icon>
+              </div>
+              <div class="clean-tool-info">
+                <span class="clean-tool-name">{{ 'home.incidentReport' | translate }}</span>
+                <span class="clean-tool-sub">Reportar o sugerir</span>
               </div>
             </button>
 
@@ -189,7 +189,8 @@
 
     } @else {
       <!-- ======================================================== -->
-      <!-- MODO CONVERSACIÓN LIBRE (VOZ Y TEXTO CON HISTORIAL)     -->
+      <!-- MODO CONVERSACIÓN: LIDERÍN CONTROLADOR DE LA TABLET       -->
+      <!-- Widgets interactivos táctiles integrados en las respuestas -->
       <!-- ======================================================== -->
       <div class="chat-response-section">
 
@@ -215,23 +216,153 @@
           </div>
         </div>
 
-        <ol class="message-list" aria-live="polite" [attr.aria-label]="'home.chatAriaLabel' | translate:{ name: currentBrand().assistantName }">
+        <ol class="message-list" aria-live="polite">
           @for (message of chat.messages(); track message.at) {
             <li class="message" [class.from-user]="message.role === 'user'" [class.from-assistant]="message.role === 'assistant'">
+              
               @if (message.role === 'assistant') {
                 <img [src]="currentAvatar()" alt="" class="bubble-avatar">
               }
+              
               <div class="bubble">
                 <p class="chat-text">{{ message.text }}</p>
+
+                <!-- =================================================== -->
+                <!-- WIDGET 1: UBICACIÓN DE PRODUCTO (¿Dónde está...?)    -->
+                <!-- =================================================== -->
+                @if (message.widget?.type === 'product_location' && message.widget?.product; as prod) {
+                  <div class="chat-action-card location-widget">
+                    <div class="action-card-main">
+                      <img [src]="prod.image" [alt]="prod.name" (error)="handleImageError($event)" class="widget-thumb">
+                      <div class="action-card-text">
+                        <span class="widget-brand">{{ prod.brand }}</span>
+                        <h4 class="widget-title">{{ prod.name }}</h4>
+                        <div class="widget-loc-pill" *ngIf="prod.supermarketLocation">
+                          <ion-icon name="location-outline"></ion-icon>
+                          <span>{{ prod.supermarketLocation.aisle }}, {{ prod.supermarketLocation.section }} ({{ prod.supermarketLocation.shelf }})</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="action-card-buttons">
+                      <button type="button" class="btn-chat-action btn-chat-map" (click)="navigateToMapForProduct(prod)">
+                        <ion-icon name="map"></ion-icon>
+                        <span>Mostrar en mapa 3D</span>
+                      </button>
+
+                      <button type="button" class="btn-chat-action btn-chat-price" (click)="navigateToPriceForProduct(prod)">
+                        <ion-icon name="pricetag"></ion-icon>
+                        <span>Consultar precio</span>
+                      </button>
+
+                      <button type="button" class="btn-chat-action btn-chat-cart" (click)="addToCartFromChat(prod)">
+                        <ion-icon name="cart"></ion-icon>
+                        <span>Agregar al cálculo</span>
+                      </button>
+
+                      <button type="button" class="btn-chat-action btn-chat-cheaper" (click)="askCheaperForProduct(prod)">
+                        <ion-icon name="trending-down"></ion-icon>
+                        <span>¿Hay una más barata?</span>
+                      </button>
+                    </div>
+                  </div>
+                }
+
+                <!-- =================================================== -->
+                <!-- WIDGET 2: CARRUSEL DE OFERTAS (¿Qué hay en oferta?) -->
+                <!-- =================================================== -->
+                @if (message.widget?.type === 'offers_list' && message.widget?.offers; as offers) {
+                  <div class="chat-offers-carousel">
+                    @for (off of offers; track off.id) {
+                      <div class="chat-offer-card">
+                        <div class="chat-offer-badge">-{{ off.discount }}%</div>
+                        <img [src]="off.image" [alt]="off.product" (error)="handleImageError($event)" class="offer-thumb">
+                        <div class="chat-offer-info">
+                          <span class="offer-brand">{{ off.brand }}</span>
+                          <h5 class="offer-title">{{ off.product }}</h5>
+                          <div class="offer-pricing">
+                            <strong class="offer-now">{{ off.price | clp }}</strong>
+                            <span class="offer-was">{{ off.originalPrice | clp }}</span>
+                          </div>
+                        </div>
+                        <div class="chat-offer-btns">
+                          <button type="button" class="btn-mini-cart" (click)="addToCartFromChat({ id: off.productId, name: off.product, brand: off.brand, price: off.originalPrice, image: off.image, barcode: '', category: off.category, inOffer: true, offerPrice: off.price })">
+                            <ion-icon name="cart"></ion-icon>
+                            <span>Agregar</span>
+                          </button>
+                          <button type="button" class="btn-mini-price" (click)="navigateToPriceForProduct({ id: off.productId, name: off.product, brand: off.brand, price: off.originalPrice, image: off.image, barcode: '', category: off.category, inOffer: true, offerPrice: off.price })">
+                            <ion-icon name="eye"></ion-icon>
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+
+                <!-- =================================================== -->
+                <!-- WIDGET 3: ALTERNATIVAS MÁS BARATAS (¿Hay una más?)  -->
+                <!-- =================================================== -->
+                @if (message.widget?.type === 'cheaper_alternatives' && message.widget?.cheaperAlternatives; as alts) {
+                  <div class="chat-cheaper-container">
+                    @for (alt of alts; track alt.product.id) {
+                      <div class="chat-cheaper-card">
+                        <div class="cheaper-savings-badge">
+                          <ion-icon name="sparkles"></ion-icon>
+                          <span>Ahorras {{ alt.savings | clp }} (-{{ alt.savingsPercent }}%)</span>
+                        </div>
+                        <div class="cheaper-card-body">
+                          <img [src]="alt.product.image" [alt]="alt.product.name" (error)="handleImageError($event)" class="cheaper-thumb">
+                          <div class="cheaper-card-details">
+                            <span class="cheaper-brand">{{ alt.product.brand }}</span>
+                            <h4 class="cheaper-title">{{ alt.product.name }}</h4>
+                            <div class="cheaper-price-row">
+                              <span class="cheaper-curr">{{ alt.alternativePrice | clp }}</span>
+                              <span class="cheaper-orig">vs {{ alt.targetPrice | clp }}</span>
+                            </div>
+                            <span class="cheaper-pum">{{ alt.pumText }}</span>
+                          </div>
+                        </div>
+                        <div class="cheaper-card-actions">
+                          <button type="button" class="btn-chat-action btn-chat-compare" (click)="compareFromChat(message.widget?.referenceProduct!, alt.product)">
+                            <ion-icon name="scale"></ion-icon>
+                            <span>Comparar</span>
+                          </button>
+                          <button type="button" class="btn-chat-action btn-chat-cart" (click)="addToCartFromChat(alt.product)">
+                            <ion-icon name="cart"></ion-icon>
+                            <span>Agregar</span>
+                          </button>
+                          <button type="button" class="btn-chat-action btn-chat-map" (click)="navigateToMapForProduct(alt.product)">
+                            <ion-icon name="map"></ion-icon>
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+
+                <!-- =================================================== -->
+                <!-- WIDGET 4: COMPARACIÓN DIRECTA                       -->
+                <!-- =================================================== -->
+                @if (message.widget?.type === 'compare_ready' && message.widget?.products; as prods) {
+                  <div class="chat-compare-cta">
+                    <p>Productos identificados para comparar: <strong>{{ prods[0].name }}</strong> vs <strong>{{ prods[1].name }}</strong></p>
+                    <button type="button" class="btn-chat-action btn-chat-compare-full" (click)="compareFromChat(prods[0], prods[1])">
+                      <ion-icon name="scale"></ion-icon>
+                      <span>Abrir Comparador Cara a Cara</span>
+                    </button>
+                  </div>
+                }
+
               </div>
             </li>
           }
+          
           @if (chat.isLoading()) {
             <li class="message from-assistant">
               <img [src]="currentAvatar()" alt="" class="bubble-avatar">
               <div class="bubble typing-indicator">
                 <ion-spinner name="crescent"></ion-spinner>
-                <span>{{ currentBrand().assistantName }} {{ 'home.isTyping' | translate }}</span>
+                <span>{{ currentBrand().assistantName }} está consultando la tablet...</span>
               </div>
             </li>
           }
@@ -280,18 +411,17 @@
         <span>{{ 'home.listening' | translate }}</span>
       </div>
     }
-    @if (!voice.recognitionSupported()) {
-      <p class="browser-support-message">
-        <ion-icon name="information-circle" aria-hidden="true"></ion-icon>
-        <span>{{ 'home.micUnavailable' | translate }}</span>
-      </p>
-    }
   </ion-footer>
 }
 
 <!-- ======================================================== -->
-<!-- MODALES INTERACTIVOS DE HERRAMIENTAS ESPECIALES          -->
+<!-- MODALES INTERACTIVOS Y COMPARADOR                        -->
 <!-- ======================================================== -->
+<app-product-compare-modal 
+  *ngIf="compareService.isModalOpen()"
+  (requestScan)="navigateToPriceCheck()">
+</app-product-compare-modal>
+
 @if (activeModal() === 'eventCalculator') {
   <app-event-calculator-modal (dismissModal)="closeModal()" (openExpressQr)="openExpressQr($event)"></app-event-calculator-modal>
 }

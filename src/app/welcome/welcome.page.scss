@@ -1,373 +1,655 @@
 :host {
   display: block;
   height: 100%;
+  width: 100%;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: inherit;
 }
 
 .welcome-content {
-  --background: radial-gradient(circle at 50% 28%, var(--brand-light, #ebf4fc) 0%, #ffffff 68%, #f8fafc 100%);
+  --background: #f8fafc;
   height: 100%;
+  width: 100%;
+  position: relative;
 
   &::part(scroll) {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    height: 100%;
     min-height: 100%;
+    max-height: 100%;
+    overflow: hidden;
     padding: 0;
     box-sizing: border-box;
+    background: radial-gradient(130% 90% at 50% 12%, var(--brand-light, #ebf4fc) 0%, #f8fafc 52%, #f1f5f9 100%);
   }
 }
 
-// Barra superior Kiosko
+// Halo ambiental decorativo en el centro superior (sensación de profundidad sin distraer)
+.kiosk-ambient-glow {
+  position: absolute;
+  top: 32%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(400px, 50vw, 750px);
+  height: clamp(400px, 50vw, 750px);
+  background: radial-gradient(circle, rgba(var(--brand-primary-rgb, 0, 113, 206), 0.08) 0%, rgba(var(--brand-primary-rgb, 0, 113, 206), 0.015) 55%, transparent 72%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+// Layout general de la pantalla (100% de la altura sin desborde)
+.welcome-screen-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+}
+
+// ==========================================================================
+// 1. HEADER KIOSKO: Integrado, nítido y con presencia corporativa
+// ==========================================================================
 .welcome-topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px max(24px, env(safe-area-inset-right)) 12px max(24px, env(safe-area-inset-left));
+  padding: clamp(10px, 1.6vh, 16px) max(32px, env(safe-area-inset-right)) clamp(10px, 1.6vh, 16px) max(32px, env(safe-area-inset-left));
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1.5px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
   width: 100%;
   box-sizing: border-box;
+  flex-shrink: 0;
 
-  // Logo MercaTalk discreto sin fondo (2 tonos más oscuro que el fondo)
-  .mercatalk-logo-box {
+  // Marca MercaTalk: Emblema moderno visible y profesional
+  .mercatalk-brand-emblem {
     display: inline-flex;
     align-items: center;
-    background: transparent;
-    padding: 0;
-    border: none;
-    box-shadow: none;
+    gap: 12px;
 
-    .mercatalk-logo {
-      height: 38px;
-      width: auto;
-      display: block;
-      // Blanco 2 tonos más oscuro que el fondo (efecto marca de agua sutil y discreto)
-      filter: invert(1) opacity(0.22);
-      transition: filter 0.25s ease, transform 0.2s ease;
+    .emblem-logo-wrap {
+      background: linear-gradient(135deg, var(--brand-primary, #0071ce) 0%, var(--brand-secondary, #005a9e) 100%);
+      padding: 6px 14px 6px 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 3px 10px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.28);
 
-      &:hover {
-        filter: invert(1) opacity(0.38);
-        transform: translateY(-1px);
+      .mercatalk-logo {
+        height: 24px;
+        width: auto;
+        display: block;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+      }
+    }
+
+    .emblem-kiosk-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      padding: 5px 12px;
+      border-radius: 20px;
+
+      .tag-status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #10b981;
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+      }
+
+      .tag-text {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #475569;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
       }
     }
   }
 
-  // Selector de supermercado arriba a la derecha
-  .brand-switcher-btn {
+  // Selector de Supermercado: Píldora táctil integrada a la composición
+  .brand-switcher-pill {
     display: inline-flex;
     align-items: center;
     gap: 12px;
     background: #ffffff;
     border: 1.5px solid #e2e8f0;
-    padding: 7px 22px 7px 9px;
-    border-radius: 36px;
+    padding: 5px 16px 5px 7px;
+    border-radius: 999px;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    outline: none;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    min-height: 48px;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
       border-color: var(--brand-primary, #0071ce);
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 6px 18px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.18);
+
+      .switcher-chevron {
+        transform: translateY(2px);
+      }
     }
 
-    .switcher-thumb {
-      width: 42px;
-      height: 42px;
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .switcher-avatar-ring {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       overflow: hidden;
       background: #f8fafc;
-      border: 1.5px solid #e2e8f0;
+      border: 2px solid var(--brand-primary, #0071ce);
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
 
-      img {
+      .switcher-avatar {
         width: 100%;
         height: 100%;
         object-fit: cover;
       }
     }
 
-    .switcher-name {
-      font-size: 16px;
-      font-weight: 800;
-      color: #1e293b;
+    .switcher-info {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      line-height: 1.15;
+
+      .switcher-label {
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+      }
+
+      .switcher-store {
+        font-size: 15px;
+        font-weight: 800;
+        color: #0f172a;
+      }
     }
 
-    ion-icon {
-      font-size: 19px;
-      color: #64748b;
+    .switcher-chevron {
+      font-size: 17px;
+      color: var(--brand-primary, #0071ce);
+      transition: transform 0.2s ease;
+      margin-left: 2px;
     }
   }
 }
 
-// Escenario central Kiosko espaciado para Tablet
+// ==========================================================================
+// 2. ESCENARIO CENTRAL: Mascota y Jerarquía Tipográfica de Bienvenida
+// ==========================================================================
 .welcome-center-stage {
-  max-width: 1240px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(6px, 1.2vh, 14px) clamp(24px, 4vw, 48px);
+  gap: clamp(12px, 1.8vh, 22px);
+  max-width: 1160px;
   margin: 0 auto;
-  padding: 16px 48px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.identity-section {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   width: 100%;
-  box-sizing: border-box;
-  flex: 1;
-  justify-content: center;
-}
+  transition: opacity 0.22s ease-in-out, transform 0.22s ease-in-out;
 
-.identity-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 40px;
+  &.fading {
+    opacity: 0.2;
+    transform: translateY(-4px);
+  }
 
-  // Avatar agrandado (230px de presencia)
-  .avatar-glow-ring {
-    width: 230px;
-    height: 230px;
-    border-radius: 50%;
-    padding: 8px;
-    background: linear-gradient(135deg, var(--brand-primary, #0071ce), var(--brand-secondary, #005a9e));
-    box-shadow: 0 16px 48px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.35);
-    margin-bottom: 24px;
-    animation: pulseRing 3.5s ease-in-out infinite alternate;
+  // Contenedor de la mascota con aro y halo suave
+  .mascot-hero-wrap {
+    position: relative;
+    margin-bottom: clamp(6px, 1.2vh, 12px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    .avatar-frame {
-      width: 100%;
-      height: 100%;
+    .mascot-halo-glow {
+      position: absolute;
+      inset: -22px;
       border-radius: 50%;
-      overflow: hidden;
-      background: #ffffff;
-      border: 5px solid #ffffff;
+      background: radial-gradient(circle, rgba(var(--brand-primary-rgb, 0, 113, 206), 0.22) 0%, rgba(var(--brand-primary-rgb, 0, 113, 206), 0.05) 55%, transparent 72%);
+      filter: blur(8px);
+      z-index: 0;
+      pointer-events: none;
+    }
 
-      .avatar-img {
+    .mascot-ring {
+      position: relative;
+      z-index: 1;
+      width: clamp(125px, 15vh, 165px);
+      height: clamp(125px, 15vh, 165px);
+      border-radius: 50%;
+      padding: 5px;
+      background: linear-gradient(135deg, var(--brand-primary, #0071ce) 0%, var(--brand-secondary, #005a9e) 100%);
+      box-shadow: 0 12px 34px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.28);
+      animation: mascotGentleFloat 4s ease-in-out infinite alternate;
+
+      .mascot-frame {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        border-radius: 50%;
+        overflow: hidden;
+        background: #ffffff;
+        border: 4px solid #ffffff;
+
+        .mascot-avatar-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+      }
+    }
+
+    // Badge de saludo interactivo sobre la mascota
+    .mascot-greeting-badge {
+      position: absolute;
+      bottom: 2px;
+      right: -2px;
+      z-index: 2;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 999px;
+      padding: 4px 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+      .badge-emoji {
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      .badge-text {
+        font-size: 12.5px;
+        font-weight: 800;
+        color: #0f172a;
       }
     }
   }
 
-  .welcome-headings {
-    transition: opacity 0.22s ease-in-out, transform 0.22s ease-in-out;
-
-    &.fading {
-      opacity: 0.18;
-      transform: translateY(-4px);
-    }
-
-    .main-title {
-      font-size: 46px;
-      font-weight: 900;
-      color: #0f172a;
-      margin: 0 0 8px 0;
-      letter-spacing: -0.8px;
-    }
-
-    // Slogan debajo del nombre del supermercado
-    .store-tagline-hero {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--brand-primary, #0071ce);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin: 0 0 12px 0;
-    }
-
-    .sub-title {
-      font-size: 20px;
-      color: #64748b;
-      margin: 0 0 18px 0;
-      font-weight: 500;
-
-      strong {
-        color: var(--brand-primary, #0071ce);
-      }
-    }
-
-    .prompt-text {
-      font-size: 19px;
-      font-weight: 700;
-      color: #1e293b;
-      margin: 0;
-      background: rgba(var(--brand-primary-rgb, 0, 113, 206), 0.08);
-      padding: 8px 28px;
-      border-radius: 28px;
-      display: inline-block;
-    }
-  }
-}
-
-// Las 3 tarjetas de idioma centradas y ampliadas para Tablet
-.languages-centered-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
-  width: 100%;
-  max-width: 1140px;
-
-  .lang-kiosk-card {
-    background: #ffffff;
-    border: 2.5px solid #e2e8f0;
-    border-radius: 28px;
-    padding: 34px 24px 30px;
+  // Grupo de textos y títulos de bienvenida
+  .headings-group {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+
+    // Tagline corporativo (ej: PRECIOS BAJOS TODOS LOS DÍAS)
+    .store-tagline-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(var(--brand-primary-rgb, 0, 113, 206), 0.08);
+      border: 1.5px solid rgba(var(--brand-primary-rgb, 0, 113, 206), 0.22);
+      color: var(--brand-primary, #0071ce);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      padding: 4px 16px;
+      border-radius: 999px;
+      margin-bottom: 5px;
+
+      ion-icon {
+        font-size: 14px;
+      }
+    }
+
+    // Título Principal (¡Bienvenido a Lider!)
+    .main-welcome-title {
+      font-size: clamp(28px, 3.2vw, 40px);
+      font-weight: 900;
+      color: #0f172a;
+      margin: 2px 0 4px;
+      letter-spacing: -0.6px;
+      line-height: 1.15;
+    }
+
+    // Subtítulo (Tu asistente inteligente en tienda · Liderín)
+    .assistant-subtitle {
+      font-size: clamp(14.5px, 1.4vw, 17px);
+      color: #64748b;
+      font-weight: 500;
+      margin: 0 0 clamp(6px, 1vh, 12px);
+
+      .assistant-name {
+        color: var(--brand-primary, #0071ce);
+        font-weight: 800;
+      }
+    }
+
+    // Prompt de instrucción para selección de idioma
+    .instruction-box {
+      margin-top: 2px;
+
+      .instruction-title {
+        font-size: clamp(15.5px, 1.5vw, 18.5px);
+        font-weight: 800;
+        color: #1e293b;
+        margin: 0 0 2px;
+        letter-spacing: -0.2px;
+      }
+
+      .instruction-hint {
+        font-size: 12.5px;
+        color: #64748b;
+        font-weight: 500;
+        margin: 0;
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// 3. LAS 3 TARJETAS DE IDIOMA KIOSK PREMIUM
+// ==========================================================================
+.languages-touch-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(16px, 2.2vw, 28px);
+  width: 100%;
+  max-width: 1040px;
+  box-sizing: border-box;
+
+  .lang-kiosk-btn {
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 24px;
+    padding: clamp(14px, 2vh, 22px) 18px clamp(12px, 1.6vh, 18px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     cursor: pointer;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
-    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
-    min-height: 240px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+    min-height: clamp(155px, 19vh, 195px);
     outline: none;
+    box-sizing: border-box;
+    justify-content: space-between;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.22s ease,
+                box-shadow 0.22s ease;
 
     &:hover,
     &:focus-visible {
-      transform: translateY(-8px) scale(1.02);
+      transform: translateY(-6px);
       border-color: var(--brand-primary, #0071ce);
-      box-shadow: 0 20px 48px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.25);
+      box-shadow: 0 16px 36px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.18), 0 2px 8px rgba(0, 0, 0, 0.04);
 
-      .card-flag-badge {
-        transform: scale(1.12);
-        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+      .flag-capsule {
+        transform: scale(1.06);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        border-color: rgba(var(--brand-primary-rgb, 0, 113, 206), 0.3);
       }
 
-      .card-action-icon ion-icon {
-        color: var(--brand-primary, #0071ce);
-        transform: translateX(5px);
+      .lang-cta-indicator {
+        background: var(--brand-primary, #0071ce);
+        color: #ffffff;
+
+        .cta-arrow-circle {
+          background: rgba(255, 255, 255, 0.25);
+          color: #ffffff;
+          transform: translateX(4px);
+        }
       }
     }
 
     &:active {
-      transform: translateY(-3px) scale(1.01);
+      transform: translateY(-2px) scale(0.985);
+      transition-duration: 80ms;
     }
 
-    .card-flag-badge {
-      width: 96px;
-      height: 64px;
-      border-radius: 12px;
+    // Indicador sutil de idioma activo durante el ciclo de rotación de 18s
+    &.active-cycling {
+      border-color: rgba(var(--brand-primary-rgb, 0, 113, 206), 0.45);
+      box-shadow: 0 6px 22px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.12);
+    }
+
+    // Contenedor de Bandera
+    .flag-capsule {
+      width: clamp(62px, 5.5vw, 74px);
+      height: clamp(40px, 3.6vw, 48px);
+      border-radius: 10px;
       overflow: hidden;
       background: #f8fafc;
-      border: 2px solid #e2e8f0;
+      border: 1.5px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+      transition: all 0.22s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 20px auto;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-      transition: all 0.25s ease;
 
-      .card-flag-img {
+      .flag-img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         object-position: center;
         display: block;
       }
-
-      .flag-emoji {
-        font-size: 44px;
-        line-height: 1;
-      }
     }
 
-    .card-text-group {
-      flex: 1;
+    // Bloque de nombres de idiomas
+    .lang-copy-block {
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
-      align-items: center;
-      gap: 8px;
+      gap: 3px;
+      margin: 6px 0;
 
-      .lang-title {
-        font-size: 28px;
+      .lang-name {
+        font-size: clamp(20px, 2vw, 24px);
         font-weight: 800;
         color: #0f172a;
-        margin: 0;
         letter-spacing: -0.3px;
       }
 
-      .lang-sub {
-        font-size: 16px;
+      .lang-action-hint {
+        font-size: 13.5px;
         font-weight: 600;
         color: #64748b;
       }
     }
 
-    .card-action-icon {
-      margin-top: 16px;
+    // Indicador CTA táctil en la base de la tarjeta
+    .lang-cta-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f1f5f9;
+      padding: 5px 12px 5px 14px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #334155;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
-      ion-icon {
-        font-size: 26px;
-        color: #94a3b8;
-        transition: all 0.2s ease;
+      .cta-label {
+        letter-spacing: 0.2px;
+      }
+
+      .cta-arrow-circle {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: var(--brand-primary, #0071ce);
+        transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
       }
     }
   }
 }
 
-// Pie de página del kiosko
+// ==========================================================================
+// 4. FOOTER KIOSKO: Discreto, limpio y con indicador de pantalla activa
+// ==========================================================================
 .welcome-kiosk-footer {
-  padding: 16px 0 32px;
+  padding: clamp(6px, 1.2vh, 12px) 0 clamp(10px, 1.5vh, 16px);
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
+  flex-shrink: 0;
   transition: opacity 0.22s ease-in-out;
 
   &.fading {
-    opacity: 0.35;
+    opacity: 0.3;
   }
 
-  .kiosk-status-pill {
+  .kiosk-status-capsule {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
-    border: 1px solid #e2e8f0;
-    padding: 12px 28px;
-    border-radius: 28px;
-    font-size: 14.5px;
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    padding: 7px 20px;
+    border-radius: 999px;
+    font-size: 12.5px;
     color: #64748b;
     font-weight: 600;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 
-    .pulse-dot {
-      width: 11px;
-      height: 11px;
+    .pulse-indicator-dot {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-      animation: pulseGreen 2s infinite;
+      animation: subtleGreenPulse 2.4s infinite;
+      flex-shrink: 0;
     }
 
-    ion-icon {
-      font-size: 19px;
-      color: #3b82f6;
+    .touch-icon {
+      font-size: 16px;
+      color: var(--brand-primary, #0071ce);
+      flex-shrink: 0;
+    }
+
+    .status-text {
+      line-height: 1.2;
     }
   }
 }
 
-@keyframes pulseRing {
+// ==========================================================================
+// ANIMACIONES Y ACCESIBILIDAD
+// ==========================================================================
+@keyframes mascotGentleFloat {
   0% {
-    box-shadow: 0 10px 30px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.25);
     transform: translateY(0);
+    box-shadow: 0 10px 30px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.24);
   }
   100% {
-    box-shadow: 0 20px 56px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.45);
     transform: translateY(-5px);
+    box-shadow: 0 18px 42px rgba(var(--brand-primary-rgb, 0, 113, 206), 0.34);
   }
 }
 
-@keyframes pulseGreen {
+@keyframes subtleGreenPulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
   }
   70% {
-    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+    box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+// Respeto por preferencias de movimiento reducido
+@media (prefers-reduced-motion: reduce) {
+  .mascot-ring,
+  .pulse-indicator-dot,
+  .lang-kiosk-btn,
+  .brand-switcher-pill {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+// Optimización específica para tablets con alturas compactas (700px - 768px de alto)
+@media (max-height: 740px) {
+  .welcome-topbar {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .welcome-center-stage {
+    gap: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  .identity-section .mascot-hero-wrap {
+    margin-bottom: 4px;
+
+    .mascot-ring {
+      width: 115px;
+      height: 115px;
+    }
+  }
+
+  .identity-section .headings-group {
+    .main-welcome-title {
+      font-size: 26px;
+    }
+
+    .assistant-subtitle {
+      margin-bottom: 4px;
+    }
+  }
+
+  .languages-touch-grid .lang-kiosk-btn {
+    min-height: 145px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .welcome-kiosk-footer {
+    padding-top: 4px;
+    padding-bottom: 8px;
   }
 }

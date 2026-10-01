@@ -2,9 +2,12 @@
   "products": [
     {
       "id": 1,
-      "name": "Leche Entera",
+      "name": "Leche Entera 1L",
       "brand": "Soprole",
       "price": 1250,
+      "netContent": "1 L",
+      "stockStatus": "available",
+      "stockCount": 24,
       "image": "https://i5.walmartimages.cl/asr/775df153-9744-4128-ae20-ac1254c4b7ba.41d5a84806e6e592a9abcc656a04f92b.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF",
       "barcode": "7801234567890",
       "category": "Lácteos",
@@ -16,9 +19,12 @@
     },
     {
       "id": 2,
-      "name": "Leche sin lactosa",
+      "name": "Leche sin lactosa 1L",
       "brand": "Colun",
       "price": 1350,
+      "netContent": "1 L",
+      "stockStatus": "available",
+      "stockCount": 14,
       "image": "https://i5.walmartimages.cl/asr/71dd0d88-2ad9-4337-8daf-cc7bd4340c7c.b886d3083682f3c8563ac40e747f99cc.jpeg?null=&odnHeight=612&odnWidth=612&odnBg=FFFFFF",
       "barcode": "7801234567891",
       "category": "Lácteos",
@@ -1341,6 +1347,40 @@
       "supermarketLocation": {
         "aisle": "Pasillo 9",
         "section": "Piscos",
+        "shelf": "Estante 3"
+      }
+    },
+    {
+      "id": 97,
+      "name": "Leche sin lactosa 1L",
+      "brand": "Lider",
+      "price": 1090,
+      "netContent": "1 L",
+      "stockStatus": "available",
+      "stockCount": 22,
+      "image": "https://i5.walmartimages.cl/asr/775df153-9744-4128-ae20-ac1254c4b7ba.41d5a84806e6e592a9abcc656a04f92b.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF",
+      "barcode": "7801234567897",
+      "category": "Lácteos",
+      "supermarketLocation": {
+        "aisle": "Pasillo 1",
+        "section": "Refrigerados",
+        "shelf": "Estante 2"
+      }
+    },
+    {
+      "id": 98,
+      "name": "Leche sin lactosa 1L",
+      "brand": "Soprole",
+      "price": 1190,
+      "netContent": "1 L",
+      "stockStatus": "available",
+      "stockCount": 18,
+      "image": "https://i5.walmartimages.cl/asr/775df153-9744-4128-ae20-ac1254c4b7ba.41d5a84806e6e592a9abcc656a04f92b.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF",
+      "barcode": "7801234567898",
+      "category": "Lácteos",
+      "supermarketLocation": {
+        "aisle": "Pasillo 1",
+        "section": "Refrigerados",
         "shelf": "Estante 3"
       }
     }

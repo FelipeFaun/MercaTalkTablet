@@ -1,8 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { CatalogService } from '../core/catalog.service';
 import { Product } from '../models/catalog.model';
+import { ProductHelper, CheaperAlternativeItem } from '../core/product-helper';
 
 export type { Product } from '../models/catalog.model';
+export type { CheaperAlternativeItem } from '../core/product-helper';
 
 @Injectable({
   providedIn: 'root'
@@ -63,6 +65,14 @@ export class ProductsService {
       p.category === product.category &&
       p.id !== productId
     ).slice(0, 4); // Máximo 4 productos similares
+  }
+
+  // NUEVO MÉTODO: Buscar alternativas más económicas con ahorro calculado
+  getCheaperAlternatives(productId: number): CheaperAlternativeItem[] {
+    const products = this.getAllProducts();
+    const product = products.find(p => p.id === productId);
+    if (!product) return [];
+    return ProductHelper.findCheaperAlternatives(product, products);
   }
 
   // RECOMENDACIONES DE INTERÉS GENERAL (Para estado inicial y destacados)

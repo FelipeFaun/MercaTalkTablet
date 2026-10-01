@@ -1,82 +1,142 @@
-<ion-content [fullscreen]="true" class="welcome-content">
-  <!-- Barra superior Kiosko -->
-  <header class="welcome-topbar">
-    <!-- Logo MercaTalk discreto sin fondo (2 tonos más oscuro que el fondo) -->
-    <div class="mercatalk-logo-box">
-      <img src="assets/brand/logo.svg" alt="MercaTalk" class="mercatalk-logo">
-    </div>
+<ion-content [fullscreen]="true" class="welcome-content" [scrollY]="false">
+  <!-- Halo ambiental de fondo para dar profundidad de Kiosko -->
+  <div class="kiosk-ambient-glow" aria-hidden="true"></div>
 
-    <!-- Botón selector de supermercado arriba a la derecha -->
-    <button type="button"
-            class="brand-switcher-btn"
-            (click)="openBrandMenu($event)"
-            [attr.aria-label]="'welcome.switchStore' | translate">
-      <span class="switcher-thumb">
-        <img [src]="brandService.currentBrand().avatar" [alt]="brandService.currentBrand().assistantName">
-      </span>
-      <span class="switcher-name">{{ brandService.currentBrand().storeName }}</span>
-      <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
-    </button>
-  </header>
-
-  <!-- Escenario central Kiosko (Amplitud y ergonomía para Tablet) -->
-  <main class="welcome-center-stage">
-    
-    <!-- Identidad y Asistente Oficial con Avatar grande -->
-    <div class="identity-block">
-      <div class="avatar-glow-ring">
-        <div class="avatar-frame">
-          <img [src]="brandService.currentBrand().avatar" [alt]="brandService.currentBrand().assistantName" class="avatar-img">
+  <div class="welcome-screen-layout">
+    <!-- Header Kiosko: Integrado, nítido y balanceado -->
+    <header class="welcome-topbar">
+      <!-- Marca MercaTalk: Emblema corporativo con isotipo y contraste profesional -->
+      <div class="mercatalk-brand-emblem">
+        <div class="emblem-logo-wrap">
+          <img src="assets/brand/logo.svg" alt="MercaTalk" class="mercatalk-logo">
+        </div>
+        <div class="emblem-kiosk-tag">
+          <span class="tag-status-dot"></span>
+          <span class="tag-text">Terminal Autoservicio</span>
         </div>
       </div>
 
-      <div class="welcome-headings" [class.fading]="isFading()">
-        <h1 class="main-title">{{ 'welcome.storeWelcome' | translate:{ store: brandService.currentBrand().storeName } }}</h1>
-        <p class="store-tagline-hero">{{ getStoreTagline() }}</p>
-        <p class="sub-title">{{ 'welcome.sub' | translate }} · <strong>{{ brandService.currentBrand().assistantName }}</strong></p>
-        <p class="prompt-text">{{ 'welcome.prompt' | translate }}</p>
+      <!-- Selector de Supermercado: Integrado visualmente con estilo píldora -->
+      <button type="button"
+              class="brand-switcher-pill"
+              (click)="openBrandMenu($event)"
+              [attr.aria-label]="'welcome.switchStore' | translate">
+        <span class="switcher-avatar-ring">
+          <img [src]="brandService.currentBrand().avatar" [alt]="brandService.currentBrand().assistantName" class="switcher-avatar">
+        </span>
+        <div class="switcher-info">
+          <span class="switcher-label">Tienda activa</span>
+          <span class="switcher-store">{{ brandService.currentBrand().storeName }}</span>
+        </div>
+        <ion-icon name="chevron-down" class="switcher-chevron" aria-hidden="true"></ion-icon>
+      </button>
+    </header>
+
+    <!-- Escenario Central: Jerarquía clara, mascota protagonista y 3 tarjetas premium -->
+    <main class="welcome-center-stage">
+      <!-- Identidad y Mascota Liderín / Asistente -->
+      <section class="identity-section" [class.fading]="isFading()">
+        <!-- Mascota con aro azul moderno, halo suave y flotación sutil -->
+        <div class="mascot-hero-wrap">
+          <div class="mascot-halo-glow" aria-hidden="true"></div>
+          <div class="mascot-ring">
+            <div class="mascot-frame">
+              <img [src]="brandService.currentBrand().avatar" 
+                   [alt]="brandService.currentBrand().assistantName" 
+                   class="mascot-avatar-img">
+            </div>
+          </div>
+          <!-- Badge interactivo de saludo -->
+          <div class="mascot-greeting-badge">
+            <span class="badge-emoji">👋</span>
+            <span class="badge-text">¡Hola!</span>
+          </div>
+        </div>
+
+        <!-- Jerarquía de Textos -->
+        <div class="headings-group">
+          <!-- Tagline corporativo en píldora destacada -->
+          <div class="store-tagline-pill">
+            <ion-icon name="sparkles" aria-hidden="true"></ion-icon>
+            <span>{{ getStoreTagline() }}</span>
+          </div>
+
+          <!-- Título principal de bienvenida -->
+          <h1 class="main-welcome-title">
+            {{ 'welcome.storeWelcome' | translate:{ store: brandService.currentBrand().storeName } }}
+          </h1>
+
+          <!-- Subtítulo del asistente inteligente -->
+          <p class="assistant-subtitle">
+            {{ 'welcome.sub' | translate }} · <strong class="assistant-name">{{ brandService.currentBrand().assistantName }}</strong>
+          </p>
+
+          <!-- Prompt para seleccionar idioma -->
+          <div class="instruction-box">
+            <h2 class="instruction-title">{{ 'welcome.prompt' | translate }}</h2>
+            <p class="instruction-hint">{{ 'welcome.changeAnytime' | translate }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Las 3 Tarjetas de Idioma Kiosk Premium -->
+      <section class="languages-touch-grid" aria-label="Selección de idioma">
+        @for (lang of languageService.languages; track lang.code) {
+          <button type="button"
+                  class="lang-kiosk-btn"
+                  [class.active-cycling]="languageService.currentLang() === lang.code"
+                  (click)="onSelectLanguage(lang)"
+                  [attr.aria-label]="lang.nativeLabel + ' - ' + ('welcome.tapToStart' | translate)">
+            
+            <!-- Bandera vector ultra nítida con fallback -->
+            <div class="flag-capsule">
+              <img [src]="'assets/icon/flags/' + lang.code + '.svg'" 
+                   [alt]="lang.nativeLabel" 
+                   class="flag-img"
+                   (error)="$any($event.target).src = lang.flagIcon">
+            </div>
+
+            <!-- Textos de idioma -->
+            <div class="lang-copy-block">
+              <span class="lang-name">{{ lang.nativeLabel }}</span>
+              <span class="lang-action-hint">
+                @if (lang.code === 'es') {
+                  Toca para comenzar
+                } @else if (lang.code === 'en') {
+                  Tap to start
+                } @else {
+                  Toque para começar
+                }
+              </span>
+            </div>
+
+            <!-- Botón/Flecha de acción táctil -->
+            <div class="lang-cta-indicator">
+              <span class="cta-label">
+                @if (lang.code === 'es') {
+                  Entrar
+                } @else if (lang.code === 'en') {
+                  Start
+                } @else {
+                  Entrar
+                }
+              </span>
+              <div class="cta-arrow-circle">
+                <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
+              </div>
+            </div>
+          </button>
+        }
+      </section>
+    </main>
+
+    <!-- Estado Inferior Kiosko: Discreto, elegante y funcional -->
+    <footer class="welcome-kiosk-footer" [class.fading]="isFading()">
+      <div class="kiosk-status-capsule">
+        <span class="pulse-indicator-dot" aria-hidden="true"></span>
+        <ion-icon name="hand-left-outline" class="touch-icon" aria-hidden="true"></ion-icon>
+        <span class="status-text">{{ 'welcome.kioskFooter' | translate }}</span>
       </div>
-    </div>
-
-    <!-- Las 3 tarjetas de idioma centradas y ampliadas -->
-    <div class="languages-centered-grid">
-      @for (lang of languageService.languages; track lang.code) {
-        <button type="button"
-                class="lang-kiosk-card"
-                (click)="onSelectLanguage(lang)">
-          <div class="card-flag-badge">
-            <img [src]="lang.flagIcon" [alt]="lang.nativeLabel" class="card-flag-img">
-          </div>
-
-          <div class="card-text-group">
-            <h2 class="lang-title">{{ lang.nativeLabel }}</h2>
-            <span class="lang-sub">
-              @if (lang.code === 'es') {
-                Toca para comenzar
-              } @else if (lang.code === 'en') {
-                Tap to start
-              } @else {
-                Toque para começar
-              }
-            </span>
-          </div>
-
-          <div class="card-action-icon">
-            <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon>
-          </div>
-        </button>
-      }
-    </div>
-
-  </main>
-
-  <!-- Pie de página informativo del kiosko -->
-  <footer class="welcome-kiosk-footer" [class.fading]="isFading()">
-    <div class="kiosk-status-pill">
-      <span class="pulse-dot"></span>
-      <ion-icon name="hand-left-outline" aria-hidden="true"></ion-icon>
-      <span>{{ 'welcome.kioskFooter' | translate }}</span>
-    </div>
-  </footer>
+    </footer>
+  </div>
 </ion-content>
-

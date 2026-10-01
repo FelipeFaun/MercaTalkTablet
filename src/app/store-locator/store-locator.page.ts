@@ -5,7 +5,7 @@ import {
   IonContent, IonIcon, IonSpinner, IonBadge 
 } from '@ionic/angular/standalone';
 import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -201,6 +201,7 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
 
   private productsService = inject(ProductsService);
   private ngZone = inject(NgZone);
+  private route = inject(ActivatedRoute);
   readonly brandService = inject(BrandService);
   readonly langService = inject(LanguageService);
 
@@ -262,6 +263,7 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
     this.ngZone.runOutsideAngular(() => {
       this.init3DScene();
     });
+    this.checkInitialProductQuery();
   }
 
   ionViewWillEnter(): void {
@@ -269,6 +271,20 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
     if (this.renderer && this.canvasContainerRef) {
       this.handleResize();
       this.update3DHoverVisuals();
+    }
+    this.checkInitialProductQuery();
+  }
+
+  private checkInitialProductQuery(): void {
+    const pid = this.route.snapshot.queryParams['productId'];
+    if (pid) {
+      const numId = parseInt(pid, 10);
+      const found = this.productsService.getAllProducts().find(p => p.id === numId);
+      if (found) {
+        setTimeout(() => {
+          this.selectProduct(found);
+        }, 500);
+      }
     }
   }
 
