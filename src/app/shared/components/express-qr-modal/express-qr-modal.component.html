@@ -20,21 +20,74 @@
     <div class="modal-body">
       
       <!-- Contenedor del Código QR Dinámico -->
-      <div class="qr-display-container">
-        
-        <div class="qr-frame">
-          <div class="qr-corner top-left"></div>
-          <div class="qr-corner top-right"></div>
-          <div class="qr-corner bottom-left"></div>
-          <div class="qr-corner bottom-right"></div>
-          <img [src]="qrImageSrc" alt="Código QR de Ruta y Lista Express" class="qr-image" />
-        </div>
+      <div class="qr-display-container" aria-live="polite">
 
-        <!-- Texto Exacto Solicitado -->
-        <p class="qr-instruction-text">
-          <ion-icon name="camera-outline" aria-hidden="true"></ion-icon>
-          <span>{{ 'expressQr.instruction' | translate }}</span>
-        </p>
+        @switch (shareState()) {
+          @case ('received') {
+            <!-- El celular ya tomó la lista -->
+            <div class="qr-frame qr-received">
+              <div class="received-check">
+                <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+              </div>
+            </div>
+            <div class="qr-status-text">
+              <p class="qr-status-title">{{ 'expressQr.received' | translate }}</p>
+              <p class="qr-status-desc">{{ 'expressQr.receivedDesc' | translate }}</p>
+            </div>
+          }
+
+          @case ('error') {
+            <div class="qr-frame qr-placeholder">
+              <ion-icon name="alert-circle" class="placeholder-icon error-icon" aria-hidden="true"></ion-icon>
+            </div>
+            <div class="qr-status-text">
+              <p class="qr-status-desc">{{ 'expressQr.error' | translate }}</p>
+              <button type="button" class="retry-btn" (click)="shareList()">
+                <ion-icon name="sync-outline" aria-hidden="true"></ion-icon>
+                <span>{{ 'expressQr.retry' | translate }}</span>
+              </button>
+            </div>
+          }
+
+          @case ('empty') {
+            <div class="qr-frame qr-placeholder">
+              <ion-icon name="qr-code-outline" class="placeholder-icon" aria-hidden="true"></ion-icon>
+            </div>
+            <p class="qr-status-desc">{{ 'expressQr.emptyQr' | translate }}</p>
+          }
+
+          @default {
+            <div class="qr-frame">
+              <div class="qr-corner top-left"></div>
+              <div class="qr-corner top-right"></div>
+              <div class="qr-corner bottom-left"></div>
+              <div class="qr-corner bottom-right"></div>
+              @if (shareState() === 'sharing') {
+                <div class="qr-image qr-loading">
+                  <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
+                  <span>{{ 'expressQr.generating' | translate }}</span>
+                </div>
+              } @else if (shareState() === 'ready' && qrDataUrl()) {
+                <img [src]="qrDataUrl()" alt="Código QR de tu lista" class="qr-image qr-generated" />
+              } @else {
+                <!-- Sin Supabase configurado: QR fijo de respaldo -->
+                <img [src]="qrImageSrc" alt="Código QR de Ruta y Lista Express" class="qr-image" />
+              }
+            </div>
+
+            <!-- Texto Exacto Solicitado -->
+            <p class="qr-instruction-text">
+              <ion-icon name="camera-outline" aria-hidden="true"></ion-icon>
+              <span>{{ 'expressQr.instruction' | translate }}</span>
+            </p>
+            @if (shareState() === 'ready') {
+              <p class="qr-validity">
+                <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+                {{ 'expressQr.validFor' | translate:{ minutes: ttlMinutes } }}
+              </p>
+            }
+          }
+        }
 
       </div>
 

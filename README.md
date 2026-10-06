@@ -37,6 +37,14 @@ npx cap run android
 `npx cap open android` abre el proyecto en Android Studio. El `appId` es
 `cl.mercatalk.app` (ver `capacitor.config.ts`).
 
+## Conexión con la app de celular
+
+"Llevar lista a mi celular" guarda la compra en un Supabase compartido con la app
+de celular y muestra un QR con su id. Se activa al completar `supabaseUrl` y
+`supabaseAnonKey` en `src/environments/`; sin eso se muestra el QR fijo de antes.
+Puesta en marcha, formato del QR y lo que debe hacer la app de celular:
+[docs/QR-TABLET-CELULAR.md](docs/QR-TABLET-CELULAR.md).
+
 ## Calidad
 
 ```bash

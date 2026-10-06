@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -10,6 +10,8 @@ import { BrandService } from '../core/brand.service';
 import { VoiceService } from '../core/voice.service';
 import { ChatService } from '../services/chat.service';
 import { CartFeedbackService } from '../core/cart-feedback.service';
+import { CartService } from '../core/cart.service';
+import { CatalogService } from '../core/catalog.service';
 import { CompareService } from '../services/compare.service';
 import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
 import { TranslatePipe } from '../shared/pipes/translate.pipe';
@@ -24,6 +26,9 @@ import { IncidentReportModalComponent } from '../shared/components/incident-repo
 import { ExpressListQrModalComponent, QrModalPayload } from '../shared/components/express-qr-modal/express-qr-modal.component';
 
 export type HomeActiveModal = 'eventCalculator' | 'stockAlert' | 'incidentReport' | 'expressQr' | null;
+
+/** Cuántas ofertas (las de mayor descuento) recorren la franja "Ofertas del día" */
+const DAILY_OFFERS_COUNT = 8;
 
 /**
  * Inicio Kiosk-First:
@@ -56,7 +61,27 @@ export class HomePage {
   private router = inject(Router);
   private brandService = inject(BrandService);
   private cartFeedback = inject(CartFeedbackService);
+  private catalog = inject(CatalogService);
+  private host = inject<ElementRef<HTMLElement>>(ElementRef);
+  readonly cart = inject(CartService);
   readonly compareService = inject(CompareService);
+
+  /** Ofertas vigentes con mayor descuento para la franja animada del inicio */
+  readonly dailyOffers: OfferView[] = [...this.catalog.getActiveOffers()]
+    .sort((a, b) => b.discount - a.discount)
+    .slice(0, DAILY_OFFERS_COUNT);
+
+  /** Avance del presupuesto (0–100) para la barra del resumen de Mi compra */
+  readonly budgetPercent = computed(() => {
+    const budget = this.cart.budget();
+    return budget ? Math.min(100, Math.round((this.cart.total() / budget) * 100)) : 0;
+  });
+
+  /** Cuánto se pasó del presupuesto (0 si no se pasó) */
+  readonly budgetOverBy = computed(() => Math.max(0, -(this.cart.budgetRemaining() ?? 0)));
+
+  /** La primera entrada ya anima al crearse; las siguientes se reproducen a mano */
+  private hasEntered = false;
 
   readonly chat = inject(ChatService);
   readonly voice = inject(VoiceService);
@@ -77,6 +102,23 @@ export class HomePage {
       this.chat.isLoading();
       if (this.isInConversation()) {
         void this.content()?.scrollToBottom(300);
+      }
+    });
+  }
+
+  ionViewWillEnter() {
+    // Ionic deja la página en caché: al volver, la entrada escalonada se reproduce
+    // de nuevo reiniciando sus animaciones CSS (sin quitar clases, así no parpadea)
+    if (!this.hasEntered) {
+      this.hasEntered = true;
+      return;
+    }
+    this.host.nativeElement.querySelectorAll<HTMLElement>('.stagger-item').forEach(el => {
+      for (const animation of el.getAnimations()) {
+        if ((animation as CSSAnimation).animationName === 'homeRiseIn') {
+          animation.currentTime = 0;
+          animation.play();
+        }
       }
     });
   }
@@ -158,6 +200,13 @@ export class HomePage {
 
   addToCartFromChat(product: Product) {
     void this.cartFeedback.addWithToast(product);
+  }
+
+  addOfferToCart(offer: OfferView) {
+    const product = this.catalog.getProductById(offer.productId);
+    if (product) {
+      void this.cartFeedback.addWithToast(product);
+    }
   }
 
   compareFromChat(productA: Product, productB?: Product) {

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router, provideRouter } from '@angular/router';
 import { provideIonicAngular } from '@ionic/angular/standalone';
 import { Preferences } from '@capacitor/preferences';
 import { ExpressListQrModalComponent } from './express-qr-modal.component';
@@ -11,7 +12,7 @@ describe('ExpressListQrModalComponent', () => {
     await Preferences.clear();
     await TestBed.configureTestingModule({
       imports: [ExpressListQrModalComponent],
-      providers: [provideIonicAngular()]
+      providers: [provideIonicAngular(), provideRouter([{ path: 'otra', children: [] }])]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ExpressListQrModalComponent);
@@ -38,6 +39,17 @@ describe('ExpressListQrModalComponent', () => {
   it('debe emitir dismissModal al presionar el botón cerrar', () => {
     spyOn(component.dismissModal, 'emit');
     component.onDismiss();
+    expect(component.dismissModal.emit).toHaveBeenCalled();
+  });
+
+  it('sin Supabase configurado muestra el QR fijo de respaldo', () => {
+    expect(component.shareState()).toBe('static');
+    expect(component.qrDataUrl()).toBeNull();
+  });
+
+  it('se cierra al navegar, para que el QR no quede abierto para el siguiente cliente', async () => {
+    spyOn(component.dismissModal, 'emit');
+    await TestBed.inject(Router).navigateByUrl('/otra');
     expect(component.dismissModal.emit).toHaveBeenCalled();
   });
 });

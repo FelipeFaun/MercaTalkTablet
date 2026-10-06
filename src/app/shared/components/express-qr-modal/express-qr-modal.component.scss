@@ -172,6 +172,146 @@
       flex-shrink: 0;
     }
   }
+
+  // QR propio de la lista: aparece con un pequeño rebote
+  .qr-frame .qr-generated {
+    image-rendering: pixelated;
+    animation: qrPopIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .qr-frame .qr-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: #f8fafc;
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    text-align: center;
+
+    ion-spinner {
+      width: 36px;
+      height: 36px;
+      color: var(--brand-primary, #0071ce);
+    }
+  }
+
+  // Sin QR (lista vacía o error): mismo tamaño que el código para que el modal no salte
+  .qr-placeholder {
+    width: 222px;
+    height: 222px;
+    box-sizing: border-box;
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    box-shadow: none;
+
+    .placeholder-icon {
+      font-size: 72px;
+      color: #cbd5e1;
+
+      &.error-icon {
+        color: #f87171;
+      }
+    }
+  }
+
+  .qr-received {
+    width: 222px;
+    height: 222px;
+    box-sizing: border-box;
+    background: #f0fdf4;
+    border: 2px solid #86efac;
+
+    .received-check {
+      font-size: 110px;
+      color: #16a34a;
+      display: flex;
+      animation: qrPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  }
+
+  .qr-status-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .qr-status-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 900;
+    color: #15803d;
+  }
+
+  .qr-status-desc {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #475569;
+    text-align: center;
+    max-width: 420px;
+    line-height: 1.45;
+  }
+
+  .retry-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 22px;
+    border: none;
+    border-radius: 14px;
+    background: var(--brand-primary, #0071ce);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+
+    ion-icon {
+      font-size: 20px;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  .qr-validity {
+    margin: -6px 0 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+
+    ion-icon {
+      font-size: 16px;
+    }
+  }
+}
+
+@keyframes qrPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qr-display-container .qr-frame .qr-generated,
+  .qr-display-container .qr-received .received-check {
+    animation: none;
+  }
 }
 
 .items-summary-card {
@@ -258,8 +398,8 @@
         gap: 4px;
         font-size: 12px;
         font-weight: 600;
-        color: #0284c7;
-        background: #f0f9ff;
+        color: var(--brand-primary);
+        background: rgba(var(--brand-primary-rgb), 0.06);
         padding: 3px 8px;
         border-radius: 8px;
         flex-shrink: 0;

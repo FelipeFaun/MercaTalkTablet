@@ -35,7 +35,7 @@
 
 // Contenido
 ion-content {
-  --background: #f5f5f5;
+  --background: var(--app-page-background);
 }
 
 .container {
@@ -144,7 +144,7 @@ ion-content {
   
   .valid-until {
     font-size: 11px;
-    color: #3498db;
+    color: var(--brand-secondary, #3498db);
   }
 }
 
@@ -169,11 +169,11 @@ ion-content {
   }
   
   &:hover {
-    background: #005a9e;
+    background: var(--brand-secondary);
   }
 
   &:focus-visible {
-    outline: 2px solid #005a9e;
+    outline: 2px solid var(--brand-secondary);
     outline-offset: 2px;
   }
   
@@ -212,7 +212,7 @@ ion-content {
     font-size: 18px;
   }
 }.blue-toolbar {
-  --background: #0071ce;
+  --background: var(--brand-primary);
   --min-height: 70px;
   --border-width: 0;
   
