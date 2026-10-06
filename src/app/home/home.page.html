@@ -11,7 +11,7 @@
       <div class="home-hierarchy-wrapper">
 
         <!-- Banner de Bienvenida y Asistente en Kiosko -->
-        <header class="home-hero-header">
+        <header class="home-hero-header stagger-item" style="--i: 0">
           <div class="assistant-kiosk-chip">
             <div class="chip-avatar-ring">
               <img [src]="currentAvatar()" [alt]="currentBrand().assistantName" class="chip-avatar">
@@ -24,18 +24,54 @@
               <h2 class="hero-greeting">{{ 'home.welcome' | translate:{ name: currentBrand().assistantName } }}</h2>
             </div>
           </div>
+
+          <!-- Resumen en vivo de Mi compra: aparece al agregar el primer producto -->
+          @if (!cart.isEmpty()) {
+            <button type="button"
+                    class="cart-live-pill"
+                    [attr.data-status]="cart.budgetStatus()"
+                    (click)="navigateToCart()"
+                    [attr.aria-label]="'home.cartSummaryAria' | translate:{ count: cart.count(), total: (cart.total() | clp) }">
+              <span class="cart-pill-icon">
+                <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
+                <!-- Se recrea al cambiar la cantidad para repetir el rebote -->
+                @for (count of [cart.count()]; track count) {
+                  <span class="cart-pill-badge">{{ count }}</span>
+                }
+              </span>
+              <span class="cart-pill-info">
+                <span class="cart-pill-label">{{ 'home.myCart' | translate }}</span>
+                <span class="cart-pill-total">{{ cart.total() | clp }}</span>
+                @if (cart.budgetStatus()) {
+                  <span class="cart-pill-budget">
+                    <span class="budget-track">
+                      <span class="budget-fill" [style.width.%]="budgetPercent()"></span>
+                    </span>
+                    <span class="budget-text">
+                      @if (cart.budgetStatus() === 'over') {
+                        {{ 'cart.budgetOver' | translate:{ amount: (budgetOverBy() | clp) } }}
+                      } @else {
+                        {{ 'cart.budgetRemaining' | translate:{ amount: (cart.budgetRemaining() | clp) } }}
+                      }
+                    </span>
+                  </span>
+                }
+              </span>
+              <ion-icon name="chevron-forward" class="cart-pill-chevron" aria-hidden="true"></ion-icon>
+            </button>
+          }
         </header>
 
         <!-- SECCIÓN 1: ¿QUÉ NECESITAS HOY? -->
         <section class="main-intent-section">
-          <div class="section-title-tag">
+          <div class="section-title-tag stagger-item" style="--i: 1">
             <span>¿QUÉ NECESITAS HOY?</span>
           </div>
 
           <!-- BOTÓN PRINCIPAL Y MÁS GRANDE: 🔍 CONSULTAR PRECIO (HERO CALL TO ACTION) -->
           <button 
             type="button" 
-            class="kiosk-hero-cta-btn" 
+            class="kiosk-hero-cta-btn stagger-item" style="--i: 2" 
             (click)="navigateToPriceCheck()"
             aria-label="Consultar precio y escanear producto">
             
@@ -68,7 +104,7 @@
           <div class="primary-trio-grid">
             
             <!-- 1. Encontrar un producto (Mapa 3D) -->
-            <button type="button" class="trio-card locator-card" (click)="navigateToStoreLocator()">
+            <button type="button" class="trio-card locator-card stagger-item" style="--i: 3" (click)="navigateToStoreLocator()">
               <div class="trio-icon-box">
                 <ion-icon name="map-outline"></ion-icon>
               </div>
@@ -80,7 +116,7 @@
             </button>
 
             <!-- 2. Ver ofertas del día -->
-            <button type="button" class="trio-card offers-card" (click)="navigateToOffers()">
+            <button type="button" class="trio-card offers-card stagger-item" style="--i: 4" (click)="navigateToOffers()">
               <div class="trio-icon-box">
                 <ion-icon name="pricetags-outline"></ion-icon>
               </div>
@@ -92,7 +128,7 @@
             </button>
 
             <!-- 3. Preguntar a Liderín -->
-            <button type="button" class="trio-card assistant-card" (click)="startConversation()">
+            <button type="button" class="trio-card assistant-card stagger-item" style="--i: 5" (click)="startConversation()">
               <div class="trio-icon-box">
                 <ion-icon name="chatbubbles-outline"></ion-icon>
               </div>
@@ -108,7 +144,7 @@
 
         <!-- SECCIÓN 2: MÁS HERRAMIENTAS (SEGUNDO NIVEL ORDENADO) -->
         <section class="secondary-tools-section">
-          <div class="section-divider">
+          <div class="section-divider stagger-item" style="--i: 6">
             <span class="divider-line"></span>
             <span class="divider-title">MÁS HERRAMIENTAS</span>
             <span class="divider-line"></span>
@@ -117,7 +153,7 @@
           <div class="tools-grid-clean">
             
             <!-- Herramienta 1: Catálogo de Productos -->
-            <button type="button" class="clean-tool-btn" (click)="navigateToProducts()">
+            <button type="button" class="clean-tool-btn stagger-item" style="--i: 7" (click)="navigateToProducts()">
               <div class="clean-icon-wrap bg-blue">
                 <ion-icon name="basket-outline"></ion-icon>
               </div>
@@ -128,7 +164,7 @@
             </button>
 
             <!-- Herramienta 2: Mi Cálculo / Carrito -->
-            <button type="button" class="clean-tool-btn" (click)="navigateToCart()">
+            <button type="button" class="clean-tool-btn stagger-item" style="--i: 8" (click)="navigateToCart()">
               <div class="clean-icon-wrap bg-green">
                 <ion-icon name="cart-outline"></ion-icon>
               </div>
@@ -139,7 +175,7 @@
             </button>
 
             <!-- Herramienta 3: Recetas -->
-            <button type="button" class="clean-tool-btn" (click)="navigateToRecipes()">
+            <button type="button" class="clean-tool-btn stagger-item" style="--i: 9" (click)="navigateToRecipes()">
               <div class="clean-icon-wrap bg-amber">
                 <ion-icon name="restaurant-outline"></ion-icon>
               </div>
@@ -150,7 +186,7 @@
             </button>
 
             <!-- Herramienta 4: Calculadora de Eventos -->
-            <button type="button" class="clean-tool-btn" (click)="openEventCalculator()">
+            <button type="button" class="clean-tool-btn stagger-item" style="--i: 10" (click)="openEventCalculator()">
               <div class="clean-icon-wrap bg-purple">
                 <ion-icon name="calculator-outline"></ion-icon>
               </div>
@@ -161,7 +197,7 @@
             </button>
 
             <!-- Herramienta 5: Stock en Sala -->
-            <button type="button" class="clean-tool-btn" (click)="openStockAlert()">
+            <button type="button" class="clean-tool-btn stagger-item" style="--i: 11" (click)="openStockAlert()">
               <div class="clean-icon-wrap bg-teal">
                 <ion-icon name="cube-outline"></ion-icon>
               </div>
@@ -172,7 +208,7 @@
             </button>
 
             <!-- Herramienta 6: Sugerencias y Avisos -->
-            <button type="button" class="clean-tool-btn" (click)="openIncidentReport()">
+            <button type="button" class="clean-tool-btn stagger-item" style="--i: 12" (click)="openIncidentReport()">
               <div class="clean-icon-wrap bg-rose">
                 <ion-icon name="megaphone-outline"></ion-icon>
               </div>
@@ -184,6 +220,58 @@
 
           </div>
         </section>
+
+        <!-- SECCIÓN 3: OFERTAS DEL DÍA (franja con desplazamiento automático) -->
+        @if (dailyOffers.length) {
+          <section class="daily-offers-section stagger-item" style="--i: 13" [attr.aria-label]="'home.dailyOffers' | translate">
+            <div class="section-divider">
+              <span class="divider-line"></span>
+              <span class="divider-title">
+                <ion-icon name="flame-outline" aria-hidden="true"></ion-icon>
+                {{ 'home.dailyOffers' | translate }}
+              </span>
+              <span class="divider-line"></span>
+              <button type="button" class="see-all-link" (click)="navigateToOffers()">
+                {{ 'home.seeAllOffers' | translate }}
+                <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
+              </button>
+            </div>
+
+            <!-- Dos copias seguidas de la lista: al desplazar media pista el bucle no tiene salto.
+                 La copia se oculta a lectores de pantalla y al teclado. -->
+            <div class="offers-marquee" [style.--marquee-duration]="dailyOffers.length * 5 + 's'">
+              <div class="offers-track">
+                @for (copy of [0, 1]; track copy) {
+                  <div class="offers-run" [class.offers-run-copy]="copy === 1" [attr.aria-hidden]="copy === 1 ? 'true' : null">
+                    @for (offer of dailyOffers; track offer.id) {
+                      <article class="offer-mini-card">
+                        <div class="offer-mini-img">
+                          <img [src]="offer.image" [alt]="copy === 0 ? offer.product : ''" loading="lazy" (error)="handleImageError($event)">
+                          <span class="offer-mini-discount">-{{ offer.discount }}%</span>
+                        </div>
+                        <div class="offer-mini-info">
+                          <span class="offer-mini-name">{{ offer.product }}</span>
+                          <span class="offer-mini-prices">
+                            <span class="offer-mini-price">{{ offer.price | clp }}</span>
+                            <span class="offer-mini-orig">{{ offer.originalPrice | clp }}</span>
+                          </span>
+                        </div>
+                        <button type="button"
+                                class="offer-mini-add"
+                                [attr.tabindex]="copy === 1 ? -1 : null"
+                                [attr.aria-label]="'home.offerAddAria' | translate:{ name: offer.product }"
+                                (click)="addOfferToCart(offer)">
+                          <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+                          <span>{{ 'home.addShort' | translate }}</span>
+                        </button>
+                      </article>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          </section>
+        }
 
       </div>
 

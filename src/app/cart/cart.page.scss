@@ -1,5 +1,5 @@
 ion-content {
-  --background: #f8fafc;
+  --background: var(--app-page-background);
 }
 
 .container {

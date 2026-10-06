@@ -1,5 +1,5 @@
 ion-content {
-  --background: #f8fafc;
+  --background: var(--app-page-background);
   --color: #1e293b;
 }
 
@@ -23,8 +23,29 @@ ion-content {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  animation: fadeIn 0.3s ease-out;
+  // Se ajusta al alto: en pantallas bajas la franja de ofertas cabe sin scroll
+  gap: clamp(12px, 2vh, 24px);
+}
+
+/* ======================================================== */
+/* ENTRADA ESCALONADA: cada bloque aparece ~45 ms después    */
+/* del anterior (--i en la plantilla). Relleno "backwards":  */
+/* al terminar no fija transform y no pisa hover/:active.    */
+/* ======================================================== */
+.stagger-item {
+  animation: homeRiseIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+@keyframes homeRiseIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @keyframes fadeIn {
@@ -36,12 +57,19 @@ ion-content {
 .home-hero-header {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  // El resumen de Mi compra queda siempre al lado; el saludo pasa a dos líneas si no cabe
+  @media (max-width: 700px) {
+    flex-wrap: wrap;
+  }
 
   .assistant-kiosk-chip {
     display: inline-flex;
     align-items: center;
     gap: 16px;
+    min-width: 0;
     background: #ffffff;
     border: 1.5px solid #e2e8f0;
     border-radius: 40px;
@@ -52,12 +80,12 @@ ion-content {
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      border: 2px solid #0284c7;
+      border: 2px solid var(--brand-primary);
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #f0f9ff;
+      background: rgba(var(--brand-primary-rgb), 0.06);
 
       .chip-avatar {
         width: 100%;
@@ -69,6 +97,7 @@ ion-content {
     .chip-info {
       display: flex;
       flex-direction: column;
+      min-width: 0;
 
       .store-badge {
         display: flex;
@@ -99,6 +128,161 @@ ion-content {
   }
 }
 
+/* Resumen en vivo de Mi compra (a la derecha del saludo) */
+.cart-live-pill {
+  --pill-accent: var(--brand-primary);
+  --pill-accent-rgb: var(--brand-primary-rgb);
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: #ffffff;
+  border: 1.5px solid rgba(var(--pill-accent-rgb), 0.35);
+  border-radius: 40px;
+  padding: 8px 16px 8px 8px;
+  flex-shrink: 0;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 6px 18px rgba(var(--pill-accent-rgb), 0.14);
+  animation: cartPillIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
+
+  // Colores del estado del presupuesto (CartService.budgetStatus)
+  &[data-status='warning'] {
+    --pill-accent: #d97706;
+    --pill-accent-rgb: 217, 119, 6;
+  }
+
+  &[data-status='over'] {
+    --pill-accent: #dc2626;
+    --pill-accent-rgb: 220, 38, 38;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(var(--pill-accent-rgb), 0.22);
+  }
+
+  &:active {
+    transform: scale(0.96);
+    transition-duration: 0.08s;
+  }
+
+  .cart-pill-icon {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--pill-accent);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+    transition: background 0.3s ease;
+  }
+
+  .cart-pill-badge {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 11px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+    box-sizing: border-box;
+    animation: cartBadgeBump 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .cart-pill-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .cart-pill-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .cart-pill-total {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cart-pill-budget {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 3px;
+  }
+
+  .budget-track {
+    width: 90px;
+    height: 6px;
+    border-radius: 3px;
+    background: #e2e8f0;
+    overflow: hidden;
+  }
+
+  .budget-fill {
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+    background: var(--pill-accent);
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+  }
+
+  .budget-text {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--pill-accent);
+    white-space: nowrap;
+  }
+
+  .cart-pill-chevron {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover .cart-pill-chevron {
+    transform: translateX(3px);
+  }
+}
+
+@keyframes cartPillIn {
+  from {
+    opacity: 0;
+    transform: translateX(24px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes cartBadgeBump {
+  0% { transform: scale(0.4); }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
 /* ======================================================== */
 /* SECCIÓN 1: ¿QUÉ NECESITAS HOY?                          */
 /* ======================================================== */
@@ -113,8 +297,8 @@ ion-content {
       font-weight: 900;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #0284c7;
-      background: #e0f2fe;
+      color: var(--brand-primary);
+      background: rgba(var(--brand-primary-rgb), 0.12);
       padding: 4px 12px;
       border-radius: 8px;
       display: inline-block;
@@ -125,9 +309,9 @@ ion-content {
 /* BOTÓN PRINCIPAL Y MÁS GRANDE: 🔍 CONSULTAR PRECIO (HERO CALL TO ACTION) */
 .kiosk-hero-cta-btn {
   width: 100%;
-  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
   color: #ffffff;
-  border: 3px solid #38bdf8;
+  border: 3px solid rgba(var(--brand-primary-rgb), 0.55);
   border-radius: 28px;
   padding: clamp(20px, 3vh, 32px) clamp(24px, 3vw, 40px);
   cursor: pointer;
@@ -135,7 +319,7 @@ ion-content {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  box-shadow: 0 16px 40px -8px rgba(2, 132, 199, 0.45);
+  box-shadow: 0 16px 40px -8px rgba(var(--brand-primary-rgb), 0.45);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: left;
   position: relative;
@@ -152,14 +336,27 @@ ion-content {
     pointer-events: none;
   }
 
+  // Destello que cruza el botón cada pocos segundos para atraer la mirada
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.22) 50%, transparent 65%);
+    transform: translateX(-120%);
+    animation: heroSheen 7s ease-in-out 1.5s infinite;
+    pointer-events: none;
+  }
+
   &:hover {
     transform: translateY(-4px) scale(1.008);
-    box-shadow: 0 22px 50px -10px rgba(2, 132, 199, 0.6);
+    box-shadow: 0 22px 50px -10px rgba(var(--brand-primary-rgb), 0.6);
     border-color: #ffffff;
   }
 
   &:active {
-    transform: translateY(0) scale(1);
+    transform: scale(0.985);
+    box-shadow: 0 8px 20px -8px rgba(var(--brand-primary-rgb), 0.5);
+    transition-duration: 0.08s;
   }
 
   .hero-cta-left {
@@ -222,7 +419,7 @@ ion-content {
       .hero-cta-desc {
         margin: 2px 0 0;
         font-size: clamp(0.9rem, 1.2vw, 1.05rem);
-        color: #e0f2fe;
+        color: rgba(255, 255, 255, 0.88);
         max-width: 600px;
         line-height: 1.35;
       }
@@ -237,7 +434,7 @@ ion-content {
       align-items: center;
       gap: 10px;
       background: #ffffff;
-      color: #0369a1;
+      color: var(--brand-secondary);
       padding: 14px 26px;
       border-radius: 18px;
       font-size: 1.05rem;
@@ -266,6 +463,13 @@ ion-content {
   0% { transform: scale(0.95); opacity: 0.8; }
   50% { transform: scale(1.1); opacity: 0.3; }
   100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+// El destello cruza en el primer ~20 % del ciclo y luego espera fuera del botón
+@keyframes heroSheen {
+  0% { transform: translateX(-120%); }
+  20%,
+  100% { transform: translateX(120%); }
 }
 
 /* TRÍO DE ACCIONES DE 1ER NIVEL */
@@ -344,6 +548,17 @@ ion-content {
       }
     }
 
+    // Respuesta al tocar: la tarjeta se hunde un poco (en táctil :hover queda pegado)
+    &:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      transition-duration: 0.08s;
+
+      .trio-icon-box {
+        transform: scale(0.94);
+      }
+    }
+
     /* Colores individuales */
     &.locator-card {
       .trio-icon-box { background: #e0f2fe; color: #0284c7; }
@@ -365,7 +580,8 @@ ion-content {
 /* ======================================================== */
 /* SECCIÓN 2: MÁS HERRAMIENTAS (SEGUNDO NIVEL ORDENADO)     */
 /* ======================================================== */
-.secondary-tools-section {
+.secondary-tools-section,
+.daily-offers-section {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -395,7 +611,8 @@ ion-content {
     grid-template-columns: repeat(6, 1fr);
     gap: 14px;
 
-    @media (max-width: 1080px) {
+    // Una sola fila de 6 también en tablet (1024 px); se parte en 3 recién en pantallas angostas
+    @media (max-width: 860px) {
       grid-template-columns: repeat(3, 1fr);
     }
 
@@ -455,14 +672,366 @@ ion-content {
 
       &:hover {
         transform: translateY(-2px);
-        border-color: #0284c7;
+        border-color: var(--brand-primary);
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 
         .clean-icon-wrap {
           transform: scale(1.08);
         }
       }
+
+      &:active {
+        transform: scale(0.95);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+        transition-duration: 0.08s;
+
+        .clean-icon-wrap {
+          transform: scale(0.92);
+        }
+      }
     }
+  }
+}
+
+/* ======================================================== */
+/* SECCIÓN 3: OFERTAS DEL DÍA (franja con desplazamiento)   */
+/* ======================================================== */
+.daily-offers-section {
+  .divider-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    ion-icon {
+      font-size: 1rem;
+      color: #ef4444;
+    }
+  }
+
+  .see-all-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    padding: 4px 2px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--brand-primary);
+    cursor: pointer;
+
+    ion-icon {
+      transition: transform 0.2s ease;
+    }
+
+    &:hover ion-icon {
+      transform: translateX(3px);
+    }
+  }
+}
+
+.offers-marquee {
+  overflow: hidden;
+  // Bordes desvanecidos: las tarjetas entran y salen suavemente
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  padding: 6px 0 2px;
+
+  // Se detiene al tocar o enfocar, para poder agregar con calma
+  &:hover .offers-track,
+  &:focus-within .offers-track {
+    animation-play-state: paused;
+  }
+}
+
+.offers-track {
+  display: flex;
+  width: max-content;
+  animation: offersMarquee var(--marquee-duration, 40s) linear infinite;
+}
+
+.offers-run {
+  display: flex;
+  gap: 14px;
+  // Mismo espacio al final de cada copia: las dos mitades miden igual y el bucle no salta
+  padding-right: 14px;
+}
+
+@keyframes offersMarquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.offer-mini-card {
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 10px 12px 10px 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
+
+  .offer-mini-img {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    background: #f8fafc;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      max-width: 88%;
+      max-height: 88%;
+      object-fit: contain;
+    }
+  }
+
+  .offer-mini-discount {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35);
+  }
+
+  .offer-mini-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .offer-mini-name {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .offer-mini-prices {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .offer-mini-price {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #dc2626;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .offer-mini-orig {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-decoration: line-through;
+  }
+
+  .offer-mini-add {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    min-width: 64px;
+    min-height: 56px;
+    padding: 6px 8px;
+    border: none;
+    border-radius: 14px;
+    background: var(--brand-primary);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(var(--brand-primary-rgb), 0.3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.3s ease;
+
+    ion-icon {
+      font-size: 1.4rem;
+    }
+
+    &:hover {
+      background: var(--brand-secondary);
+    }
+
+    &:active {
+      transform: scale(0.9);
+      box-shadow: 0 1px 4px rgba(var(--brand-primary-rgb), 0.3);
+      transition-duration: 0.08s;
+    }
+  }
+}
+
+/* ======================================================== */
+/* TABLET: todo el inicio cabe sin scroll                    */
+/* ======================================================== */
+
+// Herramientas en 6 columnas angostas: tarjetas más compactas
+@media (max-width: 1080px) {
+  .secondary-tools-section .tools-grid-clean {
+    gap: 10px;
+
+    .clean-tool-btn {
+      padding: 10px 8px;
+      gap: 6px;
+      border-radius: 16px;
+
+      .clean-icon-wrap {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        border-radius: 12px;
+      }
+
+      .clean-tool-info {
+        .clean-tool-name {
+          font-size: 0.8rem;
+        }
+
+        .clean-tool-sub {
+          font-size: 0.68rem;
+        }
+      }
+    }
+  }
+}
+
+// Pantallas bajas (tablets de 768–800 px y navegadores en 1080p): menos aire entre bloques
+@media (max-height: 920px) {
+  .container {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .home-hierarchy-wrapper {
+    gap: 12px;
+  }
+
+  .cart-live-pill {
+    padding: 5px 14px 5px 5px;
+    gap: 10px;
+
+    .cart-pill-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+    }
+
+    .cart-pill-total {
+      font-size: 1.1rem;
+    }
+
+    .cart-pill-budget {
+      margin-top: 1px;
+    }
+  }
+
+  .main-intent-section,
+  .secondary-tools-section {
+    gap: 10px;
+  }
+
+  .daily-offers-section {
+    gap: 4px;
+  }
+
+  .home-hero-header .assistant-kiosk-chip {
+    padding: 6px 20px 6px 8px;
+
+    .chip-avatar-ring {
+      width: 42px;
+      height: 42px;
+    }
+
+    .chip-info .hero-greeting {
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+  }
+
+  .kiosk-hero-cta-btn {
+    padding: 16px 28px;
+
+    .hero-cta-left {
+      gap: 18px;
+
+      .hero-cta-pulse-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 18px;
+        font-size: 32px;
+      }
+
+      .hero-cta-text-block .hero-cta-title {
+        font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+      }
+    }
+  }
+
+  .primary-trio-grid .trio-card {
+    padding: 12px 18px;
+
+    .trio-icon-box {
+      width: 48px;
+      height: 48px;
+      font-size: 24px;
+      border-radius: 14px;
+    }
+  }
+
+  .offer-mini-card {
+    padding: 8px 10px 8px 8px;
+
+    .offer-mini-img {
+      width: 56px;
+      height: 56px;
+    }
+
+    .offer-mini-add {
+      min-height: 46px;
+    }
+  }
+}
+
+// Movimiento reducido: sin entradas, destellos ni franja automática (se desliza a mano)
+@media (prefers-reduced-motion: reduce) {
+  .stagger-item,
+  .cart-live-pill,
+  .cart-live-pill .cart-pill-badge,
+  .kiosk-hero-cta-btn::before {
+    animation: none;
+  }
+
+  .offers-marquee {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .offers-track {
+    animation: none;
+  }
+
+  .offers-run-copy {
+    display: none;
   }
 }
 
@@ -491,7 +1060,7 @@ ion-content {
     margin-bottom: 18px;
 
     .back-btn {
-      --color: #0284c7;
+      --color: var(--brand-primary);
       font-weight: 700;
       font-size: 14.5px;
     }
@@ -524,7 +1093,7 @@ ion-content {
         border-radius: 50%;
         object-fit: cover;
         flex-shrink: 0;
-        border: 2px solid #0284c7;
+        border: 2px solid var(--brand-primary);
       }
 
       .bubble {
@@ -564,10 +1133,10 @@ ion-content {
         flex-direction: row-reverse;
 
         .bubble {
-          background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+          background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
           color: #ffffff;
           border-bottom-right-radius: 4px;
-          box-shadow: 0 4px 16px rgba(2, 132, 199, 0.28);
+          box-shadow: 0 4px 16px rgba(var(--brand-primary-rgb), 0.28);
         }
       }
     }
@@ -627,8 +1196,8 @@ ion-content {
         gap: 5px;
         font-size: 0.82rem;
         font-weight: 700;
-        color: #0369a1;
-        background: #e0f2fe;
+        color: var(--brand-secondary);
+        background: rgba(var(--brand-primary-rgb), 0.12);
         padding: 3px 8px;
         border-radius: 6px;
       }
@@ -653,9 +1222,9 @@ ion-content {
       transition: all 0.2s;
 
       &.btn-chat-map {
-        background: #0284c7;
+        background: var(--brand-primary);
         color: #ffffff;
-        &:hover { background: #0369a1; }
+        &:hover { background: var(--brand-secondary); }
       }
 
       &.btn-chat-price {
@@ -823,7 +1392,7 @@ ion-content {
           .cheaper-curr { font-size: 1.15rem; font-weight: 900; color: #15803d; }
           .cheaper-orig { font-size: 0.8rem; text-decoration: line-through; color: #94a3b8; }
         }
-        .cheaper-pum { font-size: 0.75rem; font-weight: 700; color: #0369a1; }
+        .cheaper-pum { font-size: 0.75rem; font-weight: 700; color: var(--brand-secondary); }
       }
     }
 
@@ -844,7 +1413,7 @@ ion-content {
 
         &.btn-chat-compare { background: #faf5ff; color: #6b21a8; border: 1px solid #e9d5ff; }
         &.btn-chat-cart { background: #16a34a; color: #ffffff; }
-        &.btn-chat-map { background: #e0f2fe; color: #0284c7; }
+        &.btn-chat-map { background: rgba(var(--brand-primary-rgb), 0.12); color: var(--brand-primary); }
       }
     }
   }

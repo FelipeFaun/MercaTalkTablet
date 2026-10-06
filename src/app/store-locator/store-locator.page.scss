@@ -4,8 +4,10 @@
 }
 
 .store-locator-content {
-  --background: #f1f5f9;
-  background: #f1f5f9;
+  --background: var(--brand-surface, #f1f5f9);
+  background: var(--brand-surface, #f1f5f9);
+  // El mapa 3D ocupa casi toda la pantalla: sin marca de agua
+  --brand-watermark: none;
   height: 100%;
   --overflow: hidden;
   overflow: hidden;

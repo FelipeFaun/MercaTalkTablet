@@ -9,7 +9,7 @@
 }
 
 .welcome-content {
-  --background: #f8fafc;
+  --background: var(--app-page-background);
   height: 100%;
   width: 100%;
   position: relative;
@@ -23,7 +23,8 @@
     overflow: hidden;
     padding: 0;
     box-sizing: border-box;
-    background: radial-gradient(130% 90% at 50% 12%, var(--brand-light, #ebf4fc) 0%, #f8fafc 52%, #f1f5f9 100%);
+    // Brillo central translúcido: deja ver el tinte y la marca de agua de ::part(background)
+    background: radial-gradient(130% 90% at 50% 12%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 60%);
   }
 }
 

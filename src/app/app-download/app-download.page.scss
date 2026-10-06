@@ -13,8 +13,7 @@
 
 /* Ion-content fondo claro obligatorio */
 ion-content {
-  --background: #ffffff !important;
-  background: #ffffff !important;
+  --background: var(--app-page-background) !important;
 }
 
 /* ========================================================= */

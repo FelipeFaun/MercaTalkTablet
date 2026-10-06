@@ -217,17 +217,17 @@
 
     ion-icon {
       font-size: 18px;
-      color: #0284c7;
+      color: var(--brand-primary);
     }
 
     &:hover {
-      border-color: #0284c7;
-      background: #f0f9ff;
+      border-color: var(--brand-primary);
+      background: rgba(var(--brand-primary-rgb), 0.06);
     }
 
     &.active {
-      background: #0284c7;
-      border-color: #0284c7;
+      background: var(--brand-primary);
+      border-color: var(--brand-primary);
       color: #ffffff;
 
       ion-icon {
@@ -354,8 +354,8 @@
           width: 36px;
           height: 36px;
           border-radius: 10px;
-          background: #e0f2fe;
-          color: #0284c7;
+          background: rgba(var(--brand-primary-rgb), 0.12);
+          color: var(--brand-primary);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -450,7 +450,7 @@
         font-weight: 700;
         cursor: pointer;
         transition: all 0.18s ease;
-        box-shadow: 0 2px 8px rgba(0, 113, 206, 0.25);
+        box-shadow: 0 2px 8px rgba(var(--brand-primary-rgb), 0.25);
 
         ion-icon {
           font-size: 17px;
@@ -556,7 +556,7 @@
           height: 42px;
           border-radius: 12px;
           background: #f1f5f9;
-          color: #0284c7;
+          color: var(--brand-primary);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -603,7 +603,7 @@
             gap: 5px;
             font-size: 12.5px;
             font-weight: 600;
-            color: #0284c7;
+            color: var(--brand-primary);
 
             ion-icon {
               font-size: 14px;
@@ -660,9 +660,9 @@
             transition: all 0.2s ease;
 
             &.replace-btn:hover {
-              background: #e0f2fe;
-              border-color: #0284c7;
-              color: #0284c7;
+              background: rgba(var(--brand-primary-rgb), 0.12);
+              border-color: var(--brand-primary);
+              color: var(--brand-primary);
             }
 
             &.remove-btn:hover {
@@ -900,7 +900,7 @@
             height: 40px;
             border-radius: 10px;
             background: #f1f5f9;
-            color: #0284c7;
+            color: var(--brand-primary);
             display: flex;
             align-items: center;
             justify-content: center;

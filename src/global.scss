@@ -50,11 +50,66 @@
   --brand-gradient: linear-gradient(135deg, #0071CE 0%, #005A9E 100%);
   --brand-light: #EBF4FC;
   --brand-contrast: #FFFFFF;
+  --brand-surface: #E6F1FA;
+  --brand-surface-rgb: 230, 241, 250;
+  --brand-watermark: none;
   --ion-color-primary: #0071CE;
   --ion-color-primary-rgb: 0, 113, 206;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-shade: #005A9E;
   --ion-color-primary-tint: #0071CE;
+}
+
+/*
+ * Fondo de página por supermercado: tinte suave de la marca (--app-page-background,
+ * usado en el --background de cada ion-content) con su logo grande y centrado como
+ * marca de agua animada detrás de todo el contenido.
+ *
+ * El logo es un ::after de ::part(background), así queda fijo mientras el contenido
+ * se desplaza y se puede animar con transform sin repintar el fondo. "contain"
+ * lo ajusta sin deformarlo (Lider es ancho, Unimarc es alto).
+ * Una página sin marca de agua define --brand-watermark: none en su ion-content.
+ */
+:root {
+  --app-page-background: var(--brand-surface);
+}
+
+ion-content::part(background)::after {
+  content: '';
+  position: absolute;
+  inset: 8% 16%;
+  background: var(--brand-watermark) no-repeat center / contain;
+  opacity: 0.07;
+  pointer-events: none;
+  will-change: transform;
+  animation: brandWatermarkFloat 16s ease-in-out infinite;
+}
+
+// Flotado lento: sube, "respira" y gira apenas; vuelve al punto de partida sin saltos
+@keyframes brandWatermarkFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate3d(1.5%, -2.5%, 0) scale(1.04) rotate(-1.2deg);
+  }
+  66% {
+    transform: translate3d(-1.5%, -1%, 0) scale(1.06) rotate(1deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ion-content::part(background)::after {
+    animation: none;
+  }
+}
+
+// Fundido de toda la pantalla al cambiar de supermercado (BrandService.setBrand)
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 450ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 // Transición fluida para cambios de tema en barras y botones
