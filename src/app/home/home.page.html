@@ -65,7 +65,7 @@
         <!-- SECCIÓN 1: ¿QUÉ NECESITAS HOY? -->
         <section class="main-intent-section">
           <div class="section-title-tag stagger-item" style="--i: 1">
-            <span>¿QUÉ NECESITAS HOY?</span>
+            <span>{{ 'home.whatDoYouNeed' | translate }}</span>
           </div>
 
           <!-- BOTÓN PRINCIPAL Y MÁS GRANDE: 🔍 CONSULTAR PRECIO (HERO CALL TO ACTION) -->
@@ -73,7 +73,7 @@
             type="button" 
             class="kiosk-hero-cta-btn stagger-item" style="--i: 2" 
             (click)="navigateToPriceCheck()"
-            aria-label="Consultar precio y escanear producto">
+            [attr.aria-label]="'home.checkPriceAria' | translate">
             
             <div class="hero-cta-left">
               <div class="hero-cta-pulse-icon">
@@ -84,17 +84,17 @@
               <div class="hero-cta-text-block">
                 <div class="hero-cta-badge">
                   <ion-icon name="flash"></ion-icon>
-                  <span>FUNCIÓN PRINCIPAL</span>
+                  <span>{{ 'home.mainFeature' | translate }}</span>
                 </div>
                 <h2 class="hero-cta-title">{{ 'home.checkPrice' | translate }}</h2>
-                <p class="hero-cta-desc">Apunta el código de barras a la cámara o escribe el nombre para ver precio, PUM y stock en sala</p>
+                <p class="hero-cta-desc">{{ 'home.checkPriceHeroDesc' | translate }}</p>
               </div>
             </div>
 
             <div class="hero-cta-right">
               <div class="scan-now-pill">
                 <ion-icon name="camera-outline"></ion-icon>
-                <span>CONSULTAR AHORA</span>
+                <span>{{ 'home.checkNow' | translate }}</span>
                 <ion-icon name="arrow-forward" class="cta-arrow"></ion-icon>
               </div>
             </div>
@@ -110,7 +110,7 @@
               </div>
               <div class="trio-content">
                 <h3 class="trio-title">{{ 'home.whereToFind' | translate }}</h3>
-                <p class="trio-desc">Mapa 3D interactivo con pasillos, estantes y rutas</p>
+                <p class="trio-desc">{{ 'home.whereToFindTrioDesc' | translate }}</p>
               </div>
               <ion-icon name="chevron-forward" class="trio-chevron"></ion-icon>
             </button>
@@ -122,7 +122,7 @@
               </div>
               <div class="trio-content">
                 <h3 class="trio-title">{{ 'home.featuredOffers' | translate }}</h3>
-                <p class="trio-desc">Promociones vigentes y mayores descuentos</p>
+                <p class="trio-desc">{{ 'home.offersTrioDesc' | translate }}</p>
               </div>
               <ion-icon name="chevron-forward" class="trio-chevron"></ion-icon>
             </button>
@@ -133,8 +133,8 @@
                 <ion-icon name="chatbubbles-outline"></ion-icon>
               </div>
               <div class="trio-content">
-                <h3 class="trio-title">Preguntar a {{ currentBrand().assistantName }}</h3>
-                <p class="trio-desc">Asistente por voz o chat que controla la tablet</p>
+                <h3 class="trio-title">{{ 'home.askAssistant' | translate:{ name: currentBrand().assistantName } }}</h3>
+                <p class="trio-desc">{{ 'home.askAssistantDesc' | translate }}</p>
               </div>
               <ion-icon name="chevron-forward" class="trio-chevron"></ion-icon>
             </button>
@@ -146,7 +146,7 @@
         <section class="secondary-tools-section">
           <div class="section-divider stagger-item" style="--i: 6">
             <span class="divider-line"></span>
-            <span class="divider-title">MÁS HERRAMIENTAS</span>
+            <span class="divider-title">{{ 'home.moreTools' | translate }}</span>
             <span class="divider-line"></span>
           </div>
 
@@ -159,7 +159,7 @@
               </div>
               <div class="clean-tool-info">
                 <span class="clean-tool-name">{{ 'home.allProducts' | translate }}</span>
-                <span class="clean-tool-sub">Explorar catálogo</span>
+                <span class="clean-tool-sub">{{ 'home.toolProductsSub' | translate }}</span>
               </div>
             </button>
 
@@ -170,7 +170,7 @@
               </div>
               <div class="clean-tool-info">
                 <span class="clean-tool-name">{{ 'home.myCart' | translate }}</span>
-                <span class="clean-tool-sub">Presupuesto y total</span>
+                <span class="clean-tool-sub">{{ 'home.toolCartSub' | translate }}</span>
               </div>
             </button>
 
@@ -181,7 +181,7 @@
               </div>
               <div class="clean-tool-info">
                 <span class="clean-tool-name">{{ 'home.recipesWithOffers' | translate }}</span>
-                <span class="clean-tool-sub">Ideas de cocina</span>
+                <span class="clean-tool-sub">{{ 'home.toolRecipesSub' | translate }}</span>
               </div>
             </button>
 
@@ -192,7 +192,7 @@
               </div>
               <div class="clean-tool-info">
                 <span class="clean-tool-name">{{ 'home.eventCalculator' | translate }}</span>
-                <span class="clean-tool-sub">Asados y fiestas</span>
+                <span class="clean-tool-sub">{{ 'home.toolEventsSub' | translate }}</span>
               </div>
             </button>
 
@@ -203,7 +203,7 @@
               </div>
               <div class="clean-tool-info">
                 <span class="clean-tool-name">{{ 'home.stockCrossCheck' | translate }}</span>
-                <span class="clean-tool-sub">Consultar pasillos</span>
+                <span class="clean-tool-sub">{{ 'home.toolStockSub' | translate }}</span>
               </div>
             </button>
 
@@ -214,7 +214,7 @@
               </div>
               <div class="clean-tool-info">
                 <span class="clean-tool-name">{{ 'home.incidentReport' | translate }}</span>
-                <span class="clean-tool-sub">Reportar o sugerir</span>
+                <span class="clean-tool-sub">{{ 'home.toolReportSub' | translate }}</span>
               </div>
             </button>
 
@@ -246,11 +246,11 @@
                     @for (offer of dailyOffers; track offer.id) {
                       <article class="offer-mini-card">
                         <div class="offer-mini-img">
-                          <img [src]="offer.image" [alt]="copy === 0 ? offer.product : ''" loading="lazy" (error)="handleImageError($event)">
+                          <img [src]="offer.image" [alt]="copy === 0 ? (offer.product | productName:offer.productId) : ''" loading="lazy" (error)="handleImageError($event)">
                           <span class="offer-mini-discount">-{{ offer.discount }}%</span>
                         </div>
                         <div class="offer-mini-info">
-                          <span class="offer-mini-name">{{ offer.product }}</span>
+                          <span class="offer-mini-name">{{ offer.product | productName:offer.productId }}</span>
                           <span class="offer-mini-prices">
                             <span class="offer-mini-price">{{ offer.price | clp }}</span>
                             <span class="offer-mini-orig">{{ offer.originalPrice | clp }}</span>
@@ -259,7 +259,7 @@
                         <button type="button"
                                 class="offer-mini-add"
                                 [attr.tabindex]="copy === 1 ? -1 : null"
-                                [attr.aria-label]="'home.offerAddAria' | translate:{ name: offer.product }"
+                                [attr.aria-label]="'home.offerAddAria' | translate:{ name: (offer.product | productName:offer.productId) }"
                                 (click)="addOfferToCart(offer)">
                           <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
                           <span>{{ 'home.addShort' | translate }}</span>
@@ -321,13 +321,13 @@
                 @if (message.widget?.type === 'product_location' && message.widget?.product; as prod) {
                   <div class="chat-action-card location-widget">
                     <div class="action-card-main">
-                      <img [src]="prod.image" [alt]="prod.name" (error)="handleImageError($event)" class="widget-thumb">
+                      <img [src]="prod.image" [alt]="prod.name | productName:prod.id" (error)="handleImageError($event)" class="widget-thumb">
                       <div class="action-card-text">
                         <span class="widget-brand">{{ prod.brand }}</span>
-                        <h4 class="widget-title">{{ prod.name }}</h4>
+                        <h4 class="widget-title">{{ prod.name | productName:prod.id }}</h4>
                         <div class="widget-loc-pill" *ngIf="prod.supermarketLocation">
                           <ion-icon name="location-outline"></ion-icon>
-                          <span>{{ prod.supermarketLocation.aisle }}, {{ prod.supermarketLocation.section }} ({{ prod.supermarketLocation.shelf }})</span>
+                          <span>{{ prod.supermarketLocation.aisle | term }}, {{ prod.supermarketLocation.section | term }} ({{ prod.supermarketLocation.shelf | term }})</span>
                         </div>
                       </div>
                     </div>
@@ -335,22 +335,22 @@
                     <div class="action-card-buttons">
                       <button type="button" class="btn-chat-action btn-chat-map" (click)="navigateToMapForProduct(prod)">
                         <ion-icon name="map"></ion-icon>
-                        <span>Mostrar en mapa 3D</span>
+                        <span>{{ 'home.showOnMap' | translate }}</span>
                       </button>
 
                       <button type="button" class="btn-chat-action btn-chat-price" (click)="navigateToPriceForProduct(prod)">
                         <ion-icon name="pricetag"></ion-icon>
-                        <span>Consultar precio</span>
+                        <span>{{ 'home.checkPriceShort' | translate }}</span>
                       </button>
 
                       <button type="button" class="btn-chat-action btn-chat-cart" (click)="addToCartFromChat(prod)">
                         <ion-icon name="cart"></ion-icon>
-                        <span>Agregar al cálculo</span>
+                        <span>{{ 'home.addToCalc' | translate }}</span>
                       </button>
 
                       <button type="button" class="btn-chat-action btn-chat-cheaper" (click)="askCheaperForProduct(prod)">
                         <ion-icon name="trending-down"></ion-icon>
-                        <span>¿Hay una más barata?</span>
+                        <span>{{ 'home.isThereCheaper' | translate }}</span>
                       </button>
                     </div>
                   </div>
@@ -364,10 +364,10 @@
                     @for (off of offers; track off.id) {
                       <div class="chat-offer-card">
                         <div class="chat-offer-badge">-{{ off.discount }}%</div>
-                        <img [src]="off.image" [alt]="off.product" (error)="handleImageError($event)" class="offer-thumb">
+                        <img [src]="off.image" [alt]="off.product | productName:off.productId" (error)="handleImageError($event)" class="offer-thumb">
                         <div class="chat-offer-info">
                           <span class="offer-brand">{{ off.brand }}</span>
-                          <h5 class="offer-title">{{ off.product }}</h5>
+                          <h5 class="offer-title">{{ off.product | productName:off.productId }}</h5>
                           <div class="offer-pricing">
                             <strong class="offer-now">{{ off.price | clp }}</strong>
                             <span class="offer-was">{{ off.originalPrice | clp }}</span>
@@ -376,7 +376,7 @@
                         <div class="chat-offer-btns">
                           <button type="button" class="btn-mini-cart" (click)="addToCartFromChat({ id: off.productId, name: off.product, brand: off.brand, price: off.originalPrice, image: off.image, barcode: '', category: off.category, inOffer: true, offerPrice: off.price })">
                             <ion-icon name="cart"></ion-icon>
-                            <span>Agregar</span>
+                            <span>{{ 'home.addShort' | translate }}</span>
                           </button>
                           <button type="button" class="btn-mini-price" (click)="navigateToPriceForProduct({ id: off.productId, name: off.product, brand: off.brand, price: off.originalPrice, image: off.image, barcode: '', category: off.category, inOffer: true, offerPrice: off.price })">
                             <ion-icon name="eye"></ion-icon>
@@ -396,16 +396,16 @@
                       <div class="chat-cheaper-card">
                         <div class="cheaper-savings-badge">
                           <ion-icon name="sparkles"></ion-icon>
-                          <span>Ahorras {{ alt.savings | clp }} (-{{ alt.savingsPercent }}%)</span>
+                          <span>{{ 'home.youSave' | translate:{ amount: (alt.savings | clp), percent: alt.savingsPercent } }}</span>
                         </div>
                         <div class="cheaper-card-body">
-                          <img [src]="alt.product.image" [alt]="alt.product.name" (error)="handleImageError($event)" class="cheaper-thumb">
+                          <img [src]="alt.product.image" [alt]="alt.product.name | productName:alt.product.id" (error)="handleImageError($event)" class="cheaper-thumb">
                           <div class="cheaper-card-details">
                             <span class="cheaper-brand">{{ alt.product.brand }}</span>
-                            <h4 class="cheaper-title">{{ alt.product.name }}</h4>
+                            <h4 class="cheaper-title">{{ alt.product.name | productName:alt.product.id }}</h4>
                             <div class="cheaper-price-row">
                               <span class="cheaper-curr">{{ alt.alternativePrice | clp }}</span>
-                              <span class="cheaper-orig">vs {{ alt.targetPrice | clp }}</span>
+                              <span class="cheaper-orig">{{ 'home.versus' | translate:{ price: (alt.targetPrice | clp) } }}</span>
                             </div>
                             <span class="cheaper-pum">{{ alt.pumText }}</span>
                           </div>
@@ -413,11 +413,11 @@
                         <div class="cheaper-card-actions">
                           <button type="button" class="btn-chat-action btn-chat-compare" (click)="compareFromChat(message.widget?.referenceProduct!, alt.product)">
                             <ion-icon name="scale"></ion-icon>
-                            <span>Comparar</span>
+                            <span>{{ 'home.compare' | translate }}</span>
                           </button>
                           <button type="button" class="btn-chat-action btn-chat-cart" (click)="addToCartFromChat(alt.product)">
                             <ion-icon name="cart"></ion-icon>
-                            <span>Agregar</span>
+                            <span>{{ 'home.addShort' | translate }}</span>
                           </button>
                           <button type="button" class="btn-chat-action btn-chat-map" (click)="navigateToMapForProduct(alt.product)">
                             <ion-icon name="map"></ion-icon>
@@ -433,10 +433,10 @@
                 <!-- =================================================== -->
                 @if (message.widget?.type === 'compare_ready' && message.widget?.products; as prods) {
                   <div class="chat-compare-cta">
-                    <p>Productos identificados para comparar: <strong>{{ prods[0].name }}</strong> vs <strong>{{ prods[1].name }}</strong></p>
+                    <p>{{ 'home.compareReady' | translate }} <strong>{{ prods[0].name | productName:prods[0].id }}</strong> vs <strong>{{ prods[1].name | productName:prods[1].id }}</strong></p>
                     <button type="button" class="btn-chat-action btn-chat-compare-full" (click)="compareFromChat(prods[0], prods[1])">
                       <ion-icon name="scale"></ion-icon>
-                      <span>Abrir Comparador Cara a Cara</span>
+                      <span>{{ 'home.openCompare' | translate }}</span>
                     </button>
                   </div>
                 }
@@ -450,7 +450,7 @@
               <img [src]="currentAvatar()" alt="" class="bubble-avatar">
               <div class="bubble typing-indicator">
                 <ion-spinner name="crescent"></ion-spinner>
-                <span>{{ currentBrand().assistantName }} está consultando la tablet...</span>
+                <span>{{ 'home.assistantThinking' | translate:{ name: currentBrand().assistantName } }}</span>
               </div>
             </li>
           }

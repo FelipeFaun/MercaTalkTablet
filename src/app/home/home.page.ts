@@ -12,10 +12,13 @@ import { ChatService } from '../services/chat.service';
 import { CartFeedbackService } from '../core/cart-feedback.service';
 import { CartService } from '../core/cart.service';
 import { CatalogService } from '../core/catalog.service';
+import { CatalogI18nService } from '../core/catalog-i18n.service';
+import { LanguageService } from '../core/language.service';
 import { CompareService } from '../services/compare.service';
 import { AppHeaderComponent } from '../shared/components/app-header/app-header.component';
 import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { ClpPipe } from '../shared/pipes/clp.pipe';
+import { CatalogTermPipe, ProductNamePipe } from '../shared/pipes/catalog.pipes';
 
 import { Product, OfferView } from '../models/catalog.model';
 import { CheaperAlternativeItem } from '../core/product-helper';
@@ -50,6 +53,8 @@ const DAILY_OFFERS_COUNT = 8;
     FormsModule,
     TranslatePipe,
     ClpPipe,
+    ProductNamePipe,
+    CatalogTermPipe,
     ProductCompareModalComponent,
     EventCalculatorModalComponent,
     StockAlertModalComponent,
@@ -62,6 +67,8 @@ export class HomePage {
   private brandService = inject(BrandService);
   private cartFeedback = inject(CartFeedbackService);
   private catalog = inject(CatalogService);
+  private catalogI18n = inject(CatalogI18nService);
+  private language = inject(LanguageService);
   private host = inject<ElementRef<HTMLElement>>(ElementRef);
   readonly cart = inject(CartService);
   readonly compareService = inject(CompareService);
@@ -219,7 +226,8 @@ export class HomePage {
   }
 
   askCheaperForProduct(product: Product) {
-    void this.sendMessage(`¿Hay una opción más barata que ${product.name}?`);
+    const name = this.catalogI18n.productName(product.id, product.name);
+    void this.sendMessage(this.language.t('home.askCheaperQuestion', { name }));
   }
 
   handleImageError(event: any) {
