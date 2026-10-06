@@ -48,6 +48,15 @@
             <ion-icon [name]="currentTheme === 'light' ? 'moon-outline' : 'sunny-outline'" aria-hidden="true"></ion-icon>
             <span class="theme-label">{{ currentTheme === 'light' ? 'Oscuro' : 'Claro' }}</span>
           </button>
+          <button type="button"
+                  class="theme-btn offers-toggle"
+                  [class.offers-on]="showOffers"
+                  [attr.aria-pressed]="showOffers"
+                  (click)="toggleOffers()"
+                  [title]="showOffers ? 'Ocultar ofertas del mapa' : 'Mostrar ofertas en el mapa'">
+            <ion-icon name="pricetags-outline" aria-hidden="true"></ion-icon>
+            <span class="theme-label">Ofertas</span>
+          </button>
         </div>
 
         <!-- Controles de Navegación y Zoom (+, reset, -) -->
@@ -88,9 +97,30 @@
           <span>Arrastra para orbitar · Rueda para zoom · Toca un pasillo</span>
         </div>
 
+        <!-- Leyenda de ofertas -->
+        @if (showOffers && aisleOffers.size > 0 && !cartRouteActive) {
+          <div class="floating-offers-legend" aria-hidden="true">
+            <span><i class="dot dot-offer"></i>Ofertas</span>
+            <span><i class="dot dot-soon"></i>Vence pronto</span>
+          </div>
+        }
+
+        <!-- Pastilla de la ruta del carrito -->
+        @if (cartRouteActive) {
+          <div class="floating-active-badge cart-badge">
+            <div class="badge-left">
+              <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
+              <strong>Ruta de tu compra · {{ pickedCount }}/{{ totalStopItems }}</strong>
+            </div>
+            <button type="button" class="btn-clear-badge" (click)="exitCartRoute()" aria-label="Salir de la ruta de compra">
+              <ion-icon name="close" aria-hidden="true"></ion-icon>
+            </button>
+          </div>
+        }
+
         <!-- Pastilla Flotante de Pasillo Activo en el 3D -->
         @if (currentAisle) {
-          <div class="floating-active-badge">
+          <div class="floating-active-badge" [style.--aisle-color]="currentAisle.color">
             <div class="badge-left">
               <ion-icon [name]="currentAisle.icon" aria-hidden="true"></ion-icon>
               <strong>{{ getAisleLabel(currentAisle) }}: {{ getAisleName(currentAisle) }}</strong>
@@ -126,12 +156,156 @@
                   [attr.aria-label]="'storeLocator.newSearch' | translate">
             <ion-icon name="close-circle-outline" aria-hidden="true"></ion-icon>
           </button>
+          <button type="button"
+                  class="btn-search-tool"
+                  [class.listening]="voice.isListening()"
+                  (click)="startVoiceSearch()"
+                  [attr.aria-label]="voice.isListening() ? 'Dejar de escuchar' : 'Buscar por voz'"
+                  [title]="voice.isListening() ? 'Dejar de escuchar' : 'Buscar por voz'">
+            <ion-icon [name]="voice.isListening() ? 'mic-off' : 'mic'" aria-hidden="true"></ion-icon>
+          </button>
+          <button type="button"
+                  class="btn-search-tool"
+                  [class.active-tool]="isScannerOpen"
+                  (click)="isScannerOpen ? closeScanner() : openScanner()"
+                  [attr.aria-label]="isScannerOpen ? 'Cerrar escáner' : 'Escanear código de barras'"
+                  [title]="isScannerOpen ? 'Cerrar escáner' : 'Escanear código de barras'">
+            <ion-icon name="barcode-outline" aria-hidden="true"></ion-icon>
+          </button>
         </div>
       </div>
 
       <!-- Cuerpo con Scroll Interno -->
       <div class="inspector-scroll-body">
         
+        <!-- Escáner de código de barras -->
+        @if (isScannerOpen) {
+          <section class="scanner-card" aria-label="Escanear y ubicar">
+            <header class="scanner-head">
+              <div>
+                <strong>Escanear y ubicar</strong>
+                <span>Apunta la cámara al código de barras del producto</span>
+              </div>
+              <button type="button" class="btn-close-prod" (click)="closeScanner()" aria-label="Cerrar escáner">
+                <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+              </button>
+            </header>
+            <div class="scanner-video-box" [class.is-scanning]="isScanning">
+              <video #scanVideo playsinline muted></video>
+              @if (isScanning) {
+                <div class="scan-line" aria-hidden="true"></div>
+              }
+              @if (!isScanning && !scanError) {
+                <div class="scanner-placeholder">
+                  <ion-spinner name="crescent"></ion-spinner>
+                  <span>Abriendo la cámara…</span>
+                </div>
+              }
+            </div>
+            @if (scanError) {
+              <p class="scanner-error" role="alert">{{ scanError }}</p>
+            }
+            <form class="manual-code-row" (ngSubmit)="submitManualBarcode()">
+              <input type="text"
+                     inputmode="numeric"
+                     name="manualBarcode"
+                     [(ngModel)]="manualBarcode"
+                     placeholder="O escribe el código (ej: 7801234567893)"
+                     aria-label="Código de barras">
+              <button type="submit">Ubicar</button>
+            </form>
+          </section>
+        }
+
+        <!-- Resultado de la búsqueda por voz o del escáner -->
+        @if (voiceFeedback) {
+          <div class="voice-feedback" [class.is-listening]="voice.isListening()" role="status">
+            <ion-icon [name]="voice.isListening() ? 'mic' : 'volume-high'" aria-hidden="true"></ion-icon>
+            <span>{{ voiceFeedback }}</span>
+            <button type="button" (click)="dismissVoiceFeedback()" aria-label="Cerrar aviso">
+              <ion-icon name="close" aria-hidden="true"></ion-icon>
+            </button>
+          </div>
+        }
+
+        <!-- Ruta de la compra: paradas en orden con lista para marcar -->
+        @if (cartRouteActive) {
+          <section class="cart-route-panel">
+            <header class="cart-route-head">
+              <div>
+                <h3>Ruta de tu compra</h3>
+                <span>{{ cartStops.length }} {{ cartStops.length === 1 ? 'parada' : 'paradas' }} en el orden más corto, de la entrada a cajas</span>
+              </div>
+              <button type="button" class="btn-exit-route" (click)="exitCartRoute()">Salir</button>
+            </header>
+
+            <div class="pick-progress" role="progressbar" aria-label="Productos tomados"
+                 [attr.aria-valuenow]="pickedCount" aria-valuemin="0" [attr.aria-valuemax]="totalStopItems">
+              <div class="pick-progress-bar">
+                <span [style.width.%]="totalStopItems ? (pickedCount / totalStopItems) * 100 : 0"></span>
+              </div>
+              <strong>{{ pickedCount }} de {{ totalStopItems }} productos</strong>
+            </div>
+
+            @if (allPicked) {
+              <div class="all-picked-banner">
+                <ion-icon name="checkmark-done-circle" aria-hidden="true"></ion-icon>
+                <span>Tienes todo. Sigue la ruta gris hasta la línea de cajas.</span>
+              </div>
+            }
+
+            <ol class="stop-list">
+              @for (stop of cartStops; track stop.aisle.id; let i = $index) {
+                <li class="stop-card" [class.stop-done]="stop.done" [style.--aisle-color]="stop.aisle.color">
+                  <div class="stop-head">
+                    <span class="stop-number">
+                      @if (stop.done) {
+                        <ion-icon name="checkmark" aria-hidden="true"></ion-icon>
+                      } @else {
+                        {{ i + 1 }}
+                      }
+                    </span>
+                    <div class="stop-titles">
+                      <strong>{{ getAisleLabel(stop.aisle) }}: {{ getAisleName(stop.aisle) }}</strong>
+                      <span>{{ stop.items.length }} {{ stop.items.length === 1 ? 'producto' : 'productos' }}</span>
+                    </div>
+                  </div>
+                  <ul class="stop-items">
+                    @for (entry of stop.items; track entry.item.productId) {
+                      <li>
+                        <button type="button"
+                                class="pick-row"
+                                [class.picked]="isPicked(entry.item.productId)"
+                                role="checkbox"
+                                [attr.aria-checked]="isPicked(entry.item.productId)"
+                                (click)="togglePicked(stop, entry.item.productId)">
+                          <ion-icon class="pick-check"
+                                    [name]="isPicked(entry.item.productId) ? 'checkmark-circle' : 'ellipse-outline'"
+                                    aria-hidden="true"></ion-icon>
+                          <img [src]="entry.item.image" alt="" loading="lazy">
+                          <span class="pick-info">
+                            <strong>{{ entry.item.name }}</strong>
+                            <span>{{ getShelfDisplay(entry.product.supermarketLocation?.shelf) }} · {{ entry.item.qty }} {{ entry.item.qty === 1 ? 'unidad' : 'unidades' }}</span>
+                          </span>
+                        </button>
+                      </li>
+                    }
+                  </ul>
+                </li>
+              }
+            </ol>
+
+            @if (unlocatedItems.length > 0) {
+              <div class="unlocated-box">
+                <strong>Sin ubicación en el plano</strong>
+                <span>{{ unlocatedItems.length }} {{ unlocatedItems.length === 1 ? 'producto' : 'productos' }}: pregunta en el mesón de atención.</span>
+              </div>
+            }
+
+            <ng-container *ngTemplateOutlet="directionsTpl"></ng-container>
+          </section>
+        }
+
         <!-- Indicador de Carga -->
         <div class="mini-loading" *ngIf="isLoading">
           <ion-spinner name="crescent" color="dark"></ion-spinner>
@@ -225,6 +399,8 @@
             </div>
           </div>
 
+          <ng-container *ngTemplateOutlet="directionsTpl"></ng-container>
+
           <!-- Sugerencias Complementarias para el Producto Seleccionado -->
           <div class="complementary-sugg-section" *ngIf="complementaryProducts.length > 0">
             <div class="sugg-header">
@@ -262,7 +438,7 @@
         </article>
 
         <!-- Detalle de Góndolas del Pasillo Activo -->
-        <section class="aisle-inventory-section" *ngIf="currentAisle">
+        <section class="aisle-inventory-section" *ngIf="currentAisle" [style.--aisle-color]="currentAisle.color">
           <header class="inventory-head">
             <div class="head-icon-box">
               <ion-icon [name]="currentAisle.icon" aria-hidden="true"></ion-icon>
@@ -272,6 +448,20 @@
               <p>{{ getAisleDesc(currentAisle) }}</p>
             </div>
           </header>
+
+          @if (aisleOffers.get(currentAisle.id); as offerInfo) {
+            <div class="aisle-offer-chip" [class.offer-soon]="isOfferSoon(offerInfo)">
+              <ion-icon name="pricetags-outline" aria-hidden="true"></ion-icon>
+              <span>
+                {{ offerInfo.count }} {{ offerInfo.count === 1 ? 'oferta vigente' : 'ofertas vigentes' }} en este pasillo
+                @if (isOfferSoon(offerInfo)) { · la primera vence en {{ offerInfo.soonestDays }} días }
+              </span>
+            </div>
+          }
+
+          @if (!selectedProduct) {
+            <ng-container *ngTemplateOutlet="directionsTpl"></ng-container>
+          }
 
           <!-- Listado agrupado por Estantes / Góndolas -->
           <div class="shelves-stack">
@@ -311,7 +501,24 @@
         </section>
 
         <!-- Estado Inicial Limpio / Exploración (cuando no hay pasillo seleccionado) -->
-        <div class="empty-inspector-state" *ngIf="!currentAisle && !selectedProduct && !searchQuery">
+        <div class="empty-inspector-state" *ngIf="!currentAisle && !selectedProduct && !searchQuery && !cartRouteActive && !isScannerOpen">
+          <div class="cart-route-cta" [class.cta-empty]="cartSummary.items === 0">
+            <ion-icon name="cart-outline" class="cta-ic" aria-hidden="true"></ion-icon>
+            @if (cartSummary.items > 0) {
+              <div class="cta-texts">
+                <strong>Recorre tu compra en orden</strong>
+                <span>{{ cartSummary.items }} {{ cartSummary.items === 1 ? 'producto' : 'productos' }} en {{ cartSummary.aisles }} {{ cartSummary.aisles === 1 ? 'pasillo' : 'pasillos' }}. Te mostramos la ruta más corta hasta cajas.</span>
+              </div>
+              <button type="button" class="cta-btn" (click)="startCartRoute()">Trazar ruta</button>
+            } @else {
+              <div class="cta-texts">
+                <strong>Tu carrito está vacío</strong>
+                <span>Agrega productos y aquí verás la ruta más corta para recogerlos todos.</span>
+              </div>
+              <a class="cta-btn cta-secondary" routerLink="/products">Ver productos</a>
+            }
+          </div>
+
           <div class="empty-state-icon">
             <ion-icon name="cube-outline" aria-hidden="true"></ion-icon>
           </div>
@@ -322,9 +529,12 @@
             <span class="suggestions-label">{{ 'storeLocator.popularSearches' | translate }}</span>
             <div class="suggestion-pills">
               @for (aisle of aisles; track aisle.id) {
-                <button type="button" class="aisle-pill-btn" (click)="selectAisle(aisle.id)">
+                <button type="button" class="aisle-pill-btn" [style.--aisle-color]="aisle.color" (click)="selectAisle(aisle.id)">
                   <ion-icon [name]="aisle.icon" class="pill-icon" aria-hidden="true"></ion-icon>
                   <span class="pill-text">{{ getAisleName(aisle) }}</span>
+                  @if (showOffers && aisleOffers.get(aisle.id); as info) {
+                    <span class="pill-offer" [class.offer-soon]="isOfferSoon(info)" [title]="info.count + ' ofertas'">%</span>
+                  }
                 </button>
               }
             </div>
@@ -378,6 +588,56 @@
       </div>
 
     </aside>
+
+    <!-- Indicaciones paso a paso (producto, pasillo o ruta del carrito) -->
+    <ng-template #directionsTpl>
+      @if (navSteps.length > 0) {
+        <section class="directions-card">
+          <header class="directions-head">
+            <button type="button"
+                    class="directions-toggle"
+                    [attr.aria-expanded]="stepsExpanded"
+                    (click)="stepsExpanded = !stepsExpanded">
+              <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon>
+              <span class="directions-title">Cómo llegar</span>
+              @if (trip) {
+                <span class="trip-chip">
+                  <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+                  ≈ {{ trip.minutes }} min · {{ trip.meters }} m
+                </span>
+              }
+              <ion-icon class="chev" [name]="stepsExpanded ? 'chevron-up' : 'chevron-down'" aria-hidden="true"></ion-icon>
+            </button>
+            <button type="button"
+                    class="btn-speak"
+                    (click)="speakDirections()"
+                    [attr.aria-label]="voice.isSpeaking() ? 'Detener lectura' : 'Escuchar indicaciones'"
+                    [title]="voice.isSpeaking() ? 'Detener lectura' : 'Escuchar indicaciones'">
+              <ion-icon [name]="voice.isSpeaking() ? 'volume-mute' : 'volume-high'" aria-hidden="true"></ion-icon>
+            </button>
+          </header>
+
+          @if (stepsExpanded) {
+            <ol class="directions-list">
+              @for (step of navSteps; track $index; let i = $index) {
+                <li>
+                  <button type="button"
+                          class="direction-step"
+                          [class.step-arrive]="step.kind === 'arrive' || step.kind === 'checkout'"
+                          [class.step-active]="activeStepIndex === i"
+                          [style.--step-color]="stepColor(step)"
+                          (click)="focusStep(i)">
+                    <span class="dir-icon"><ion-icon [name]="stepIcon(step)" aria-hidden="true"></ion-icon></span>
+                    <span class="dir-text">{{ step.text }}</span>
+                  </button>
+                </li>
+              }
+            </ol>
+            <p class="directions-hint">Toca una indicación para verla en el mapa.</p>
+          }
+        </section>
+      }
+    </ng-template>
 
   </div>
 </ion-content>

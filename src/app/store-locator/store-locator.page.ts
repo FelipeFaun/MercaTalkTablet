@@ -17,6 +17,16 @@ import { BrandService } from '../core/brand.service';
 import { ClpPipe } from '../shared/pipes/clp.pipe';
 import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { LanguageService } from '../core/language.service';
+import { CartService } from '../core/cart.service';
+import { VoiceService } from '../core/voice.service';
+import { OffersService } from '../services/offers.service';
+import { CartItem } from '../models/catalog.model';
+import { BrowserMultiFormatReader } from '@zxing/library';
+import { Preferences } from '@capacitor/preferences';
+import {
+  AISLE_ACCESS, CHECKOUT_POINT, KIOSK_POINT, NavLeg, NavPoint, NavStep,
+  buildSteps, estimateTrip, orderStops, pathLength, shortestPath
+} from './store-navigation';
 
 export interface AisleDefinition {
   id: number;
@@ -34,6 +44,55 @@ export interface AisleDefinition {
   height: number;
 }
 
+interface AisleMeshData {
+  group: THREE.Group;
+  hitMesh: THREE.Mesh;
+  baseMeshes: THREE.Mesh[];
+  lineMeshes: THREE.LineSegments[];
+  labelSprite?: THREE.Sprite;
+  floorPad: THREE.Mesh;
+  color: THREE.Color;
+  lift: number;
+  introDelay: number;
+}
+
+const ROUTE_DOT_COUNT = 5;
+const INTRO_STAGGER_MS = 90;
+const INTRO_DURATION_MS = 700;
+
+function easeOutBack(t: number): number {
+  const c1 = 1.4;
+  const c3 = c1 + 1;
+  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+}
+
+function aisleIdOf(product?: Product | null): number | null {
+  const match = product?.supermarketLocation?.aisle?.match(/\d+/);
+  return match ? parseInt(match[0], 10) : null;
+}
+
+function easeOutCubic(t: number): number {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+/** Una parada de la ruta del carrito: un pasillo y lo que hay que tomar ahí. */
+export interface CartStop {
+  aisle: AisleDefinition;
+  items: { item: CartItem; product: Product }[];
+  done: boolean;
+}
+
+/** Resumen de ofertas vigentes de un pasillo, para el rótulo 3D y el panel. */
+export interface AisleOfferInfo {
+  count: number;
+  /** Días hasta que vence la oferta más próxima. */
+  soonestDays: number;
+}
+
+const PICKED_KEY = 'mercatalk.store.picked';
+/** Una oferta "vence pronto" si le quedan estos días o menos. */
+const OFFER_SOON_DAYS = 14;
+
 export interface ShelfGroup {
   shelfName: string;
   shelfNumber: number;
@@ -47,7 +106,7 @@ export const SUPERMARKET_AISLES: AisleDefinition[] = [
     name: 'Lácteos & Refrigerados',
     category: 'Lácteos',
     icon: 'nutrition-outline',
-    color: '#0f172a',
+    color: '#2f8fd8',
     badge: 'Fresco',
     description: 'Leches, yogures, mantequillas, quesos y refrigerados',
     mapX: 28,
@@ -62,7 +121,7 @@ export const SUPERMARKET_AISLES: AisleDefinition[] = [
     name: 'Abarrotes & Despensa',
     category: 'Abarrotes',
     icon: 'restaurant-outline',
-    color: '#0f172a',
+    color: '#d99a1e',
     badge: 'Despensa',
     description: 'Arroz, fideos, harinas, azúcar, sopas y conservas',
     mapX: -16,
@@ -77,7 +136,7 @@ export const SUPERMARKET_AISLES: AisleDefinition[] = [
     name: 'Bebidas, Aguas & Café',
     category: 'Bebidas',
     icon: 'cafe-outline',
-    color: '#0f172a',
+    color: '#14a39a',
     badge: 'Líquidos',
     description: 'Bebidas gaseosas, jugos naturales, aguas minerales y té',
     mapX: 0,
@@ -92,7 +151,7 @@ export const SUPERMARKET_AISLES: AisleDefinition[] = [
     name: 'Limpieza, Hogar & Congelados',
     category: 'Limpieza',
     icon: 'sparkles-outline',
-    color: '#0f172a',
+    color: '#7c5cd6',
     badge: 'Hogar',
     description: 'Detergentes, desinfectantes, lavalozas y productos congelados',
     mapX: 16,
@@ -107,7 +166,7 @@ export const SUPERMARKET_AISLES: AisleDefinition[] = [
     name: 'Frutas, Verduras & Granel',
     category: 'Frutas y Verduras',
     icon: 'leaf-outline',
-    color: '#0f172a',
+    color: '#3fa34d',
     badge: 'Fresco',
     description: 'Manzanas, plátanos, tomates, paltas y frutos secos',
     mapX: -36,
@@ -122,7 +181,7 @@ export const SUPERMARKET_AISLES: AisleDefinition[] = [
     name: 'Carnicería, Pollo & Pescadería',
     category: 'Carnicería',
     icon: 'fast-food-outline',
-    color: '#0f172a',
+    color: '#d6453d',
     badge: 'Carnes',
     description: 'Pechuga de pollo fresca, pescados y cortes de vacuno seleccionados',
     mapX: -16,
@@ -137,7 +196,7 @@ export const SUPERMARKET_AISLES: AisleDefinition[] = [
     name: 'Panadería & Pastelería',
     category: 'Panadería',
     icon: 'pizza-outline',
-    color: '#0f172a',
+    color: '#c9782b',
     badge: 'Panadería',
     description: 'Pan de molde horneado y bollería seleccionada',
     mapX: 36,
@@ -152,7 +211,7 @@ export const SUPERMARKET_AISLES: AisleDefinition[] = [
     name: 'Cuidado Personal & Farmacia',
     category: 'Cuidado Personal',
     icon: 'medkit-outline',
-    color: '#0f172a',
+    color: '#d4559a',
     badge: 'Higiene',
     description: 'Desodorantes, aseo corporal y cuidado diario',
     mapX: 36,
@@ -167,7 +226,7 @@ export const SUPERMARKET_AISLES: AisleDefinition[] = [
     name: 'Vinos, Cervezas & Licores',
     category: 'Vinos',
     icon: 'wine-outline',
-    color: '#0f172a',
+    color: '#8e2a4a',
     badge: 'Vinos',
     description: 'Vinos tintos Carmenere y cepas seleccionadas',
     mapX: 36,
@@ -199,7 +258,12 @@ export const SUPERMARKET_AISLES: AisleDefinition[] = [
 export class StoreLocatorPage implements OnInit, OnDestroy {
   @ViewChild('canvasContainer', { static: false }) canvasContainerRef!: ElementRef<HTMLDivElement>;
 
+  @ViewChild('scanVideo', { static: false }) scanVideoRef?: ElementRef<HTMLVideoElement>;
+
   private productsService = inject(ProductsService);
+  private offersService = inject(OffersService);
+  readonly cartService = inject(CartService);
+  readonly voice = inject(VoiceService);
   private ngZone = inject(NgZone);
   private route = inject(ActivatedRoute);
   readonly brandService = inject(BrandService);
@@ -216,6 +280,32 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
   highlightedShelf: string | null = null;
   previousAisleId: number | null = null;
   isRouteActive: boolean = false;
+
+  // Ruta del carrito (lista de compras con avance)
+  cartRouteActive = false;
+  cartStops: CartStop[] = [];
+  unlocatedItems: CartItem[] = [];
+  private pickedIds = new Set<number>();
+
+  // Indicaciones paso a paso
+  navSteps: NavStep[] = [];
+  trip: { meters: number; minutes: number } | null = null;
+  activeStepIndex: number | null = null;
+  stepsExpanded = true;
+
+  // Ofertas en el mapa
+  showOffers = true;
+  aisleOffers = new Map<number, AisleOfferInfo>();
+
+  // Búsqueda por voz
+  voiceFeedback: string | null = null;
+
+  // Escáner de código de barras
+  isScannerOpen = false;
+  isScanning = false;
+  scanError: string | null = null;
+  manualBarcode = '';
+  private codeReader: BrowserMultiFormatReader | null = null;
 
   currentPerspective: 'isometric' | 'entrance' = 'isometric';
   currentTheme: 'light' | 'dark' = 'light';
@@ -243,20 +333,30 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
   private routeGroup = new THREE.Group();
   private beaconGroup = new THREE.Group();
 
-  private aisleMeshes = new Map<number, {
-    group: THREE.Group;
-    hitMesh: THREE.Mesh;
-    baseMeshes: THREE.Mesh[];
-    lineMeshes: THREE.LineSegments[];
-    labelSprite?: THREE.Sprite;
-  }>();
+  private aisleMeshes = new Map<number, AisleMeshData>();
 
   // Smooth Camera Animation Targets
   private targetCamPos: THREE.Vector3 | null = null;
   private targetLookAt: THREE.Vector3 | null = null;
 
+  // Animación: entrada escalonada, ruta que se dibuja y pulsos
+  private readonly reduceMotion =
+    typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  private introStart = 0;
+  private routeLegs: { meshes: THREE.Mesh[]; from: number; to: number }[] = [];
+  private routeCurve: THREE.CurvePath<THREE.Vector3> | null = null;
+  private routeLength = 0;
+  private routeStart = 0;
+  private offerSprites = new Map<number, THREE.Sprite>();
+  private stepMarker: THREE.Mesh | null = null;
+  private routeDots: THREE.Mesh[] = [];
+  private destRipples: THREE.Mesh[] = [];
+  private lastFrameTime = 0;
+
   ngOnInit(): void {
     this.resetToInitialState();
+    this.computeAisleOffers();
+    void this.restorePicked();
   }
 
   ngAfterViewInit(): void {
@@ -288,7 +388,14 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
     }
   }
 
+  ionViewWillLeave(): void {
+    this.closeScanner();
+    this.voice.stopListening();
+    this.voice.stopSpeaking();
+  }
+
   ngOnDestroy(): void {
+    this.closeScanner();
     if (this.animFrameId !== null) {
       cancelAnimationFrame(this.animFrameId);
     }
@@ -312,6 +419,8 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
     this.previousAisleId = null;
     this.isRouteActive = false;
     this.isLoading = false;
+    this.cartRouteActive = false;
+    this.voiceFeedback = null;
     this.cancelCameraAnimation();
     this.update3DHoverVisuals();
     this.clear3DRoute();
@@ -391,6 +500,8 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
     this.buildKioskStation();
     this.buildEntrancePortal();
     this.buildAllAisles();
+    this.buildOfferBadges();
+    this.buildStepMarker();
 
     this.scene.add(this.routeGroup);
     this.scene.add(this.beaconGroup);
@@ -590,21 +701,25 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
 
   private buildAllAisles(): void {
     this.aisleMeshes.clear();
+    this.introStart = performance.now();
+
+    // Las góndolas emergen del suelo desde la entrada hacia el fondo
+    const order = [...this.aisles].sort((a, b) => (b.mapZ - a.mapZ) || (a.mapX - b.mapX));
 
     this.aisles.forEach(aisle => {
       const aisleData = this.createAisle3DObject(aisle);
+      aisleData.introDelay = this.reduceMotion ? 0 : order.indexOf(aisle) * INTRO_STAGGER_MS;
+      if (!this.reduceMotion) {
+        aisleData.group.scale.set(1, 0.001, 1);
+        aisleData.floorPad.scale.set(0.001, 1, 0.001);
+      }
       this.aisleMeshes.set(aisle.id, aisleData);
       this.scene.add(aisleData.group);
+      this.scene.add(aisleData.floorPad);
     });
   }
 
-  private createAisle3DObject(aisle: AisleDefinition): {
-    group: THREE.Group;
-    hitMesh: THREE.Mesh;
-    baseMeshes: THREE.Mesh[];
-    lineMeshes: THREE.LineSegments[];
-    labelSprite?: THREE.Sprite;
-  } {
+  private createAisle3DObject(aisle: AisleDefinition): AisleMeshData {
     const group = new THREE.Group();
     group.position.set(aisle.mapX, 0, aisle.mapZ);
     group.userData = { aisleId: aisle.id };
@@ -701,21 +816,38 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
     }
 
     // Rótulo Flotante 3D
-    const labelSprite = this.createTextSprite(`P-0${aisle.id} ${aisle.category}`);
+    const labelSprite = this.createTextSprite(`P-0${aisle.id} ${aisle.category}`, aisle.color);
     labelSprite.position.set(0, aisle.height + 3.2, 0);
     labelSprite.scale.set(13, 3.2, 1);
     group.add(labelSprite);
+
+    // Zona de color en el piso: identifica la sección aun vista desde arriba
+    const padGeo = new THREE.PlaneGeometry(aisle.width + 5, aisle.depth + 5);
+    padGeo.rotateX(-Math.PI / 2);
+    const padMat = new THREE.MeshBasicMaterial({
+      color: aisle.color,
+      transparent: true,
+      opacity: 0.16,
+      depthWrite: false
+    });
+    const floorPad = new THREE.Mesh(padGeo, padMat);
+    floorPad.position.set(aisle.mapX, 0.04, aisle.mapZ);
+    floorPad.renderOrder = 1;
 
     return {
       group,
       hitMesh,
       baseMeshes,
       lineMeshes,
-      labelSprite
+      labelSprite,
+      floorPad,
+      color: new THREE.Color(aisle.color),
+      lift: 0,
+      introDelay: 0
     };
   }
 
-  private createTextSprite(text: string): THREE.Sprite {
+  private createTextSprite(text: string, accent?: string): THREE.Sprite {
     const isLight = this.currentTheme === 'light';
     const canvas = document.createElement('canvas');
     canvas.width = 512;
@@ -734,9 +866,21 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
 
     ctx.font = 'bold 36px "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = isLight ? '#0f172a' : '#ffffff';
-    ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(text, 256, 64);
+
+    if (accent) {
+      // Punto de color de la sección a la izquierda del texto
+      ctx.fillStyle = accent;
+      ctx.beginPath();
+      ctx.arc(64, 64, 16, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = isLight ? '#0f172a' : '#ffffff';
+      ctx.textAlign = 'left';
+      ctx.fillText(text, 96, 64, 380);
+    } else {
+      ctx.textAlign = 'center';
+      ctx.fillText(text, 256, 64);
+    }
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
@@ -762,7 +906,7 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
     this.aisleMeshes.forEach((data, id) => {
       const aisle = this.aisles.find(a => a.id === id);
       if (!aisle || !data.labelSprite) return;
-      const newSprite = this.createTextSprite(`P-0${aisle.id} ${aisle.category}`);
+      const newSprite = this.createTextSprite(`P-0${aisle.id} ${aisle.category}`, aisle.color);
       data.labelSprite.material.map?.dispose();
       data.labelSprite.material.map = newSprite.material.map;
       data.labelSprite.material.needsUpdate = true;
@@ -807,7 +951,7 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
     this.updateAllSpritesTheme();
     this.update3DHoverVisuals();
 
-    if (this.selectedAisleId && this.isRouteActive) {
+    if ((this.selectedAisleId && this.isRouteActive) || this.cartRouteActive) {
       this.update3DRoute(false);
     }
   }
@@ -867,130 +1011,422 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
 
   private update3DHoverVisuals(): void {
     const isLight = this.currentTheme === 'light';
+    const neutral = new THREE.Color(isLight ? 0xe2e8f0 : 0x1e293b);
+    const hasSelection = this.selectedAisleId !== null || this.cartRouteActive;
+    const pendingIds = new Set(this.cartRouteActive ? this.cartStops.filter(s => !s.done).map(s => s.aisle.id) : []);
+    const doneIds = new Set(this.cartRouteActive ? this.cartStops.filter(s => s.done).map(s => s.aisle.id) : []);
+
+    // Solo se fijan colores objetivo; animate() los interpola cada cuadro
+    this.aisleMeshes.forEach((data, id) => {
+      const isSelected = this.selectedAisleId === id;
+      const isHovered = this.hoveredAisleId === id;
+
+      let body: THREE.Color;
+      let glow: THREE.Color;
+      if (isSelected) {
+        body = data.color.clone();
+        glow = data.color.clone().multiplyScalar(0.35);
+      } else if (isHovered) {
+        body = data.color.clone().lerp(new THREE.Color(0xffffff), 0.12);
+        glow = data.color.clone().multiplyScalar(0.18);
+      } else if (pendingIds.has(id)) {
+        // Parada de la compra que aún falta: color pleno
+        body = data.color.clone();
+        glow = data.color.clone().multiplyScalar(0.15);
+      } else if (doneIds.has(id)) {
+        // Parada completada: casi gris, para que se note que ya pasaste
+        body = neutral.clone().lerp(data.color, 0.12);
+        glow = new THREE.Color(0x000000);
+      } else {
+        // En reposo el color de la sección se mezcla con el neutro del tema;
+        // si hay otra sección elegida, esta se apaga para que destaque aquella
+        body = neutral.clone().lerp(data.color, hasSelection ? 0.28 : (isLight ? 0.62 : 0.7));
+        glow = new THREE.Color(0x000000);
+      }
+
+      data.baseMeshes.forEach(mesh => {
+        mesh.userData['targetColor'] = body;
+        mesh.userData['targetEmissive'] = glow;
+        (mesh.material as THREE.MeshStandardMaterial).roughness = isSelected ? 0.25 : 0.45;
+      });
+
+      const edge = isSelected || isHovered
+        ? new THREE.Color(0xffffff)
+        : data.color.clone().multiplyScalar(isLight ? 0.55 : 1.1);
+      data.lineMeshes.forEach(line => {
+        line.userData['targetColor'] = edge;
+      });
+
+      const padMat = data.floorPad.material as THREE.MeshBasicMaterial;
+      padMat.userData['targetOpacity'] = isSelected ? 0.42
+        : isHovered ? 0.3
+        : pendingIds.has(id) ? 0.34
+        : hasSelection ? 0.07
+        : 0.16;
+    });
+  }
+
+  private tweenAisleVisuals(now: number, dt: number): void {
+    // Interpolación exponencial independiente de la tasa de cuadros (~150 ms)
+    const k = this.reduceMotion ? 1 : 1 - Math.exp(-dt / 70);
+    const pulse = this.reduceMotion ? 1 : 0.75 + 0.25 * Math.sin(now * 0.005);
 
     this.aisleMeshes.forEach((data, id) => {
       const isSelected = this.selectedAisleId === id;
       const isHovered = this.hoveredAisleId === id;
 
+      // Entrada escalonada: la góndola crece desde el suelo con rebote suave
+      if (data.group.scale.y < 1) {
+        const t = Math.min(1, Math.max(0, (now - this.introStart - data.introDelay) / INTRO_DURATION_MS));
+        const grow = Math.max(0.001, easeOutBack(t));
+        data.group.scale.y = t >= 1 ? 1 : grow;
+        const spread = Math.max(0.001, easeOutCubic(t));
+        data.floorPad.scale.set(spread, 1, spread);
+      }
+
+      // Elevación al pasar el cursor o al seleccionar
+      const targetLift = isSelected ? 1.2 : isHovered ? 0.7 : 0;
+      data.lift += (targetLift - data.lift) * k;
+      data.group.position.y = data.lift;
+
       data.baseMeshes.forEach(mesh => {
         const mat = mesh.material as THREE.MeshStandardMaterial;
-        if (isSelected) {
-          // Seleccionado:
-          // Modo claro: 0x0f172a
-          // Modo oscuro: 0xf8fafc (blanco platino intenso de máxima visibilidad)
-          mat.color.setHex(isLight ? 0x0f172a : 0xf8fafc);
-          mat.emissive.setHex(isLight ? 0x1e293b : 0x334155);
-          mat.roughness = 0.2;
-        } else if (isHovered) {
-          mat.color.setHex(isLight ? 0x1e293b : 0x94a3b8);
-          mat.emissive.setHex(isLight ? 0x0f172a : 0x1e293b);
-          mat.roughness = 0.3;
-        } else {
-          // En reposo:
-          // Modo claro: 0x334155 (grafito oscuro contra suelo blanco)
-          // Modo oscuro: 0x475569 (pizarra claro contra suelo 0x080d1a, ¡GRAN CONTRASTE!)
-          mat.color.setHex(isLight ? 0x334155 : 0x475569);
-          mat.emissive.setHex(0x000000);
-          mat.roughness = 0.45;
+        const tc = mesh.userData['targetColor'] as THREE.Color | undefined;
+        const te = mesh.userData['targetEmissive'] as THREE.Color | undefined;
+        if (tc) mat.color.lerp(tc, k);
+        if (te) {
+          const e = isSelected ? te.clone().multiplyScalar(pulse) : te;
+          mat.emissive.lerp(e, k);
         }
       });
 
       data.lineMeshes.forEach(line => {
-        const mat = line.material as THREE.LineBasicMaterial;
-        if (isSelected) {
-          mat.color.setHex(isLight ? 0xffffff : 0x38bdf8);
-        } else if (isHovered) {
-          mat.color.setHex(isLight ? 0xffffff : 0xffffff);
-        } else {
-          // Aristas:
-          // Modo claro: 0x1e293b
-          // Modo oscuro: 0xcbd5e1 (platino nítido, delineando perfectamente la silueta de cada góndola)
-          mat.color.setHex(isLight ? 0x1e293b : 0xcbd5e1);
-        }
+        const tc = line.userData['targetColor'] as THREE.Color | undefined;
+        if (tc) (line.material as THREE.LineBasicMaterial).color.lerp(tc, k);
       });
+
+      const padMat = data.floorPad.material as THREE.MeshBasicMaterial;
+      const to = padMat.userData['targetOpacity'] as number | undefined;
+      if (to !== undefined) {
+        const target = isSelected ? to * (0.8 + 0.2 * pulse) : to;
+        padMat.opacity += (target - padMat.opacity) * k;
+      }
     });
   }
 
   private clear3DRoute(): void {
-    while (this.routeGroup.children.length > 0) {
-      this.routeGroup.remove(this.routeGroup.children[0]);
-    }
-    while (this.beaconGroup.children.length > 0) {
-      this.beaconGroup.remove(this.beaconGroup.children[0]);
-    }
+    const disposeAll = (group: THREE.Group) => {
+      while (group.children.length > 0) {
+        const child = group.children[0] as THREE.Mesh | THREE.Sprite;
+        group.remove(child);
+        child.geometry?.dispose();
+        const mat = child.material as THREE.Material & { map?: THREE.Texture | null };
+        mat?.map?.dispose();
+        mat?.dispose();
+      }
+    };
+    disposeAll(this.routeGroup);
+    disposeAll(this.beaconGroup);
+    this.routeLegs = [];
+    this.routeCurve = null;
+    this.routeLength = 0;
+    this.routeDots = [];
+    this.destRipples = [];
+    this.navSteps = [];
+    this.trip = null;
+    this.activeStepIndex = null;
+    if (this.stepMarker) this.stepMarker.visible = false;
   }
 
+  /** Vuelve a trazar la ruta activa: la del carrito o la de un pasillo. */
   private update3DRoute(autoFrameCamera: boolean = true): void {
     this.clear3DRoute();
 
-    if (!this.selectedAisleId || !this.isRouteActive) return;
+    if (this.cartRouteActive) {
+      this.renderCartRoute(autoFrameCamera);
+      return;
+    }
 
+    if (!this.selectedAisleId || !this.isRouteActive) return;
     const aisle = this.aisles.find(a => a.id === this.selectedAisleId);
     if (!aisle) return;
 
+    const legs: NavLeg[] = [{ aisleId: aisle.id, path: shortestPath(KIOSK_POINT, AISLE_ACCESS[aisle.id]) }];
+    this.renderLegs(legs, autoFrameCamera);
+    this.addDestinationBeacon(aisle, true);
+
+    this.navSteps = this.buildNavSteps(legs);
+    this.trip = estimateTrip(pathLength(legs[0].path), 0);
+  }
+
+  private renderCartRoute(autoFrameCamera: boolean): void {
+    const pending = this.cartStops.filter(stop => !stop.done);
+    const legs: NavLeg[] = [];
+    let from: NavPoint = KIOSK_POINT;
+    // Solo se camina hacia lo que falta; lo ya tomado queda marcado con ✓
+    for (const stop of pending) {
+      const to = AISLE_ACCESS[stop.aisle.id];
+      legs.push({ aisleId: stop.aisle.id, path: shortestPath(from, to) });
+      from = to;
+    }
+    legs.push({ aisleId: null, path: shortestPath(from, CHECKOUT_POINT) });
+
+    this.renderLegs(legs, autoFrameCamera);
+
+    this.cartStops.forEach((stop, i) => {
+      this.addStopMarker(stop.aisle, i + 1, stop.done);
+    });
+    const next = pending[0];
+    if (next) {
+      this.addDestinationBeacon(next.aisle, false);
+    }
+
+    this.navSteps = this.buildNavSteps(legs);
+    const total = legs.reduce((sum, leg) => sum + pathLength(leg.path), 0);
+    this.trip = estimateTrip(total, pending.length);
+  }
+
+  private buildNavSteps(legs: NavLeg[]): NavStep[] {
+    return buildSteps(
+      legs,
+      id => {
+        const a = this.aisles.find(x => x.id === id)!;
+        return { x: a.mapX, z: a.mapZ };
+      },
+      id => {
+        const a = this.aisles.find(x => x.id === id)!;
+        return `${this.getAisleLabel(a)} (${this.getAisleName(a)})`;
+      }
+    );
+  }
+
+  /**
+   * Dibuja cada tramo con el color de su pasillo de destino (el tramo final a
+   * cajas va en gris) y prepara la animación de trazado y los puntos viajeros.
+   */
+  private renderLegs(legs: NavLeg[], autoFrameCamera: boolean): void {
     const isLight = this.currentTheme === 'light';
-    const startX = -32;
-    const startZ = 36;
-    const destX = aisle.mapX;
-    const destZ = aisle.mapZ;
+    const toVec = (p: NavPoint) => new THREE.Vector3(p.x, 0.2, p.z);
+    const fullPath = new THREE.CurvePath<THREE.Vector3>();
 
-    const waypoints: THREE.Vector3[] = [];
-    waypoints.push(new THREE.Vector3(startX, 0.2, startZ));
-    waypoints.push(new THREE.Vector3(startX, 0.2, 24));
+    const lengths = legs.map(leg => pathLength(leg.path));
+    const total = lengths.reduce((a, b) => a + b, 0) || 1;
+    let acc = 0;
 
-    if (destX > 25) {
-      waypoints.push(new THREE.Vector3(26, 0.2, 24));
-      waypoints.push(new THREE.Vector3(26, 0.2, destZ));
-      waypoints.push(new THREE.Vector3(destX - 2, 0.2, destZ));
-    } else if (destZ < -30) {
-      waypoints.push(new THREE.Vector3(destX > 0 ? 26 : -26, 0.2, 24));
-      waypoints.push(new THREE.Vector3(destX > 0 ? 26 : -26, 0.2, -26));
-      waypoints.push(new THREE.Vector3(destX, 0.2, -26));
-      waypoints.push(new THREE.Vector3(destX, 0.2, destZ + 4));
-    } else if (destX < -25) {
-      waypoints.push(new THREE.Vector3(-32, 0.2, destZ));
-      waypoints.push(new THREE.Vector3(destX + 3, 0.2, destZ));
-    } else {
-      waypoints.push(new THREE.Vector3(destX, 0.2, 24));
-      waypoints.push(new THREE.Vector3(destX, 0.2, destZ));
+    legs.forEach((leg, i) => {
+      if (leg.path.length < 2) return;
+      const curve = new THREE.CurvePath<THREE.Vector3>();
+      for (let k = 1; k < leg.path.length; k++) {
+        const segment = new THREE.LineCurve3(toVec(leg.path[k - 1]), toVec(leg.path[k]));
+        curve.add(segment);
+        fullPath.add(segment);
+      }
+
+      const aisle = leg.aisleId !== null ? this.aisles.find(a => a.id === leg.aisleId) : undefined;
+      const color = new THREE.Color(aisle ? aisle.color : (isLight ? 0x64748b : 0x94a3b8));
+      const segments = Math.max(24, Math.round(lengths[i] * 3));
+
+      const tubeGeo = new THREE.TubeGeometry(curve, segments, 0.38, 8, false);
+      const tube = new THREE.Mesh(tubeGeo, new THREE.MeshBasicMaterial({ color }));
+
+      const haloGeo = new THREE.TubeGeometry(curve, segments, 0.9, 8, false);
+      const halo = new THREE.Mesh(haloGeo, new THREE.MeshBasicMaterial({
+        color,
+        transparent: true,
+        opacity: isLight ? 0.18 : 0.28,
+        depthWrite: false
+      }));
+
+      if (!this.reduceMotion) {
+        tubeGeo.setDrawRange(0, 0);
+        haloGeo.setDrawRange(0, 0);
+      }
+      this.routeGroup.add(halo, tube);
+      this.routeLegs.push({ meshes: [tube, halo], from: acc / total, to: (acc + lengths[i]) / total });
+      acc += lengths[i];
+    });
+
+    this.routeCurve = fullPath;
+    this.routeLength = total;
+    this.routeStart = performance.now();
+
+    // Puntos que recorren la ruta indicando el sentido de la marcha
+    if (!this.reduceMotion) {
+      const dotCount = Math.min(14, Math.max(ROUTE_DOT_COUNT, Math.round(total / 24)));
+      for (let i = 0; i < dotCount; i++) {
+        const dot = new THREE.Mesh(
+          new THREE.SphereGeometry(0.6, 16, 12),
+          new THREE.MeshBasicMaterial({ color: 0xffffff })
+        );
+        dot.visible = false;
+        this.routeGroup.add(dot);
+        this.routeDots.push(dot);
+      }
     }
 
-    // Ruta en 3D: en modo oscuro brilla en 0x38bdf8 (cyan neón luminoso); en claro en 0x0f172a
-    const curve = new THREE.CatmullRomCurve3(waypoints, false, 'centripetal', 0.15);
-    const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.38, 8, false);
-    const tubeMat = new THREE.MeshBasicMaterial({ color: isLight ? 0x0f172a : 0x38bdf8 });
-    const routeMesh = new THREE.Mesh(tubeGeo, tubeMat);
-    this.routeGroup.add(routeMesh);
-
-    // Baliza de Destino 3D (Pin)
-    const pinGeo = new THREE.ConeGeometry(1.6, 3.2, 16);
-    pinGeo.rotateX(Math.PI);
-    const pinMat = new THREE.MeshStandardMaterial({
-      color: isLight ? 0x0f172a : 0x38bdf8,
-      roughness: 0.2
-    });
-    const pin = new THREE.Mesh(pinGeo, pinMat);
-    pin.position.set(destX, aisle.height + 4.5, destZ);
-    this.beaconGroup.add(pin);
-
-    // Anillo en el suelo
-    const destRingGeo = new THREE.RingGeometry(1.8, 2.6, 32);
-    destRingGeo.rotateX(-Math.PI / 2);
-    const destRingMat = new THREE.MeshBasicMaterial({
-      color: isLight ? 0x0f172a : 0x38bdf8,
-      side: THREE.DoubleSide
-    });
-    const destRing = new THREE.Mesh(destRingGeo, destRingMat);
-    destRing.position.set(destX, 0.1, destZ);
-    this.beaconGroup.add(destRing);
-
-    // Encuadre inicial panorámico que muestra TANTO la entrada como el pasillo
     if (autoFrameCamera) {
-      const midX = (-32 + destX) / 2;
-      const midZ = (36 + destZ) / 2;
-      this.targetLookAt = new THREE.Vector3(midX, 2, midZ);
-      this.targetCamPos = new THREE.Vector3(midX + 26, 54, midZ + 48);
+      this.frameCameraOn(legs.flatMap(leg => leg.path));
     }
+  }
+
+  /** Encuadra la cámara para que se vea toda la ruta. */
+  private frameCameraOn(points: NavPoint[]): void {
+    if (points.length === 0) return;
+    const xs = points.map(p => p.x);
+    const zs = points.map(p => p.z);
+    const minX = Math.min(...xs), maxX = Math.max(...xs);
+    const minZ = Math.min(...zs), maxZ = Math.max(...zs);
+    const cx = (minX + maxX) / 2;
+    const cz = (minZ + maxZ) / 2;
+    const span = Math.max(maxX - minX, maxZ - minZ, 30);
+    const d = span * 1.3;
+    this.targetLookAt = new THREE.Vector3(cx, 2, cz);
+    this.targetCamPos = new THREE.Vector3(cx + d * 0.42, d * 0.95, cz + d * 0.8);
+  }
+
+  /** Pin giratorio sobre el pasillo de destino y ondas en el punto de llegada. */
+  private addDestinationBeacon(aisle: AisleDefinition, withPin: boolean): void {
+    const color = new THREE.Color(aisle.color);
+    const access = AISLE_ACCESS[aisle.id];
+
+    if (withPin) {
+      const pinGeo = new THREE.ConeGeometry(1.6, 3.2, 16);
+      pinGeo.rotateX(Math.PI);
+      const pin = new THREE.Mesh(pinGeo, new THREE.MeshStandardMaterial({
+        color,
+        emissive: color.clone().multiplyScalar(0.35),
+        roughness: 0.2
+      }));
+      pin.position.set(aisle.mapX, aisle.height + 4.5, aisle.mapZ);
+      pin.userData['baseY'] = aisle.height + 4.5;
+      pin.userData['isPin'] = true;
+      this.beaconGroup.add(pin);
+    }
+
+    const ringGeo = new THREE.RingGeometry(1.8, 2.6, 32);
+    ringGeo.rotateX(-Math.PI / 2);
+    const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide }));
+    ring.position.set(access.x, 0.1, access.z);
+    this.beaconGroup.add(ring);
+
+    if (!this.reduceMotion) {
+      for (let i = 0; i < 2; i++) {
+        const rippleGeo = new THREE.RingGeometry(2.4, 2.8, 48);
+        rippleGeo.rotateX(-Math.PI / 2);
+        const ripple = new THREE.Mesh(rippleGeo, new THREE.MeshBasicMaterial({
+          color,
+          transparent: true,
+          opacity: 0,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        }));
+        ripple.position.set(access.x, 0.12, access.z);
+        ripple.userData['phase'] = i * 0.5;
+        this.beaconGroup.add(ripple);
+        this.destRipples.push(ripple);
+      }
+    }
+  }
+
+  /** Número de parada (o ✓ si ya se tomó todo) flotando sobre el pasillo. */
+  private addStopMarker(aisle: AisleDefinition, order: number, done: boolean): void {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = done ? '#94a3b8' : aisle.color;
+    ctx.beginPath();
+    ctx.arc(64, 64, 56, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = 8;
+    ctx.strokeStyle = '#ffffff';
+    ctx.stroke();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 64px "Segoe UI", Roboto, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(done ? '✓' : String(order), 64, 68);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false }));
+    const baseY = aisle.height + 9.5;
+    sprite.position.set(aisle.mapX, baseY, aisle.mapZ);
+    sprite.scale.set(4.2, 4.2, 1);
+    sprite.renderOrder = 10;
+    sprite.userData['baseY'] = baseY;
+    sprite.userData['marker'] = true;
+    this.beaconGroup.add(sprite);
+  }
+
+  // =========================================================================
+  // OFERTAS EN EL MAPA
+  // =========================================================================
+
+  private computeAisleOffers(): void {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const offers = this.offersService.getAllOffers();
+    const products = this.productsService.getAllProducts();
+    const info = new Map<number, AisleOfferInfo>();
+
+    for (const offer of offers) {
+      const product = products.find(p => p.id === offer.productId);
+      const aisleId = aisleIdOf(product);
+      if (aisleId === null) continue;
+      const until = new Date(`${offer.validUntil}T00:00:00`);
+      const days = Math.max(0, Math.round((until.getTime() - today.getTime()) / 86_400_000));
+      const current = info.get(aisleId);
+      info.set(aisleId, {
+        count: (current?.count ?? 0) + 1,
+        soonestDays: Math.min(current?.soonestDays ?? Infinity, days),
+      });
+    }
+    this.aisleOffers = info;
+  }
+
+  isOfferSoon(info?: AisleOfferInfo): boolean {
+    return !!info && info.soonestDays <= OFFER_SOON_DAYS;
+  }
+
+  /** Rótulo "% N ofertas" sobre cada pasillo; rojo si alguna vence pronto. */
+  private buildOfferBadges(): void {
+    this.aisleOffers.forEach((info, aisleId) => {
+      const data = this.aisleMeshes.get(aisleId);
+      const aisle = this.aisles.find(a => a.id === aisleId);
+      if (!data || !aisle) return;
+
+      const soon = this.isOfferSoon(info);
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d')!;
+      ctx.fillStyle = soon ? '#dc2626' : '#ea580c';
+      this.roundRect(ctx, 16, 16, 480, 96, 48);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 40px "Segoe UI", Roboto, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const label = `% ${info.count} ${info.count === 1 ? 'oferta' : 'ofertas'}`;
+      ctx.fillText(soon ? `${label} · ${info.soonestDays} d` : label, 256, 66, 440);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.minFilter = THREE.LinearFilter;
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true }));
+      const baseY = aisle.height + 6.4;
+      sprite.position.set(0, baseY, 0);
+      sprite.scale.set(9, 2.25, 1);
+      sprite.userData['baseY'] = baseY;
+      sprite.visible = this.showOffers;
+      data.group.add(sprite);
+      this.offerSprites.set(aisleId, sprite);
+    });
+  }
+
+  toggleOffers(): void {
+    this.showOffers = !this.showOffers;
+    this.offerSprites.forEach(sprite => (sprite.visible = this.showOffers));
   }
 
   // =========================================================================
@@ -1000,24 +1436,50 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
   private animate(): void {
     this.animFrameId = requestAnimationFrame(() => this.animate());
 
-    const time = performance.now() * 0.002;
+    const now = performance.now();
+    const dt = this.lastFrameTime ? Math.min(now - this.lastFrameTime, 100) : 16;
+    this.lastFrameTime = now;
+    const time = now * 0.002;
 
-    if (this.kioskPulseMesh) {
-      const scale = 1 + (Math.sin(time * 3) + 1) * 0.15;
-      this.kioskPulseMesh.scale.set(scale, scale, 1);
-    }
+    this.tweenAisleVisuals(now, dt);
 
-    if (this.beaconGroup.children.length > 0) {
-      const pin = this.beaconGroup.children[0];
-      if (pin) {
-        pin.position.y += Math.sin(time * 4) * 0.03;
-        pin.rotation.y += 0.03;
+    if (!this.reduceMotion) {
+      if (this.kioskPulseMesh) {
+        const scale = 1 + (Math.sin(time * 3) + 1) * 0.15;
+        this.kioskPulseMesh.scale.set(scale, 1, scale);
+      }
+
+      // Pin giratorio y números de parada flotando
+      this.beaconGroup.children.forEach((child, i) => {
+        const baseY = child.userData['baseY'] as number | undefined;
+        if (baseY === undefined) return;
+        if (child.userData['isPin']) {
+          child.position.y = baseY + Math.sin(time * 2.5) * 0.6;
+          child.rotation.y += 0.03;
+        } else if (child.userData['marker']) {
+          child.position.y = baseY + Math.sin(time * 2 + i) * 0.35;
+        }
+      });
+
+      // Rótulos de oferta: vaivén suave, desfasado por pasillo
+      if (this.showOffers) {
+        this.offerSprites.forEach((sprite, aisleId) => {
+          sprite.position.y = (sprite.userData['baseY'] as number) + Math.sin(time * 1.6 + aisleId) * 0.3;
+        });
+      }
+
+      if (this.stepMarker?.visible) {
+        const s = 1 + 0.25 * Math.sin(time * 4);
+        this.stepMarker.scale.set(s, 1, s);
       }
     }
 
+    this.animateRoute(now);
+
     if (this.targetCamPos && this.targetLookAt) {
-      this.camera.position.lerp(this.targetCamPos, 0.07);
-      this.controls.target.lerp(this.targetLookAt, 0.07);
+      const k = 1 - Math.exp(-dt / 220);
+      this.camera.position.lerp(this.targetCamPos, k);
+      this.controls.target.lerp(this.targetLookAt, k);
 
       if (this.camera.position.distanceTo(this.targetCamPos) < 0.25) {
         this.cancelCameraAnimation();
@@ -1026,6 +1488,45 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
 
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
+  }
+
+  private animateRoute(now: number): void {
+    if (!this.routeCurve || this.reduceMotion) return;
+
+    // Trazado progresivo, tramo por tramo; más largo cuanto más larga la ruta
+    const elapsed = now - this.routeStart;
+    const drawDuration = Math.min(2400, 700 + this.routeLength * 6);
+    const drawT = easeOutCubic(Math.min(1, elapsed / drawDuration));
+    this.routeLegs.forEach(leg => {
+      const local = Math.min(1, Math.max(0, (drawT - leg.from) / Math.max(1e-6, leg.to - leg.from)));
+      leg.meshes.forEach(mesh => {
+        const index = mesh.geometry.index;
+        if (index) {
+          // Redondeado a múltiplos de 6 para no cortar un triángulo a la mitad
+          mesh.geometry.setDrawRange(0, Math.floor((index.count * local) / 6) * 6);
+        }
+      });
+    });
+
+    // Puntos viajeros a velocidad constante, cuando la ruta ya está dibujada
+    const travelling = drawT >= 1;
+    const period = Math.max(2000, (this.routeLength / 14) * 1000);
+    this.routeDots.forEach((dot, i) => {
+      dot.visible = travelling;
+      if (!travelling) return;
+      const u = ((elapsed - drawDuration) / period + i / this.routeDots.length) % 1;
+      const p = this.routeCurve!.getPoint(Math.max(0, u));
+      dot.position.set(p.x, p.y + 0.5, p.z);
+      dot.scale.setScalar(0.6 + 0.4 * Math.sin(u * Math.PI));
+    });
+
+    // Ondas en el punto de llegada
+    this.destRipples.forEach(ripple => {
+      const t = (elapsed / 1800 + (ripple.userData['phase'] as number)) % 1;
+      const scale = 1 + t * 2.2;
+      ripple.scale.set(scale, 1, scale);
+      (ripple.material as THREE.MeshBasicMaterial).opacity = travelling ? 0.55 * (1 - t) : 0;
+    });
   }
 
   // =========================================================================
@@ -1102,6 +1603,7 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
   }
 
   selectAisle(aisleId: number): void {
+    this.cartRouteActive = false;
     this.selectedAisleId = aisleId;
     this.previousAisleId = aisleId;
     this.selectedProduct = null;
@@ -1150,6 +1652,7 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
       this.previousAisleId = this.selectedAisleId;
     }
 
+    this.cartRouteActive = false;
     this.selectedProduct = product;
     this.isRouteActive = true;
 
@@ -1188,6 +1691,8 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
     this.selectedAisleId = null;
     this.previousAisleId = null;
     this.isLoading = false;
+    this.cartRouteActive = false;
+    this.voiceFeedback = null;
     this.update3DHoverVisuals();
     this.clear3DRoute();
   }
@@ -1247,4 +1752,388 @@ export class StoreLocatorPage implements OnInit, OnDestroy {
     const translated = this.langService.t(key);
     return translated !== key ? translated : aisleName;
   }
+
+  // =========================================================================
+  // RUTA DEL CARRITO Y LISTA DE COMPRAS CON AVANCE
+  // =========================================================================
+
+  /** Resumen para la invitación del panel: cuántos productos y pasillos. */
+  get cartSummary(): { items: number; aisles: number } {
+    const items = this.cartService.items();
+    const aisles = new Set<number>();
+    for (const item of items) {
+      const id = aisleIdOf(this.productsService.getAllProducts().find(p => p.id === item.productId));
+      if (id !== null) aisles.add(id);
+    }
+    return { items: items.length, aisles: aisles.size };
+  }
+
+  get pickedCount(): number {
+    return this.cartStops.reduce((sum, stop) => sum + stop.items.filter(x => this.isPicked(x.item.productId)).length, 0);
+  }
+
+  get totalStopItems(): number {
+    return this.cartStops.reduce((sum, stop) => sum + stop.items.length, 0);
+  }
+
+  get allPicked(): boolean {
+    return this.cartStops.length > 0 && this.cartStops.every(stop => stop.done);
+  }
+
+  startCartRoute(): void {
+    const products = this.productsService.getAllProducts();
+    const byAisle = new Map<number, { item: CartItem; product: Product }[]>();
+    const unlocated: CartItem[] = [];
+
+    for (const item of this.cartService.items()) {
+      const product = products.find(p => p.id === item.productId);
+      const aisleId = aisleIdOf(product);
+      if (!product || aisleId === null || !AISLE_ACCESS[aisleId]) {
+        unlocated.push(item);
+        continue;
+      }
+      if (!byAisle.has(aisleId)) byAisle.set(aisleId, []);
+      byAisle.get(aisleId)!.push({ item, product });
+    }
+
+    // Lo que ya no está en el carrito deja de contar como tomado
+    const inCart = new Set(this.cartService.items().map(i => i.productId));
+    this.pickedIds.forEach(id => { if (!inCart.has(id)) this.pickedIds.delete(id); });
+    void this.persistPicked();
+
+    const order = orderStops([...byAisle.keys()]);
+    this.cartStops = order.map(aisleId => {
+      const items = byAisle.get(aisleId)!.sort((a, b) =>
+        (a.product.supermarketLocation?.shelf ?? '').localeCompare(b.product.supermarketLocation?.shelf ?? ''));
+      return {
+        aisle: this.aisles.find(a => a.id === aisleId)!,
+        items,
+        done: items.every(x => this.pickedIds.has(x.item.productId)),
+      };
+    });
+    this.unlocatedItems = unlocated;
+
+    this.searchQuery = '';
+    this.searchResults = [];
+    this.selectedProduct = null;
+    this.highlightedShelf = null;
+    this.selectedAisleId = null;
+    this.previousAisleId = null;
+    this.isRouteActive = false;
+    this.voiceFeedback = null;
+    this.cartRouteActive = true;
+    this.stepsExpanded = false;
+
+    this.update3DHoverVisuals();
+    this.update3DRoute(true);
+  }
+
+  exitCartRoute(): void {
+    this.cartRouteActive = false;
+    this.cartStops = [];
+    this.unlocatedItems = [];
+    this.update3DHoverVisuals();
+    this.clear3DRoute();
+    this.setPerspective('isometric');
+  }
+
+  isPicked(productId: number): boolean {
+    return this.pickedIds.has(productId);
+  }
+
+  togglePicked(stop: CartStop, productId: number): void {
+    if (this.pickedIds.has(productId)) {
+      this.pickedIds.delete(productId);
+    } else {
+      this.pickedIds.add(productId);
+    }
+    void this.persistPicked();
+
+    const wasDone = stop.done;
+    stop.done = stop.items.every(x => this.pickedIds.has(x.item.productId));
+    if (stop.done !== wasDone) {
+      // Cambió el recorrido pendiente: se vuelve a trazar sin mover la cámara
+      this.update3DHoverVisuals();
+      this.update3DRoute(false);
+      if (this.allPicked) {
+        void this.voice.speak('Tienes todo. Dirígete a la línea de cajas.');
+      }
+    }
+  }
+
+  stopIndexOf(aisleId: number | null): number {
+    return this.cartStops.findIndex(stop => stop.aisle.id === aisleId);
+  }
+
+  private async restorePicked(): Promise<void> {
+    try {
+      const { value } = await Preferences.get({ key: PICKED_KEY });
+      const ids = value ? (JSON.parse(value) as number[]) : [];
+      this.pickedIds = new Set(ids.filter(n => typeof n === 'number'));
+    } catch {
+      this.pickedIds = new Set();
+    }
+  }
+
+  private async persistPicked(): Promise<void> {
+    try {
+      await Preferences.set({ key: PICKED_KEY, value: JSON.stringify([...this.pickedIds]) });
+    } catch {
+      // Sin almacenamiento la lista sigue funcionando en esta sesión
+    }
+  }
+
+  // =========================================================================
+  // INDICACIONES PASO A PASO
+  // =========================================================================
+
+  private buildStepMarker(): void {
+    const geo = new THREE.RingGeometry(1.2, 2, 32);
+    geo.rotateX(-Math.PI / 2);
+    this.stepMarker = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.95,
+      depthTest: false
+    }));
+    this.stepMarker.renderOrder = 11;
+    this.stepMarker.visible = false;
+    this.scene.add(this.stepMarker);
+  }
+
+  /** Enfoca la cámara en el punto donde ocurre la indicación. */
+  focusStep(index: number): void {
+    const step = this.navSteps[index];
+    if (!step) return;
+    this.activeStepIndex = index;
+    this.targetLookAt = new THREE.Vector3(step.point.x, 1, step.point.z);
+    this.targetCamPos = new THREE.Vector3(step.point.x + 16, 42, step.point.z + 34);
+    if (this.stepMarker) {
+      this.stepMarker.position.set(step.point.x, 0.3, step.point.z);
+      this.stepMarker.visible = true;
+    }
+  }
+
+  stepIcon(step: NavStep): string {
+    switch (step.kind) {
+      case 'left': return 'arrow-back';
+      case 'right': return 'arrow-forward';
+      case 'arrive': return 'location';
+      case 'checkout': return 'cart-outline';
+      default: return 'arrow-up';
+    }
+  }
+
+  stepColor(step: NavStep): string {
+    const aisle = step.aisleId !== null ? this.aisles.find(a => a.id === step.aisleId) : undefined;
+    return aisle?.color ?? '#64748b';
+  }
+
+  speakDirections(): void {
+    if (this.voice.isSpeaking()) {
+      this.voice.stopSpeaking();
+      return;
+    }
+    const intro = this.trip ? `Unos ${this.trip.minutes} minutos a pie. ` : '';
+    void this.voice.speak(intro + this.navSteps.map(step => spokenMeters(step.text)).join('. '));
+  }
+
+  // =========================================================================
+  // BÚSQUEDA POR VOZ
+  // =========================================================================
+
+  async startVoiceSearch(): Promise<void> {
+    if (this.voice.isListening()) {
+      this.voice.stopListening();
+      return;
+    }
+    if (!this.voice.recognitionSupported()) {
+      this.voiceFeedback = 'Este navegador no permite dictar. Usa Chrome o Edge, o escribe el producto.';
+      return;
+    }
+    this.voiceFeedback = 'Te escucho… di por ejemplo "¿dónde está el arroz?"';
+    const heard = await this.voice.listen();
+    if (!heard) {
+      this.voiceFeedback = 'No te escuché. Toca el micrófono e inténtalo de nuevo.';
+      return;
+    }
+    this.handleVoiceQuery(heard);
+  }
+
+  /** Interpreta la frase dictada: producto primero, si no, una sección. */
+  private handleVoiceQuery(heard: string): void {
+    const term = extractSearchTerm(heard);
+    this.cartRouteActive = false;
+    this.searchQuery = term || heard;
+
+    const results = this.findProductsByVoice(term);
+    if (results.length > 0) {
+      this.searchResults = results;
+      const product = results[0];
+      this.selectProduct(product);
+      const loc = product.supermarketLocation;
+      const where = loc ? `${this.getAisleDisplay(loc.aisle)}, ${this.getShelfDisplay(loc.shelf)}` : 'un pasillo sin ubicación registrada';
+      const minutes = this.trip ? ` Llegas en unos ${this.trip.minutes} minutos.` : '';
+      this.voiceFeedback = `"${heard}" → ${product.name}: ${where}`;
+      void this.voice.speak(`${product.name} está en ${where}.${minutes}`);
+      return;
+    }
+
+    const aisle = this.findAisleByVoice(term);
+    if (aisle) {
+      this.searchQuery = '';
+      this.selectAisle(aisle.id);
+      const title = `${this.getAisleLabel(aisle)}: ${this.getAisleName(aisle)}`;
+      this.voiceFeedback = `"${heard}" → ${title}`;
+      void this.voice.speak(`La sección ${this.getAisleName(aisle)} está en el ${this.getAisleLabel(aisle)}.`);
+      return;
+    }
+
+    this.searchResults = [];
+    this.voiceFeedback = `No encontré "${term || heard}". Prueba con otro nombre o escríbelo.`;
+    void this.voice.speak(`No encontré ${term || heard} en el plano.`);
+  }
+
+  private findProductsByVoice(term: string): Product[] {
+    if (!term) return [];
+    const direct = this.productsService.searchProducts(term);
+    if (direct.length > 0) return direct;
+    // Palabra por palabra, también en singular ("tomates" → "tomate")
+    for (const word of term.split(/\s+/).filter(w => w.length >= 3)) {
+      for (const variant of [word, word.replace(/es$/, ''), word.replace(/s$/, '')]) {
+        const found = this.productsService.searchProducts(variant);
+        if (found.length > 0) return found;
+      }
+    }
+    return [];
+  }
+
+  private findAisleByVoice(term: string): AisleDefinition | undefined {
+    const words = normalize(term).split(/\s+/).filter(w => w.length >= 4);
+    return this.aisles.find(aisle => {
+      const haystack = normalize(`${aisle.name} ${aisle.category} ${aisle.description} ${this.getAisleName(aisle)}`);
+      return words.some(w => haystack.includes(w) || haystack.includes(w.replace(/s$/, '')));
+    });
+  }
+
+  dismissVoiceFeedback(): void {
+    this.voiceFeedback = null;
+  }
+
+  // =========================================================================
+  // ESCANEAR Y UBICAR
+  // =========================================================================
+
+  openScanner(): void {
+    this.isScannerOpen = true;
+    this.scanError = null;
+    this.manualBarcode = '';
+    this.voiceFeedback = null;
+    // Esperar a que Angular pinte el <video> antes de pedir la cámara
+    setTimeout(() => void this.startCamera(), 0);
+  }
+
+  private async startCamera(): Promise<void> {
+    const video = this.scanVideoRef?.nativeElement;
+    if (!video || !this.isScannerOpen) return;
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      this.scanError = 'Este navegador no da acceso a la cámara. Escribe el código abajo.';
+      return;
+    }
+
+    this.isScanning = true;
+    this.codeReader = new BrowserMultiFormatReader();
+    try {
+      const devices = await this.codeReader.listVideoInputDevices();
+      if (devices.length === 0) {
+        throw new Error('no-camera');
+      }
+      const rear = devices.find(d => /back|rear|environment|trasera/i.test(d.label));
+      const deviceId = (rear ?? devices[0]).deviceId;
+
+      await this.codeReader.decodeFromVideoDevice(deviceId, video, result => {
+        if (result) {
+          this.ngZone.run(() => this.locateBarcode(result.getText()));
+        }
+      });
+    } catch (error) {
+      this.ngZone.run(() => {
+        this.isScanning = false;
+        this.scanError = (error as Error)?.message === 'no-camera'
+          ? 'No se encontró una cámara. Escribe el código de barras abajo.'
+          : 'No se pudo abrir la cámara. Revisa el permiso o escribe el código abajo.';
+      });
+      this.stopCamera();
+    }
+  }
+
+  private stopCamera(): void {
+    try {
+      this.codeReader?.reset();
+    } catch {
+      // La cámara ya estaba cerrada
+    }
+    this.codeReader = null;
+    this.isScanning = false;
+  }
+
+  closeScanner(): void {
+    this.stopCamera();
+    this.isScannerOpen = false;
+  }
+
+  submitManualBarcode(): void {
+    const code = this.manualBarcode.replace(/\D/g, '');
+    if (!code) {
+      this.scanError = 'Escribe los números que aparecen bajo el código de barras.';
+      return;
+    }
+    this.locateBarcode(code);
+  }
+
+  /** Busca el código en el catálogo y traza la ruta a su pasillo. */
+  private locateBarcode(code: string): void {
+    const product = this.productsService.findProductByBarcode(code);
+    if (!product) {
+      this.scanError = `El código ${code} no está en el catálogo de esta tienda.`;
+      return;
+    }
+    this.closeScanner();
+    this.searchQuery = '';
+    this.searchResults = [];
+    this.selectProduct(product);
+    const loc = product.supermarketLocation;
+    this.voiceFeedback = loc
+      ? `Escaneado: ${product.name} se repone en ${this.getAisleDisplay(loc.aisle)}, ${this.getShelfDisplay(loc.shelf)}.`
+      : `Escaneado: ${product.name}. No tiene ubicación registrada.`;
+  }
+}
+
+/** Quita tildes y pasa a minúsculas para comparar texto dictado. */
+function normalize(text: string): string {
+  return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+/**
+ * De una frase dictada ("¿dónde está el arroz?") deja solo lo que se busca
+ * ("arroz"). Cubre las formas más comunes en español, inglés y portugués.
+ */
+function extractSearchTerm(phrase: string): string {
+  let t = phrase.toLowerCase().replace(/[¿?¡!.,;:"]/g, ' ').replace(/\s+/g, ' ').trim();
+  const leads = [
+    /^(en )?(d[oó]nde|donde) (est[aá]n?|encuentro|hay|queda[n]?|puedo encontrar|se encuentra[n]?)\s+/,
+    /^(busco|buscar|necesito|quiero|ll[eé]vame a|mu[eé]strame)\s+/,
+    /^(where is|where are|where can i find|find)\s+/,
+    /^(onde (est[aá]|fica|encontro))\s+/,
+  ];
+  for (const re of leads) t = t.replace(re, '');
+  t = t.replace(/^(el|la|los|las|un|una|unos|unas|the|o|a|os|as)\s+/, '');
+  return t.replace(/\s+(por favor|please)$/, '').trim();
+}
+
+/** "avanza 12 m" → "avanza 12 metros" para la voz. */
+function spokenMeters(text: string): string {
+  return text.replace(/(\d+) m\b/g, (_, n: string) => `${n} ${n === '1' ? 'metro' : 'metros'}`);
 }

@@ -350,7 +350,8 @@
     padding: 8px 16px;
     color: #ffffff;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.25s ease;
+    border-left: 6px solid var(--aisle-color, #334155);
+    animation: badgeIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 
     .badge-left {
       display: flex;
@@ -359,7 +360,7 @@
 
       ion-icon {
         font-size: 18px;
-        color: #f8fafc;
+        color: var(--aisle-color, #f8fafc);
       }
 
       strong {
@@ -814,13 +815,14 @@
       width: 40px;
       height: 40px;
       border-radius: 10px;
-      background: #0f172a;
+      background: var(--aisle-color, #0f172a);
       color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 20px;
       flex-shrink: 0;
+      transition: background-color 0.3s ease;
     }
 
     .head-titles {
@@ -1057,10 +1059,17 @@
         text-align: left;
         transition: all 0.15s ease;
 
+        border-left: 4px solid var(--aisle-color, #cbd5e1);
+        transition:
+          background-color 0.15s ease,
+          border-color 0.15s ease,
+          transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+
         .pill-icon {
           font-size: 17px;
-          color: #0f172a;
+          color: var(--aisle-color, #0f172a);
           flex-shrink: 0;
+          transition: color 0.15s ease;
         }
 
         .pill-text {
@@ -1073,9 +1082,21 @@
         }
 
         &:hover {
-          background: #0f172a;
-          border-color: #0f172a;
-          transform: translateY(-1px);
+          background: var(--aisle-color, #0f172a);
+          border-color: var(--aisle-color, #0f172a);
+          transform: translateY(-2px);
+        }
+
+        &:active {
+          transform: scale(0.97);
+        }
+
+        &:focus-visible {
+          outline: 3px solid var(--aisle-color, #0f172a);
+          outline-offset: 2px;
+        }
+
+        &:hover {
 
           .pill-icon,
           .pill-text {
@@ -1476,4 +1497,901 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes badgeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-active-badge,
+  .aisle-pill-btn {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ===================================================================== */
+/* FUNCIONES DEL MAPA: ofertas, voz, escáner, ruta de compra, indicaciones */
+/* ===================================================================== */
+
+$offer: #ea580c;
+$offer-soon: #dc2626;
+$ink: #0f172a;
+$muted: #64748b;
+$line: #e2e8f0;
+$ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+/* Interruptor de ofertas en la barra del mapa */
+.map-controls-bar .theme-toggle-group {
+  display: flex;
+  gap: 6px;
+
+  .theme-btn.offers-toggle.offers-on {
+    background: $offer;
+    border-color: $offer;
+    color: #ffffff;
+
+    &:hover {
+      background: #c2410c;
+      border-color: #c2410c;
+    }
+  }
+}
+
+/* Leyenda de colores de ofertas sobre el mapa */
+.viewport-3d-wrapper .floating-offers-legend {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  gap: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1.5px solid $line;
+  font-size: 11px;
+  font-weight: 700;
+  color: $ink;
+  pointer-events: none;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+
+  .dot-offer { background: $offer; }
+  .dot-soon { background: $offer-soon; }
+}
+
+.supermarket-canvas-card.dark-theme .floating-offers-legend {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.viewport-3d-wrapper .floating-active-badge.cart-badge {
+  border-left-color: $offer;
+
+  .badge-left ion-icon {
+    color: #fdba74;
+  }
+}
+
+/* Botones de voz y escáner dentro del buscador */
+.search-panel-fixed .search-input-field .btn-search-tool {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  background: #ffffff;
+  color: $ink;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s $ease-spring;
+
+  &:hover {
+    background: $ink;
+    border-color: $ink;
+    color: #ffffff;
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(15, 23, 42, 0.35);
+    outline-offset: 2px;
+  }
+
+  &.active-tool {
+    background: $ink;
+    border-color: $ink;
+    color: #ffffff;
+  }
+
+  // Micrófono abierto: anillo que late para que se note que está escuchando
+  &.listening {
+    background: $offer-soon;
+    border-color: $offer-soon;
+    color: #ffffff;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 13px;
+      border: 2px solid $offer-soon;
+      animation: micPulse 1.2s ease-out infinite;
+    }
+  }
+}
+
+/* Aviso del resultado de voz o del escáner */
+.voice-feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  border: 1.5px solid $line;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: $ink;
+  line-height: 1.4;
+  animation: panelIn 0.3s $ease-out;
+
+  > ion-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  span {
+    flex: 1;
+  }
+
+  button {
+    border: none;
+    background: transparent;
+    color: $muted;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    font-size: 16px;
+  }
+
+  &.is-listening > ion-icon {
+    color: $offer-soon;
+    animation: micBlink 1s ease-in-out infinite;
+  }
+}
+
+/* Escáner */
+.scanner-card {
+  margin-bottom: 14px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1.5px solid $line;
+  background: #ffffff;
+  animation: panelIn 0.3s $ease-out;
+
+  .scanner-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    strong {
+      display: block;
+      font-size: 14px;
+      color: $ink;
+    }
+
+    span {
+      font-size: 12px;
+      color: $muted;
+    }
+
+    .btn-close-prod {
+      width: 28px;
+      height: 28px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 50%;
+      background: #f8fafc;
+      color: $ink;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+  }
+
+  .scanner-video-box {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: 12px;
+    overflow: hidden;
+    background: $ink;
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .scanner-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #cbd5e1;
+      font-size: 12px;
+      font-weight: 600;
+
+      ion-spinner {
+        color: #ffffff;
+      }
+    }
+
+    // Línea láser que barre la imagen mientras se busca un código
+    .scan-line {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      height: 2px;
+      background: $offer-soon;
+      box-shadow: 0 0 12px 2px rgba(220, 38, 38, 0.7);
+      animation: scanSweep 1.8s ease-in-out infinite alternate;
+    }
+  }
+
+  .scanner-error {
+    margin: 10px 0 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: $offer-soon;
+  }
+
+  .manual-code-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+
+    input {
+      flex: 1;
+      min-width: 0;
+      padding: 9px 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      background: #f8fafc;
+      font-size: 13px;
+      font-weight: 600;
+      color: $ink;
+      outline: none;
+
+      &:focus {
+        border-color: $ink;
+        background: #ffffff;
+      }
+    }
+
+    button {
+      padding: 0 14px;
+      border: none;
+      border-radius: 10px;
+      background: $ink;
+      color: #ffffff;
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+  }
+}
+
+/* Invitación a la ruta del carrito */
+.empty-inspector-state .cart-route-cta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: $ink;
+  color: #ffffff;
+  text-align: left;
+
+  .cta-ic {
+    font-size: 26px;
+    flex-shrink: 0;
+    color: #fdba74;
+  }
+
+  .cta-texts {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    strong {
+      font-size: 14px;
+    }
+
+    span {
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.35;
+    }
+  }
+
+  .cta-btn {
+    flex-shrink: 0;
+    padding: 9px 14px;
+    border: none;
+    border-radius: 10px;
+    background: #ffffff;
+    color: $ink;
+    font-size: 12.5px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.15s $ease-spring;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: scale(0.96);
+    }
+  }
+
+  &.cta-empty {
+    background: #f1f5f9;
+    color: $ink;
+    border: 1.5px dashed #cbd5e1;
+
+    .cta-ic { color: $muted; }
+    .cta-texts span { color: $muted; }
+    .cta-btn { background: $ink; color: #ffffff; }
+  }
+}
+
+/* Marca de oferta en los botones de sección */
+.empty-inspector-state .suggestion-pills .aisle-pill-btn {
+  .pill-text {
+    flex: 1;
+  }
+
+  .pill-offer {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: $offer;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.offer-soon {
+      background: $offer-soon;
+    }
+  }
+}
+
+/* Ofertas del pasillo seleccionado */
+.aisle-inventory-section .aisle-offer-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 2px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #fff7ed;
+  border: 1.5px solid #fed7aa;
+  color: #9a3412;
+  font-size: 12px;
+  font-weight: 700;
+
+  ion-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  &.offer-soon {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+  }
+}
+
+/* Ruta de la compra */
+.cart-route-panel {
+  animation: panelIn 0.35s $ease-out;
+
+  .cart-route-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+
+    h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+      color: $ink;
+    }
+
+    span {
+      font-size: 12px;
+      color: $muted;
+    }
+
+    .btn-exit-route {
+      flex-shrink: 0;
+      padding: 6px 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      background: #ffffff;
+      color: $ink;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+
+      &:hover {
+        background: $ink;
+        border-color: $ink;
+        color: #ffffff;
+      }
+    }
+  }
+
+  .pick-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0;
+
+    .pick-progress-bar {
+      flex: 1;
+      height: 8px;
+      border-radius: 999px;
+      background: $line;
+      overflow: hidden;
+
+      span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: #16a34a;
+        transition: width 0.4s $ease-out;
+      }
+    }
+
+    strong {
+      font-size: 12px;
+      color: $ink;
+      white-space: nowrap;
+    }
+  }
+
+  .all-picked-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f0fdf4;
+    border: 1.5px solid #bbf7d0;
+    color: #166534;
+    font-size: 12.5px;
+    font-weight: 700;
+    animation: badgeIn 0.4s $ease-spring;
+
+    ion-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+  }
+
+  .stop-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .stop-card {
+    border: 1.5px solid $line;
+    border-left: 5px solid var(--aisle-color, $ink);
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 10px 12px;
+    transition: opacity 0.3s ease, border-color 0.3s ease;
+
+    &.stop-done {
+      border-left-color: #94a3b8;
+      opacity: 0.7;
+
+      .stop-number {
+        background: #94a3b8;
+      }
+    }
+  }
+
+  .stop-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .stop-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--aisle-color, $ink);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background-color 0.3s ease;
+    }
+
+    .stop-titles {
+      display: flex;
+      flex-direction: column;
+
+      strong {
+        font-size: 13px;
+        color: $ink;
+      }
+
+      span {
+        font-size: 11.5px;
+        color: $muted;
+      }
+    }
+  }
+
+  .stop-items {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .pick-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background: #f8fafc;
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--aisle-color, $ink);
+      outline-offset: 1px;
+    }
+
+    .pick-check {
+      font-size: 22px;
+      color: #cbd5e1;
+      flex-shrink: 0;
+      transition: color 0.15s ease, transform 0.25s $ease-spring;
+    }
+
+    img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #f1f5f9;
+    }
+
+    .pick-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+
+      strong {
+        font-size: 12.5px;
+        color: $ink;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      span {
+        font-size: 11px;
+        color: $muted;
+      }
+    }
+
+    &.picked {
+      .pick-check {
+        color: #16a34a;
+        transform: scale(1.1);
+      }
+
+      .pick-info strong {
+        text-decoration: line-through;
+        color: $muted;
+      }
+    }
+  }
+
+  .unlocated-box {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1.5px dashed #cbd5e1;
+    font-size: 12px;
+    color: $muted;
+
+    strong {
+      color: $ink;
+    }
+  }
+}
+
+/* Indicaciones paso a paso */
+.directions-card {
+  margin: 14px 0;
+  border: 1.5px solid $line;
+  border-radius: 14px;
+  background: #ffffff;
+  overflow: hidden;
+
+  .directions-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px 6px 12px;
+    background: #f8fafc;
+    border-bottom: 1.5px solid $line;
+  }
+
+  .directions-toggle {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    border: none;
+    background: transparent;
+    color: $ink;
+    cursor: pointer;
+    text-align: left;
+
+    > ion-icon {
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    .directions-title {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .trip-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: $ink;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+
+      ion-icon {
+        font-size: 12px;
+      }
+    }
+
+    .chev {
+      margin-left: auto;
+      font-size: 16px;
+      color: $muted;
+    }
+  }
+
+  .btn-speak {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    background: #ffffff;
+    color: $ink;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:hover {
+      background: $ink;
+      border-color: $ink;
+      color: #ffffff;
+    }
+  }
+
+  .directions-list {
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .direction-step {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 8px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    .dir-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+      color: var(--step-color, $ink);
+      font-size: 15px;
+    }
+
+    .dir-text {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #334155;
+      line-height: 1.35;
+    }
+
+    &:hover {
+      background: #f8fafc;
+    }
+
+    &.step-arrive {
+      .dir-icon {
+        background: var(--step-color, $ink);
+        color: #ffffff;
+      }
+
+      .dir-text {
+        font-weight: 800;
+        color: $ink;
+      }
+    }
+
+    &.step-active {
+      background: #f1f5f9;
+      box-shadow: inset 3px 0 0 var(--step-color, $ink);
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--step-color, $ink);
+      outline-offset: 1px;
+    }
+  }
+
+  .directions-hint {
+    margin: 0;
+    padding: 0 14px 10px;
+    font-size: 11px;
+    color: #94a3b8;
+  }
+}
+
+@keyframes micPulse {
+  from {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes micBlink {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes scanSweep {
+  from { top: 12%; }
+  to { top: 88%; }
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-search-tool.listening::after,
+  .voice-feedback,
+  .voice-feedback ion-icon,
+  .scanner-card,
+  .scan-line,
+  .cart-route-panel,
+  .all-picked-banner,
+  .pick-progress-bar span,
+  .pick-check {
+    animation: none !important;
+    transition: none !important;
+  }
 }
